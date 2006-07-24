@@ -1,0 +1,10 @@
+Low resource X11 Window manager using libcairo
+
+This is a brand new window manager with the following features:
+- good looking (transparency, cairo rendering, ...)
+- OSD CLI (on-screen command line interface) with command completion
+- Tabbed windows: multiple X11 clients can be grouped together in one
+  window frame
+- EWMH conform
+- Autofocus and Autoraise control
+
