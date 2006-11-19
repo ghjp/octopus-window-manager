@@ -1,3 +1,9 @@
+octopus (0.2.1-1) unstable; urgency=low
+
+  * Changed focus change problems after virtual desktop switching
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 19 Nov 2006 15:51:30 +0100
+
 octopus (0.2.0-5) unstable; urgency=low
 
   * Added Debian postinst and prerm scripts

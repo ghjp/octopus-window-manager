@@ -189,7 +189,7 @@ static void _scan_clients_from_screen(gswm_t *gsw)
 
   /* Needed to ensure that no window dies before we are ready */
   XGrabServer(dpy);
-  XSync(dpy, FALSE);
+  XSync(dpy, False);
   if(XQueryTree(dpy, scr->rootwin, &rw, &pw, &childlist, &nchilds)) {
     Window *childlist_wo_frame_id, *trans_subwindows, *main_windows;
     gint i, trans_count, main_count;
