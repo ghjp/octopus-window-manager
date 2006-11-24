@@ -44,7 +44,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
   clist = scr->vdesk[scr->current_vdesk].clnt_list;
   TRACE(("%s hide_clist=%d", __func__, g_list_length(clist)));
   XSync(gsw->display, False); /* Perform all outstanding events */
-  /* XGrabServer(gsw->display); */
+  //XGrabServer(gsw->display);
   g_list_foreach(clist, _hide_vdesk_client, gsw);
 
 	scr->current_vdesk = v;
@@ -54,8 +54,12 @@ void switch_vdesk(gswm_t *gsw, gint v)
   TRACE(("%s unhide_clist=%d", __func__, g_list_length(clist)));
   g_list_foreach(clist, _unhide_vdesk_client, gsw);
   /*g_list_foreach(scr->sticky_list, _unhide_vdesk_client, gsw);*/
-  /* XUngrabServer(gsw->display); */
-  XSync(gsw->display, True); /* Discard all events */
+  //XUngrabServer(gsw->display);
+  {
+    XEvent xev;
+    while(XCheckMaskEvent(gsw->display, FocusChangeMask, &xev))
+      g_message("%s: FocusChangeMask found", __func__);
+  }
 
   if(old_focused_client)
     focus_client(gsw, old_focused_client, TRUE);
