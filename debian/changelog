@@ -1,3 +1,9 @@
+octopus (0.2.1-2) unstable; urgency=low
+
+  * Corrected lost X events after desktop switching
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Fri, 24 Nov 2006 21:23:25 +0100
+
 octopus (0.2.1-1) unstable; urgency=low
 
   * Changed focus change problems after virtual desktop switching
