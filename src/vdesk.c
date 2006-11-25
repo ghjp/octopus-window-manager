@@ -57,8 +57,8 @@ void switch_vdesk(gswm_t *gsw, gint v)
   //XUngrabServer(gsw->display);
   {
     XEvent xev;
-    while(XCheckMaskEvent(gsw->display, FocusChangeMask, &xev))
-      g_message("%s: FocusChangeMask found", __func__);
+    while(XCheckMaskEvent(gsw->display, FocusChangeMask|EnterWindowMask, &xev))
+      TRACE(("%s: FocusChangeMask|EnterWindowMask found", __func__));
   }
 
   if(old_focused_client)
