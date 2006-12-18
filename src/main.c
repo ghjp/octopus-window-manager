@@ -185,7 +185,7 @@ static void _scan_clients_from_screen(gswm_t *gsw)
   screen_t *scr = gsw->screen + gsw->i_curr_scr;
   GHashTable *frame_id_map = g_hash_table_new(NULL, NULL);
   gint fr_id = 0;
-  guint nchilds_wo_frame_id = 0;
+  gint nchilds_wo_frame_id = 0;
 
   /* Needed to ensure that no window dies before we are ready */
   XGrabServer(dpy);

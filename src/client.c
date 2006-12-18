@@ -131,7 +131,7 @@ static gchar *_get_ewmh_win_name(gswm_t *gsw, client_t *c)
     /* The data returned by XGetWindowProperty is guaranteed
        to contain one extra byte that is null terminated to
        make retrieving string properties easy  */
-    utf8_name = g_strdup(name);
+    utf8_name = g_strdup((gchar*)name);
     TRACE(("%s _NET_WM_NAME ut8 name found and valid", __func__));
     c->wstate.has_net_wm_name = TRUE;
   }
@@ -145,11 +145,11 @@ static gchar *_get_ewmh_win_name(gswm_t *gsw, client_t *c)
 
 G_INLINE_FUNC gchar *_read_property_xa_string(gswm_t *gsw, client_t *c, const XTextProperty *text_prop)
 {
-  gint8 *xa_string = NULL;
+  gchar *xa_string = NULL;
 
   if(text_prop->value && 0 < text_prop->nitems && text_prop->format == 8) {
     if(XA_STRING == text_prop->encoding)
-      xa_string = g_locale_to_utf8(text_prop->value, -1, NULL, NULL, NULL);
+      xa_string = g_locale_to_utf8((gchar*)text_prop->value, -1, NULL, NULL, NULL);
     else {
       gint num;
       gchar **list;
@@ -285,8 +285,8 @@ void create_new_client(gswm_t *gsw, Window w)
     gint idummy;
     guint udummy;
 
-    XShapeQueryExtents(gsw->display, c->win, &bounding_shaped, &clip_shaped,
-        &idummy, &idummy, &idummy, &idummy, &udummy, &udummy, &udummy, &udummy);
+    XShapeQueryExtents(gsw->display, c->win, &bounding_shaped, &idummy,
+        &idummy, &udummy, &udummy, &clip_shaped, &idummy, &idummy, &udummy, &udummy);
     /* A bound shaped client doesn't want to be decored by a visible frame */
     if(bounding_shaped) {
       TRACE(("%s bounding_shaped client (%s)", __func__, c->utf8_name));

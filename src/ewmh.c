@@ -157,13 +157,13 @@ void init_ewmh_support(gswm_t *gsw)
   XChangeWindowAttributes(dpy, scr->extended_hints_win, CWOverrideRedirect, &attr);
 
   XChangeProperty(dpy, scr->extended_hints_win, gsw->xa.wm_net_wm_name, gsw->xa.wm_utf8_string, 8,
-      PropModeReplace, wm_name->str, wm_name->len);
+      PropModeReplace, (guint8*)wm_name->str, wm_name->len);
 
   XChangeProperty(dpy, scr->extended_hints_win, gsw->xa.wm_net_supporting_wm_check, XA_WINDOW, 32,
       PropModeReplace, (guint8*)&scr->extended_hints_win, 1);
   {
 #define HNAME_MAXLEN 256
-    gint8 hname[HNAME_MAXLEN];
+    gchar hname[HNAME_MAXLEN];
     CARD32 pid = getpid();
     Atom wm_client_machine = XInternAtom(dpy, "WM_CLIENT_MACHINE", False);
 
@@ -186,7 +186,7 @@ void init_ewmh_support(gswm_t *gsw)
 
   /* Set _NET_SUPPORTED hint */
   XChangeProperty(dpy, scr->rootwin, gsw->xa.wm_net_supported, XA_ATOM, 32,
-      PropModeReplace, net_supported_list->data, net_supported_list->len);
+      PropModeReplace, (guint8*)net_supported_list->data, net_supported_list->len);
 
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_number_of_desktops, scr->num_vdesk);
   /*set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, 0);*/
@@ -246,9 +246,9 @@ void update_ewmh_net_client_list(gswm_t *gsw)
 
   TRACE(("%s len=%d", __func__, scr->extended_client_list->len));
   XChangeProperty(gsw->display, scr->rootwin, gsw->xa.wm_net_client_list,
-      XA_WINDOW, 32, PropModeReplace, scr->extended_client_list->data, scr->extended_client_list->len);
+      XA_WINDOW, 32, PropModeReplace, (guint8*)scr->extended_client_list->data, scr->extended_client_list->len);
   XChangeProperty(gsw->display, scr->rootwin, gsw->xa.wm_net_client_list_stacking,
-      XA_WINDOW, 32, PropModeReplace, scr->extended_client_list->data, scr->extended_client_list->len);
+      XA_WINDOW, 32, PropModeReplace, (guint8*)scr->extended_client_list->data, scr->extended_client_list->len);
 }
 
 void set_ewmh_prop(gswm_t *gsw, client_t *c, Atom at, glong val)
@@ -469,7 +469,7 @@ void set_ewmh_net_wm_states(gswm_t *gsw, client_t *c)
 
   if(gsw->net_wm_states_array->len)
     XChangeProperty(gsw->display, c->win, gsw->xa.wm_net_wm_state, XA_ATOM, 32,
-        PropModeReplace,  gsw->net_wm_states_array->data, gsw->net_wm_states_array->len);
+        PropModeReplace, (guint8*)gsw->net_wm_states_array->data, gsw->net_wm_states_array->len);
   else
     XDeleteProperty(gsw->display, c->win, gsw->xa.wm_net_wm_state);
 }
@@ -600,7 +600,7 @@ void set_ewmh_net_wm_allowed_actions(gswm_t *gsw, client_t *c)
 
   XChangeProperty(gsw->display, c->win, gsw->xa.wm_net_wm_allowed_actions,
       XA_ATOM, 32, PropModeReplace,
-      net_wm_allowed_actions_array->data, net_wm_allowed_actions_array->len);
+      (guint8*)net_wm_allowed_actions_array->data, net_wm_allowed_actions_array->len);
 
   g_array_free(net_wm_allowed_actions_array, TRUE);
 }
