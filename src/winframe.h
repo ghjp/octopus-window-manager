@@ -10,6 +10,7 @@ void wframe_bind_client(gswm_t *gsw, wframe_t *frame, client_t *c);
 void wframe_unbind_client(gswm_t *gsw, client_t *c);
 void wframe_remove_client(gswm_t *gsw, client_t *c);
 void wframe_install_kb_shortcuts(gswm_t *gsw, wframe_t *frame);
+void wframe_set_type(gswm_t *gsw, wframe_t *frame, gboolean focused);
 void wframe_expose(gswm_t *gsw, wframe_t *frame);
 void wframe_tbar_pmap_recreate(gswm_t *gsw, wframe_t *frame);
 void wframe_button_init(gswm_t *gsw);

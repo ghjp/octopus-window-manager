@@ -907,20 +907,25 @@ void wframe_tbar_button_set_normal(gswm_t *gsw, wframe_t *frame)
   _redraw_tbar_button(gsw, frame);
 }
 
+void wframe_set_type(gswm_t *gsw, wframe_t *frame, gboolean focused)
+{
+  screen_t *scr = gsw->screen + gsw->i_curr_scr;
+  /* Draw the correct pixmap onto the titlebar */
+  if(focused) {
+    XSetWindowBorder(gsw->display, frame->win, scr->color.focus.pixel);
+    XSetWindowBackgroundPixmap(gsw->display, frame->titlewin, frame->focused_tbar_pmap);
+  }
+  else {
+    XSetWindowBorder(gsw->display, frame->win, scr->color.unfocus.pixel);
+    XSetWindowBackgroundPixmap(gsw->display, frame->titlewin, frame->unfocused_tbar_pmap);
+  }
+}
+
 void wframe_expose(gswm_t *gsw, wframe_t *frame)
 {
   Display *dpy = gsw->display;
-  screen_t *scr = gsw->screen + gsw->i_curr_scr;
 
-  /* Draw the correct pixmap onto the titlebar */
-  if(frame->focus_expose_hint) {
-    XSetWindowBorder(dpy, frame->win, scr->color.focus.pixel);
-    XSetWindowBackgroundPixmap(dpy, frame->titlewin, frame->focused_tbar_pmap);
-  }
-  else {
-    XSetWindowBorder(dpy, frame->win, scr->color.unfocus.pixel);
-    XSetWindowBackgroundPixmap(dpy, frame->titlewin, frame->unfocused_tbar_pmap);
-  }
+  wframe_set_type(gsw, frame, frame->focus_expose_hint);
   XClearWindow(dpy, frame->titlewin);
   _redraw_tbar_button(gsw, frame);
 }

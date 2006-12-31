@@ -8,12 +8,14 @@
 #include "winactions.h"
 #include "main.h"
 #include "client.h"
+#include "winframe.h"
 
 static void _hide_vdesk_client(gpointer data, gpointer user_data)
 {
   client_t *c = (client_t*)data;
   gswm_t *gsw = (gswm_t *)user_data;
   wa_hide(gsw, c);
+  wframe_set_type(gsw, c->wframe, FALSE);
 }
 
 static void _unhide_vdesk_client(gpointer data, gpointer user_data)
