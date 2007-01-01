@@ -1,3 +1,9 @@
+octopus (0.2.2-2) unstable; urgency=low
+
+  * Fixed nasty focus jumping bug during desktop switching
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Mon, 01 Jan 2007 16:17:08 +0100
+
 octopus (0.2.2-1) unstable; urgency=low
 
   * Hopefully solved the problem with two focused clients
