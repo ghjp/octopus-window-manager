@@ -787,6 +787,13 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
     clnt->wframe->focus_expose_hint = FALSE;
     wframe_expose(gsw, clnt->wframe);
   }
+  else {
+    /* If no client is found we give focus to the root window
+     * as we don't want to get left without focus.
+     */
+    TRACE(("%s giving focus to root window", __func__));
+    XSetInputFocus(gsw->display, gsw->screen[gsw->i_curr_scr].rootwin, RevertToPointerRoot, CurrentTime);
+  }
 }
 
 static void _handle_colormapchange_event(gswm_t *gsw, XColormapEvent *e)
