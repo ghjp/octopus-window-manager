@@ -778,6 +778,9 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
   client_t *clnt;
 
   TRACE(("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail));
+  /* Get the last focus in event, no need to go through them all. */
+  while(XCheckTypedEvent(gsw->display, FocusOut, (XEvent*)e))
+    ;
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
@@ -791,8 +794,15 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
     /* If no client is found we give focus to the root window
      * as we don't want to get left without focus.
      */
-    TRACE(("%s giving focus to root window", __func__));
-    XSetInputFocus(gsw->display, gsw->screen[gsw->i_curr_scr].rootwin, RevertToPointerRoot, CurrentTime);
+    if(XCheckTypedEvent(gsw->display, FocusIn, (XEvent*)e)) {
+      /* We found a Event, put it back and handle it later on. */
+      TRACE(("%s found a FocusIn event", __func__));
+      XPutBackEvent(gsw->display, (XEvent *)e);
+    }
+    else {
+      TRACE(("%s giving focus to root window", __func__));
+      XSetInputFocus(gsw->display, gsw->screen[gsw->i_curr_scr].rootwin, RevertToPointerRoot, CurrentTime);
+    }
   }
 }
 
