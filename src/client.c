@@ -748,9 +748,7 @@ void detach(gswm_t *gsw, client_t *c)
   scr->detached_frlist = g_list_prepend(scr->detached_frlist, c->wframe);
   wa_iconify(gsw, c);
   remove_ewmh_strut(gsw, c, FALSE);
-  /* FIXME Check if the following 2 statements are necessary */
-  c->wframe->focus_expose_hint = FALSE;
-  wframe_expose(gsw, c->wframe);
+  wframe_set_type(gsw, c->wframe, FALSE);
   /* Eliminate pending focus events */
   wframe_nullify_pending_focus_events(gsw, c->wframe);
   wframe_update_stat_indicator(gsw);
