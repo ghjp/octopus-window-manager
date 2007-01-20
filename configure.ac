@@ -2,17 +2,19 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([octopus], [0.2.2], [pfefferl@gmx.net])
+AC_INIT([octopus], [0.3.0], [pfefferl@gmx.net])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([auxdir])
 AC_CONFIG_HEADER([config.h])
 
 AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE([octopus], [0.2.2], no-define)
+AM_INIT_AUTOMAKE([octopus], [0.3.0], no-define)
 AM_DISABLE_STATIC
 
 # Checks for programs.
 AM_PROG_LIBTOOL
+AM_PROG_CC_C_O
+AC_PROG_RANLIB
 AC_PROG_MAKE_SET
 
 if test "$CC" = gcc

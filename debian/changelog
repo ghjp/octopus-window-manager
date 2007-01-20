@@ -1,3 +1,9 @@
+octopus (0.3.0-1) unstable; urgency=low
+
+  * Added new tool octopus_xkeyd to bind actions to special X11 keys
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sat, 20 Jan 2007 20:35:46 +0100
+
 octopus (0.2.2-3) unstable; urgency=low
 
   * Focus follows correctly now when a window is dragged onto another frame

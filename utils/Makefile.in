@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -32,9 +33,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = octopus_setbg$(EXEEXT)
+bin_PROGRAMS = octopus_setbg$(EXEEXT) octopus_xkeyd$(EXEEXT)
 subdir = utils
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -51,6 +53,13 @@ octopus_setbg_LDADD = $(LDADD)
 octopus_setbg_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(octopus_setbg_CFLAGS) \
 	$(CFLAGS) $(octopus_setbg_LDFLAGS) $(LDFLAGS) -o $@
+am_octopus_xkeyd_OBJECTS = octopus_xkeyd-octopus_xkeyd.$(OBJEXT) \
+	octopus_xkeyd-xkeyd_userconfig.$(OBJEXT)
+octopus_xkeyd_OBJECTS = $(am_octopus_xkeyd_OBJECTS)
+octopus_xkeyd_LDADD = $(LDADD)
+octopus_xkeyd_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(octopus_xkeyd_CFLAGS) \
+	$(CFLAGS) $(octopus_xkeyd_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/auxdir/depcomp
 am__depfiles_maybe = depfiles
@@ -63,8 +72,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = octopus_setbg.c
-DIST_SOURCES = octopus_setbg.c
+SOURCES = octopus_setbg.c $(octopus_xkeyd_SOURCES)
+DIST_SOURCES = octopus_setbg.c $(octopus_xkeyd_SOURCES)
+HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -194,6 +204,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 octopus_setbg_CFLAGS = @GDK_PIXBUF_XLIB_CFLAGS@
 octopus_setbg_LDFLAGS = @GDK_PIXBUF_XLIB_LIBS@
+octopus_xkeyd_CFLAGS = @GDK_PIXBUF_XLIB_CFLAGS@
+octopus_xkeyd_LDFLAGS = @GDK_PIXBUF_XLIB_LIBS@
+noinst_HEADERS = xkeyd_userconfig.h
+octopus_xkeyd_SOURCES = octopus_xkeyd.c xkeyd_userconfig.c
 all: all-am
 
 .SUFFIXES:
@@ -258,6 +272,9 @@ clean-binPROGRAMS:
 octopus_setbg$(EXEEXT): $(octopus_setbg_OBJECTS) $(octopus_setbg_DEPENDENCIES) 
 	@rm -f octopus_setbg$(EXEEXT)
 	$(octopus_setbg_LINK) $(octopus_setbg_OBJECTS) $(octopus_setbg_LDADD) $(LIBS)
+octopus_xkeyd$(EXEEXT): $(octopus_xkeyd_OBJECTS) $(octopus_xkeyd_DEPENDENCIES) 
+	@rm -f octopus_xkeyd$(EXEEXT)
+	$(octopus_xkeyd_LINK) $(octopus_xkeyd_OBJECTS) $(octopus_xkeyd_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -266,6 +283,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_setbg-octopus_setbg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -301,6 +320,34 @@ octopus_setbg-octopus_setbg.obj: octopus_setbg.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='octopus_setbg.c' object='octopus_setbg-octopus_setbg.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_setbg_CFLAGS) $(CFLAGS) -c -o octopus_setbg-octopus_setbg.obj `if test -f 'octopus_setbg.c'; then $(CYGPATH_W) 'octopus_setbg.c'; else $(CYGPATH_W) '$(srcdir)/octopus_setbg.c'; fi`
+
+octopus_xkeyd-octopus_xkeyd.o: octopus_xkeyd.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -MT octopus_xkeyd-octopus_xkeyd.o -MD -MP -MF $(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Tpo -c -o octopus_xkeyd-octopus_xkeyd.o `test -f 'octopus_xkeyd.c' || echo '$(srcdir)/'`octopus_xkeyd.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Tpo $(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='octopus_xkeyd.c' object='octopus_xkeyd-octopus_xkeyd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -c -o octopus_xkeyd-octopus_xkeyd.o `test -f 'octopus_xkeyd.c' || echo '$(srcdir)/'`octopus_xkeyd.c
+
+octopus_xkeyd-octopus_xkeyd.obj: octopus_xkeyd.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -MT octopus_xkeyd-octopus_xkeyd.obj -MD -MP -MF $(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Tpo -c -o octopus_xkeyd-octopus_xkeyd.obj `if test -f 'octopus_xkeyd.c'; then $(CYGPATH_W) 'octopus_xkeyd.c'; else $(CYGPATH_W) '$(srcdir)/octopus_xkeyd.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Tpo $(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='octopus_xkeyd.c' object='octopus_xkeyd-octopus_xkeyd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -c -o octopus_xkeyd-octopus_xkeyd.obj `if test -f 'octopus_xkeyd.c'; then $(CYGPATH_W) 'octopus_xkeyd.c'; else $(CYGPATH_W) '$(srcdir)/octopus_xkeyd.c'; fi`
+
+octopus_xkeyd-xkeyd_userconfig.o: xkeyd_userconfig.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -MT octopus_xkeyd-xkeyd_userconfig.o -MD -MP -MF $(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Tpo -c -o octopus_xkeyd-xkeyd_userconfig.o `test -f 'xkeyd_userconfig.c' || echo '$(srcdir)/'`xkeyd_userconfig.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Tpo $(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xkeyd_userconfig.c' object='octopus_xkeyd-xkeyd_userconfig.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -c -o octopus_xkeyd-xkeyd_userconfig.o `test -f 'xkeyd_userconfig.c' || echo '$(srcdir)/'`xkeyd_userconfig.c
+
+octopus_xkeyd-xkeyd_userconfig.obj: xkeyd_userconfig.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -MT octopus_xkeyd-xkeyd_userconfig.obj -MD -MP -MF $(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Tpo -c -o octopus_xkeyd-xkeyd_userconfig.obj `if test -f 'xkeyd_userconfig.c'; then $(CYGPATH_W) 'xkeyd_userconfig.c'; else $(CYGPATH_W) '$(srcdir)/xkeyd_userconfig.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Tpo $(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xkeyd_userconfig.c' object='octopus_xkeyd-xkeyd_userconfig.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_xkeyd_CFLAGS) $(CFLAGS) -c -o octopus_xkeyd-xkeyd_userconfig.obj `if test -f 'xkeyd_userconfig.c'; then $(CYGPATH_W) 'xkeyd_userconfig.c'; else $(CYGPATH_W) '$(srcdir)/xkeyd_userconfig.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -384,7 +431,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
