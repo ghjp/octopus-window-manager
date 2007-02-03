@@ -39,11 +39,14 @@ static void _xml_config_start_elem(GMarkupParseContext *context,
     }
   }
   else if(g_str_equal(element_name, "userdef")) {
+    guint keycode = 0;
     const gchar *keysym = NULL, *command = NULL;
 
     for(i = 0; attribute_names[i]; i++) {
       if(g_str_equal(attribute_names[i], "keysym"))
         keysym = attribute_values[i];
+      else if(g_str_equal(attribute_names[i], "keycode"))
+        keycode = strtoul(attribute_values[i], NULL, 0);
       else if(g_str_equal(attribute_names[i], "command"))
         command = attribute_values[i];
       else {
@@ -53,10 +56,14 @@ static void _xml_config_start_elem(GMarkupParseContext *context,
         break;
       }
     }
-    if(keysym && command) {
-      gchar *ksym = g_strdup(keysym);
+    if(command) {
       gchar *cmd  = g_strdup(command);
-      g_hash_table_replace(ucfg_p->keysym_command_hash, ksym, cmd);
+      if(keycode)
+        g_hash_table_replace(ucfg_p->keycode_command_hash, GUINT_TO_POINTER(keycode), cmd);
+      else if(keysym) {
+        gchar *ksym = g_strdup(keysym);
+        g_hash_table_replace(ucfg_p->keysym_command_hash, ksym, cmd);
+      }
     }
   }
   else if(g_str_equal(element_name, PACKAGE_NAME)) {
@@ -178,43 +185,17 @@ void read_xml_config(user_cfg_t *ucfg_p)
   g_free(xml_doc);
 out1:
   g_free(cfg_fname);
-
-  /* Check consistency of configuration again.
-     User configuration files are a pain */
-#if 0
-  if(!ucfg_p->ucfg.vdesk_names->len) {
-    gint i;
-
-    TRACE(("%s constructing default %d vdesks", __func__, DEFAULT_VDESK_NUM));
-    for(i = 0; i < DEFAULT_VDESK_NUM; i++) {
-      gchar *lastname = g_strdup_printf("vdesk%02d", i);
-      g_ptr_array_add(ucfg_p->ucfg.vdesk_names, lastname);
-    }
-  }
-  if(0 > ucfg_p->ucfg.titlebar_height)
-    ucfg_p->ucfg.titlebar_height = 0;
-  else if(4 > ucfg_p->ucfg.titlebar_height)
-    ucfg_p->ucfg.titlebar_height = 4;
-  if(ucfg_p->ucfg.titlebar_height)
-    ucfg_p->ucfg.border_width = CLAMP(ucfg_p->ucfg.border_width, 0, ucfg_p->ucfg.titlebar_height-1);
-  else if(0 > ucfg_p->ucfg.border_width)
-    ucfg_p->ucfg.border_width = 0;
-  ucfg_p->ucfg.focused_color.r = CLAMP(ucfg_p->ucfg.focused_color.r, 0.0, 1.0);
-  ucfg_p->ucfg.focused_color.g = CLAMP(ucfg_p->ucfg.focused_color.g, 0.0, 1.0);
-  ucfg_p->ucfg.focused_color.b = CLAMP(ucfg_p->ucfg.focused_color.b, 0.0, 1.0);
-  ucfg_p->ucfg.resize_inc_fraction = CLAMP(ucfg_p->ucfg.resize_inc_fraction, 1, 100);
-  ucfg_p->ucfg.alpha_east = CLAMP(ucfg_p->ucfg.alpha_east, 0.0, 1.0);
-  ucfg_p->ucfg.alpha_west = CLAMP(ucfg_p->ucfg.alpha_west, 0.0, 1.0);
-#endif
 }
 
 void init_xml_config(user_cfg_t *ucfg_p)
 {
   ucfg_p->keysym_command_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+  ucfg_p->keycode_command_hash = g_hash_table_new_full(NULL, g_str_equal, NULL, g_free);
 }
 
 void finalize_xml_config(user_cfg_t *ucfg_p)
 {
   g_hash_table_remove_all(ucfg_p->keysym_command_hash);
-  ucfg_p->keysym_command_hash = NULL;
+  g_hash_table_remove_all(ucfg_p->keycode_command_hash);
+  ucfg_p->keysym_command_hash = ucfg_p->keycode_command_hash = NULL;
 }

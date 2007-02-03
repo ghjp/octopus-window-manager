@@ -20,7 +20,7 @@ typedef struct {
   GSource gs;
   Display *display;
   gint xsrv_fd;
-  GHashTable *key_action_hash;
+  GHashTable *keycode_action_hash;
   user_cfg_t ucfg;
 } gs_ext_t;
 
@@ -87,30 +87,13 @@ static gboolean _xsrv_event_cb(gpointer data)
   XEvent ev;
   gs_ext_t *gse = (gs_ext_t *)data;
   Display *dpy = gse->display;
-  gchar header_str[128];
   gchar *action;
 
   XNextEvent(dpy, &ev);
-  g_snprintf(header_str, sizeof(header_str), "%s ser=%lu send_ev=%d w=%lu",
-      __func__, ev.xany.serial, ev.xany.send_event, ev.xany.window);
-
   if(KeyPress == ev.type) {
     GError *error = NULL;
-#ifdef USE_XLOOKUPSTRING
-    KeySym ks;
-    gchar kstr[64];
-    XLookupString(&ev.xkey, kstr, sizeof(kstr), &ks, 0);
-#else
-    KeySym ks = XLookupKeysym(&ev.xkey, 0);
-    gchar *kstr = XKeysymToString(ks);
-#endif
-    /*g_message("%s KeyPress kstr=%s x=%d y=%d x_root=%d y_root=%d state=%u keycode=%u",
-        header_str, kstr, ev.xkey.x, ev.xkey.y, ev.xkey.x_root, ev.xkey.y_root,
-        ev.xkey.state, ev.xkey.keycode);
-        */
 
-    action = g_hash_table_lookup(gse->key_action_hash, GUINT_TO_POINTER(ks));
-    /*g_message("ks=%lX kstr=%s action='%s'", ks, kstr, action);*/
+    action = g_hash_table_lookup(gse->keycode_action_hash, GUINT_TO_POINTER(ev.xkey.keycode));
     if(action) {
       if(!g_spawn_command_line_async(action, &error)) {
         g_warning(error->message);
@@ -118,16 +101,24 @@ static gboolean _xsrv_event_cb(gpointer data)
       }
     }
     else
-      g_warning("No action found for '%s'", kstr);
+      g_warning("No action found for keycode %d", ev.xkey.keycode);
   }
   return TRUE; /* Keep this handler active */
 }
 
-static KeyCode grab_key(Display *dpy, GHashTable *ht, gchar *keystring, const gchar *action)
+static void x11_grab_keycode(Display *dpy, KeyCode kcode)
+{
+  gint i;
+  for(i = 0; i < ScreenCount(dpy); i++)
+    XGrabKey(dpy, kcode,
+        AnyModifier, RootWindow(dpy,i),
+        True, GrabModeAsync, GrabModeAsync);
+}
+
+static KeyCode grab_keysym(Display *dpy, GHashTable *ht, gchar *keystring, const gchar *action)
 {
 	KeySym sym;
 	KeyCode code;
-	gint i;
 
 	if(NoSymbol == (sym = XStringToKeysym(keystring))) {
     g_warning("Symbol '%s' is unknown to X server", keystring);
@@ -138,13 +129,9 @@ static KeyCode grab_key(Display *dpy, GHashTable *ht, gchar *keystring, const gc
 		return 0;
   }
 
-  for(i = 0; i < ScreenCount(dpy); i++)
-    XGrabKey(dpy, code,
-        AnyModifier, RootWindow(dpy,i),
-        True, GrabModeAsync, GrabModeAsync);
-
-  g_message("%s %s done", __func__, keystring);
-  g_hash_table_replace(ht, GUINT_TO_POINTER(sym), (gpointer)action);
+  x11_grab_keycode(dpy, code);
+  g_hash_table_replace(ht, GUINT_TO_POINTER((guint)code), (gpointer)action);
+  g_message("KeyCode %d (%s) grabbed", code, keystring);
 	return code;
 }
 
@@ -153,18 +140,28 @@ typedef struct {
   GHashTable *target_hash;
 } user_data_t;
 
-static void try_to_grab_key(gpointer key, gpointer value, gpointer user_data)
+static void try_to_grab_keysym(gpointer key, gpointer value, gpointer user_data)
 {
   user_data_t *ud_p = user_data;
-  grab_key(ud_p->dpy, ud_p->target_hash, key, value);
+  grab_keysym(ud_p->dpy, ud_p->target_hash, key, value);
 }
 
-static void grab_keys(Display *dpy, GHashTable *ht, GHashTable *keysym_cmd_h)
+static void try_to_grab_keycode(gpointer key, gpointer value, gpointer user_data)
+{
+  user_data_t *ud_p = user_data;
+  KeyCode kc = GPOINTER_TO_UINT(key);
+  x11_grab_keycode(ud_p->dpy, kc);
+  g_hash_table_replace(ud_p->target_hash, key, value);
+  g_message("KeyCode %d grabbed", kc);
+}
+
+static void grab_keys(Display *dpy, GHashTable *ht, GHashTable *keysym_cmd_h, GHashTable *keycode_cmd_h)
 {
   user_data_t ud;
   ud.dpy = dpy;
   ud.target_hash = ht;
-  g_hash_table_foreach(keysym_cmd_h, try_to_grab_key, &ud);
+  g_hash_table_foreach(keysym_cmd_h, try_to_grab_keysym, &ud);
+  g_hash_table_foreach(keycode_cmd_h, try_to_grab_keycode, &ud);
 }
 
 gint main(void)
@@ -199,7 +196,7 @@ gint main(void)
   xsrv_source = (gs_ext_t *)g_source_new(&xsrv_gsf, sizeof(*xsrv_source));
   xsrv_source->display = dpy;
   xsrv_source->xsrv_fd = ConnectionNumber(dpy);
-  xsrv_source->key_action_hash = g_hash_table_new(NULL, NULL);
+  xsrv_source->keycode_action_hash = g_hash_table_new(NULL, NULL);
   g_source_set_callback((GSource*)xsrv_source, _xsrv_event_cb, xsrv_source, NULL);
   g_source_attach((GSource *)xsrv_source, gmc);
   /* We want to destroy everything with the call g_main_loop_unref */
@@ -212,7 +209,7 @@ gint main(void)
 
   init_xml_config(&xsrv_source->ucfg);
   read_xml_config(&xsrv_source->ucfg);
-  grab_keys(dpy, xsrv_source->key_action_hash, xsrv_source->ucfg.keysym_command_hash);
+  grab_keys(dpy, xsrv_source->keycode_action_hash, xsrv_source->ucfg.keysym_command_hash, xsrv_source->ucfg.keycode_command_hash);
 
   /*
    * Now we are ready to enter the main event loop
@@ -224,9 +221,9 @@ gint main(void)
   /* The next call frees also the context, removes the poll descriptors, ... */
   g_main_loop_unref(gml);
 
-  g_message("Good bye!!");
   XCloseDisplay(dpy);
   finalize_xml_config(&xsrv_source->ucfg);
+  g_message("Good bye!!");
   return 0;
 }
 
