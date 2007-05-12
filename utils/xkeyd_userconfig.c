@@ -195,6 +195,7 @@ void init_xml_config(user_cfg_t *ucfg_p)
 
 void finalize_xml_config(user_cfg_t *ucfg_p)
 {
+  /* FIXME: The follwing two calls are only available in glib2 version 2.12 */
   g_hash_table_remove_all(ucfg_p->keysym_command_hash);
   g_hash_table_remove_all(ucfg_p->keycode_command_hash);
   ucfg_p->keysym_command_hash = ucfg_p->keycode_command_hash = NULL;
