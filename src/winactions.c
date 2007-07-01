@@ -1152,7 +1152,14 @@ void wa_fullscreen(gswm_t *gsw, client_t *c, gboolean on)
     c->height = c->height_old;
     c->wstate.fullscreen = FALSE;
   }
-  wa_do_all_size_constraints(gsw, c);
+  if(PAspect & c->wframe->xsize.flags) {
+    /* Ignore the aspect ratio for fullscreen mode */
+    c->wframe->xsize.flags &= ~PAspect;
+    wa_do_all_size_constraints(gsw, c);
+    c->wframe->xsize.flags |= PAspect;
+  }
+  else
+    wa_do_all_size_constraints(gsw, c);
   wframe_tbar_pmap_recreate(gsw, c->wframe);
   _x_move_resize(gsw, c);
   wframe_foreach(gsw, c->wframe, _apply_fullscreen_state, c);
