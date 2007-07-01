@@ -593,9 +593,9 @@ static action_table_t act_table[] = {
   { "unmaximize-vert",  _action_unmaxi_vert},
   { "vdesk-next",       _action_vdesk_next},
   { "vdesk-prev",       _action_vdesk_prev},
-  { "vdesk-goto ",       NULL},
+  { "vdesk-goto ",       NULL}, /* Space at the end due to the need of an argument */
   { "xterm",            _action_xterm},
-  { "jump ",            NULL},
+  { "jump ",            NULL}, /* Space at the end due to the need of an argument */
   { NULL, NULL}
 };
 
