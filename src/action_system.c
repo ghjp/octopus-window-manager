@@ -505,6 +505,42 @@ static void _action_dump_state(gswm_t *gsw)
         scr->id, len, count);
 }
 
+typedef struct {
+  gchar *name_pat;
+  client_t *c_found;
+} jump_search_t;
+
+static void _compare_name_of_client(gpointer key, gpointer value, gpointer user_data)
+{
+  client_t *c = (client_t*)value;
+  jump_search_t *js_info = (jump_search_t*)user_data;
+
+  (void)key; /* Keep compiler quiet */
+  if(!js_info->c_found) {
+    GString *title_string = g_string_new(c->utf8_name);
+    g_string_ascii_down(title_string);
+    if(g_strstr_len(title_string->str, title_string->len, js_info->name_pat))
+      js_info->c_found = c;
+    g_string_free(title_string, TRUE);
+  }
+}
+
+static void _action_jump_to(gswm_t *gsw, gchar *name_pattern)
+{
+  jump_search_t js_info;
+
+  js_info.name_pat = name_pattern;
+  js_info.c_found = NULL;
+  g_hash_table_foreach(gsw->win2clnt_hash, _compare_name_of_client, &js_info);
+  if(js_info.c_found) {
+    if(STICKY !=  js_info.c_found->i_vdesk)
+      switch_vdesk(gsw, js_info.c_found->i_vdesk);
+    wa_raise(gsw, js_info.c_found);
+    focus_client(gsw, js_info.c_found, FALSE);
+    TRACE(("%s: %s", __func__, js_info.c_found->utf8_name));
+  }
+}
+
 /* Action function table {{{1 */
 
 static action_table_t act_table[] = {
@@ -557,8 +593,9 @@ static action_table_t act_table[] = {
   { "unmaximize-vert",  _action_unmaxi_vert},
   { "vdesk-next",       _action_vdesk_next},
   { "vdesk-prev",       _action_vdesk_prev},
-  { "vdesk-goto",       NULL},
+  { "vdesk-goto ",       NULL},
   { "xterm",            _action_xterm},
+  { "jump ",            NULL},
   { NULL, NULL}
 };
 
@@ -621,6 +658,11 @@ static void _action_system_perform(gswm_t *gsw)
     else if(!g_ascii_strncasecmp(as->str, "vdesk-goto ", 11)) {
       g_string_erase(as, 0, 11);
       switch_vdesk(gsw, strtol(as->str, NULL, 0));
+    }
+    else if(!g_ascii_strncasecmp(as->str, "jump ", 5)) {
+      g_string_erase(as, 0, 5);
+      g_string_ascii_down(as);
+      _action_jump_to(gsw, as->str);
     }
     else
       g_warning("%s: Command `%s' not found", __func__, as->str);
