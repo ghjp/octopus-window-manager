@@ -1,3 +1,9 @@
+octopus (0.3.1-1) unstable; urgency=low
+
+  * Handle fullscreen mode correctly for applications with an aspect ratio
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 01 Jul 2007 13:24:04 +0200
+
 octopus (0.3.0-2) unstable; urgency=low
 
   * Tool octopus_xkeyd can handle keycode specifications in the config file
