@@ -86,10 +86,16 @@ static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
         action_system_interpret(gsw,
             clnt->wstate.maxi_vert ? "unmaximize-vert" : "maximize-vert");
       break;
-    case XK_x:
+    case XK_h:
+      clnt = wframe_lookup_client_for_window(gsw, e->window);
+      if(clnt)
+        action_system_interpret(gsw,
+            clnt->wstate.maxi_horz ? "unmaximize-horz" : "maximize-horz");
+      break;
+    case XK_Return:
       action_system_interpret(gsw, "xterm");
       break;
-    case XK_c:
+    case XK_Delete:
       clnt = wframe_lookup_client_for_window(gsw, e->window);
       if(clnt)
         wa_send_wm_delete(gsw, clnt);

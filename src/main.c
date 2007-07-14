@@ -247,7 +247,7 @@ static void _scan_clients_from_screen(gswm_t *gsw)
 
 static void _inst_root_kbd_shortcuts(Display *dpy, Window srwin, guint mod_mask)
 {
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("x")),
+  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Return")),
       mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Page_Up")),
       mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);

@@ -614,7 +614,7 @@ static void _inst_frame_shortcuts(Display *dpy, Window frwin, guint mod_mask)
   XGrabButton(dpy, AnyButton, mod_mask, frwin, True,
       ButtonPressMask|ButtonReleaseMask,
       GrabModeAsync, GrabModeAsync, None, None);
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("c")),
+  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Delete")),
       mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("d")),
       mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
@@ -651,6 +651,8 @@ static void _inst_frame_shortcuts(Display *dpy, Window frwin, guint mod_mask)
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("m")),
       mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("v")),
+      mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
+  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("h")),
       mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Tab")),
       ShiftMask|mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
