@@ -95,7 +95,7 @@ static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
     case XK_Return:
       action_system_interpret(gsw, "xterm");
       break;
-    case XK_Delete:
+    case XK_Escape:
       clnt = wframe_lookup_client_for_window(gsw, e->window);
       if(clnt)
         wa_send_wm_delete(gsw, clnt);

@@ -614,7 +614,7 @@ static void _inst_frame_shortcuts(Display *dpy, Window frwin, guint mod_mask)
   XGrabButton(dpy, AnyButton, mod_mask, frwin, True,
       ButtonPressMask|ButtonReleaseMask,
       GrabModeAsync, GrabModeAsync, None, None);
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Delete")),
+  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Escape")),
       mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("d")),
       mod_mask, frwin, True, GrabModeAsync, GrabModeAsync);
