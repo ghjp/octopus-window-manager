@@ -1,6 +1,7 @@
 octopus (0.3.2-1) unstable; urgency=low
 
   * The keybindings were changed
+  * Better fullscreen handling
 
  -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 15 Jul 2007 09:13:45 +0200 
 
