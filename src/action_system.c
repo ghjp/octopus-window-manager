@@ -599,6 +599,15 @@ static action_table_t act_table[] = {
   { NULL, NULL}
 };
 
+static void _remove_leading_whitespace(GString *as)
+{
+  gint cnt = 0;
+  while(as->str[cnt] == ' ' || as->str[cnt] == '\t')
+    ++cnt;
+  if(cnt)
+    g_string_erase(as, 0, cnt);
+}
+
 /* Exported access functions {{{1 */
 static void _action_system_perform(gswm_t *gsw)
 {
@@ -657,12 +666,18 @@ static void _action_system_perform(gswm_t *gsw)
       _action_exec_term(gsw);
     else if(!g_ascii_strncasecmp(as->str, "vdesk-goto ", 11)) {
       g_string_erase(as, 0, 11);
-      switch_vdesk(gsw, strtol(as->str, NULL, 0));
+      _remove_leading_whitespace(as);
+      if(as->len)
+        switch_vdesk(gsw, strtol(as->str, NULL, 0));
     }
     else if(!g_ascii_strncasecmp(as->str, "jump ", 5)) {
       g_string_erase(as, 0, 5);
+      _remove_leading_whitespace(as);
       g_string_ascii_down(as);
-      _action_jump_to(gsw, as->str);
+      if(as->len)
+        _action_jump_to(gsw, as->str);
+      else
+        g_warning("Command jump has no argument");
     }
     else
       g_warning("%s: Command `%s' not found", __func__, as->str);
