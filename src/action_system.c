@@ -664,14 +664,16 @@ static void _action_system_perform(gswm_t *gsw)
     }
     else if(!g_ascii_strncasecmp(as->str, "exec-term ", 10))
       _action_exec_term(gsw);
-    else if(!g_ascii_strncasecmp(as->str, "vdesk-goto ", 11)) {
-      g_string_erase(as, 0, 11);
+    else if(!g_ascii_strncasecmp(as->str, "vdesk-goto", 10)) {
+      g_string_erase(as, 0, 10);
       _remove_leading_whitespace(as);
       if(as->len)
         switch_vdesk(gsw, strtol(as->str, NULL, 0));
+      else
+        g_warning("Command vdesk-goto has no argument");
     }
-    else if(!g_ascii_strncasecmp(as->str, "jump ", 5)) {
-      g_string_erase(as, 0, 5);
+    else if(!g_ascii_strncasecmp(as->str, "jump", 4)) {
+      g_string_erase(as, 0, 4);
       _remove_leading_whitespace(as);
       g_string_ascii_down(as);
       if(as->len)
