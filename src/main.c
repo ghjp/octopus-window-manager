@@ -25,6 +25,7 @@
 #include "action_system.h"
 #include "userconfig.h"
 #include "input.h"
+#include "xinerama.h"
 
 #include <X11/cursorfont.h>
 #include <X11/keysym.h> /* XK_Num_Lock */
@@ -395,8 +396,10 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
 #ifdef HAVE_XF86VM
   gsw->xf86vm = XF86VidModeQueryExtension(dpy, &si, &si); 
 #endif
-  g_message("Detected X extensions:%s%s",
+  gsw->xinerama = xinerama_init(dpy);
+  g_message("Detected X extensions:%s%s%s",
       gsw->shape ? " SHAPE": "",
+      gsw->xinerama ? " Xinerama": "",
       gsw->xf86vm ? " XFree86-VidModeExtension": "");
 
   _init_cursors(gsw);
@@ -626,7 +629,7 @@ gint main(gint argc, gchar **argv)
   _scan_exec_data_t sed;
 
   g_message("!     Welcome to " PACKAGE_STRING);
-  g_message("! (c) 2005-2007 Dr. Johann Pfefferl");
+  g_message("! (c) 2005-2008 Dr. Johann Pfefferl");
   g_message("! (c) Distributed under the terms and conditions of the GPL");
 
   if(!setlocale(LC_ALL, ""))
@@ -791,6 +794,7 @@ gint main(gint argc, gchar **argv)
   g_string_chunk_free(xsrv_source->cmd.str_chunk);
   action_system_destroy(xsrv_source);
   g_ptr_array_free(xsrv_source->ucfg.vdesk_names, TRUE);
+  xinerama_shutdown();
 
   XSetInputFocus(xsrv_source->display, PointerRoot, RevertToPointerRoot, CurrentTime);
   XCloseDisplay(xsrv_source->display);

@@ -22217,7 +22217,7 @@ fi
 ##		AC_MSG_RESULT([no])
 ##		fi
 
-# Check for XShape extension
+# Check for Xinerama extension
 { echo "$as_me:$LINENO: checking whether to build support for the Xinerama extension" >&5
 echo $ECHO_N "checking whether to build support for the Xinerama extension... $ECHO_C" >&6; }
 # Check whether --enable-xinerama was given.

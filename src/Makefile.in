@@ -51,7 +51,8 @@ am_octopus_OBJECTS = octopus-main.$(OBJEXT) octopus-client.$(OBJEXT) \
 	octopus-events.$(OBJEXT) octopus-winactions.$(OBJEXT) \
 	octopus-vdesk.$(OBJEXT) octopus-ewmh.$(OBJEXT) \
 	octopus-winframe.$(OBJEXT) octopus-userconfig.$(OBJEXT) \
-	octopus-action_system.$(OBJEXT) octopus-input.$(OBJEXT)
+	octopus-action_system.$(OBJEXT) octopus-input.$(OBJEXT) \
+	octopus-xinerama.$(OBJEXT)
 octopus_OBJECTS = $(am_octopus_OBJECTS)
 octopus_LDADD = $(LDADD)
 octopus_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -202,8 +203,8 @@ top_srcdir = @top_srcdir@
 octopus_CFLAGS = @GLIB_CFLAGS@ @X_CFLAGS@ @CAIRO_CFLAGS@ @LIBXOSD_CFLAGS@
 #octopus_LDFLAGS = @GLIB_LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@ -lX11
 octopus_LDFLAGS = @GLIB_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ @CAIRO_LIBS@ @LIBXOSD_LIBS@ -lX11 
-noinst_HEADERS = action_system.h client.h events.h ewmh.h glib_log_ext.h input.h main.h mwm_stuff.h octopus.h userconfig.h vdesk.h winactions.h winframe.h
-octopus_SOURCES = main.c client.c events.c winactions.c vdesk.c ewmh.c winframe.c userconfig.c action_system.c input.c
+noinst_HEADERS = action_system.h client.h events.h ewmh.h glib_log_ext.h input.h main.h mwm_stuff.h octopus.h userconfig.h vdesk.h winactions.h winframe.h xinerama.h
+octopus_SOURCES = main.c client.c events.c winactions.c vdesk.c ewmh.c winframe.c userconfig.c action_system.c input.c xinerama.c
 all: all-am
 
 .SUFFIXES:
@@ -285,6 +286,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-vdesk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-winactions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-winframe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-xinerama.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -446,6 +448,20 @@ octopus-input.obj: input.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='input.c' object='octopus-input.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -c -o octopus-input.obj `if test -f 'input.c'; then $(CYGPATH_W) 'input.c'; else $(CYGPATH_W) '$(srcdir)/input.c'; fi`
+
+octopus-xinerama.o: xinerama.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -MT octopus-xinerama.o -MD -MP -MF $(DEPDIR)/octopus-xinerama.Tpo -c -o octopus-xinerama.o `test -f 'xinerama.c' || echo '$(srcdir)/'`xinerama.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus-xinerama.Tpo $(DEPDIR)/octopus-xinerama.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xinerama.c' object='octopus-xinerama.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -c -o octopus-xinerama.o `test -f 'xinerama.c' || echo '$(srcdir)/'`xinerama.c
+
+octopus-xinerama.obj: xinerama.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -MT octopus-xinerama.obj -MD -MP -MF $(DEPDIR)/octopus-xinerama.Tpo -c -o octopus-xinerama.obj `if test -f 'xinerama.c'; then $(CYGPATH_W) 'xinerama.c'; else $(CYGPATH_W) '$(srcdir)/xinerama.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus-xinerama.Tpo $(DEPDIR)/octopus-xinerama.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xinerama.c' object='octopus-xinerama.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -c -o octopus-xinerama.obj `if test -f 'xinerama.c'; then $(CYGPATH_W) 'xinerama.c'; else $(CYGPATH_W) '$(srcdir)/xinerama.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
