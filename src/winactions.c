@@ -9,6 +9,7 @@
 #include "ewmh.h"
 #include "winframe.h"
 #include "events.h"
+#include "xinerama.h"
 
 #define MouseMask (ButtonMask|PointerMotionMask)
 

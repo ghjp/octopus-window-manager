@@ -10,7 +10,7 @@ void xinerama_shutdown(void);
 gint xinerama_zoom(client_t *client);
 void xinerama_correctloc(client_t *client);
 //int xinerama_scrdims(screen_t *screen, int *mon, rect_t *rect);
-gint xinerama_current_mon(Display *display, screen_t *scr);
+gint xinerama_current_mon(gswm_t *gsw);
 
 #else
 

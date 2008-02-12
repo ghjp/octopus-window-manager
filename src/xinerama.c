@@ -213,7 +213,7 @@ void xinerama_correctloc(client_t *client)
    * on.
    */
 correct:
-  g_message("found a window \"%s\" that needs correction", client->utf8_name ? : "unamed");
+  g_message("found a window \"%s\" that needs correction", client->utf8_name);
   most = mosti = 0;
   for (i = 0; i < xinerama_count; i++) {
     isect = rect_intersection(&rect, &xinerama_screens[i]);
@@ -231,9 +231,7 @@ correct:
 
   /* push it into the screen */
   if (client->x < xinerama_screens[mosti].x1)
-  {
     client->x = xinerama_screens[mosti].x1;
-  }
   else if (client->x + client->width > xinerama_screens[mosti].x2)
     client->x = xinerama_screens[mosti].x2 - client->width;
   if (client->y < xinerama_screens[mosti].y1)
@@ -278,7 +276,7 @@ gint xinerama_scrdims(screen_t *screen, gint *mon, rect_t *rect)
 #endif
 
 
-gint xinerama_current_mon(Display *display, screen_t *scr)
+gint xinerama_current_mon(gswm_t *gsw)
 {
   Window dumwin;
   gint dumint;
@@ -288,7 +286,7 @@ gint xinerama_current_mon(Display *display, screen_t *scr)
 
   x=y=0;
 
-  XQueryPointer(display, scr->rootwin, &dumwin,
+  XQueryPointer(gsw->display, gsw->screen[gsw->i_curr_scr].rootwin, &dumwin,
       &dumwin, &x, &y, &dumint, &dumint, &mask);
 
   for (i = 0; i < xinerama_count; i++)  {
