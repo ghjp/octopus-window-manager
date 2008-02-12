@@ -57,6 +57,9 @@
 /* Define to 1 if you have an XFree86-VidModeExtension capable server */
 #undef HAVE_XF86VM
 
+/* Define to 1 if you have an Xinerama capable server */
+#undef HAVE_XINERAMA
+
 /* Define to 1 if you have an XShape capable server */
 #undef HAVE_XSHAPE
 

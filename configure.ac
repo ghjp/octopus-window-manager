@@ -99,5 +99,20 @@ fi
 ##		AC_MSG_RESULT([no])
 ##		fi
 
+# Check for Xinerama extension
+AC_MSG_CHECKING([whether to build support for the Xinerama extension])
+AC_ARG_ENABLE(xinerama,
+	      AC_HELP_STRING([--enable-xinerama],
+			     [enable support for the Xinerama extension [default=yes]]), ,
+			     [enable_xinerama=yes])
+if test "x$enable_xinerama" = "xyes"; then
+	AC_MSG_RESULT([yes])
+	AC_CHECK_LIB(Xinerama, XineramaQueryExtension,
+		     AC_DEFINE(HAVE_XINERAMA, [], [Define to 1 if you have an Xinerama capable server])
+		     X_LIBS="$X_LIBS -lXinerama", , $X_CFLAGS $X_PRE_LIBS $X_EXTRA_LIBS $X_LIBS)
+else
+	AC_MSG_RESULT([no])
+fi
+
 AC_CONFIG_FILES([Makefile src/Makefile utils/Makefile])
 AC_OUTPUT
