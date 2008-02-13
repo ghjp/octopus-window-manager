@@ -36,6 +36,12 @@ typedef struct {
   CARD32 south;
 } strut_t;
 
+/* simple rectangle structure; defined by two x,y pairs */
+typedef struct {
+  gint	x1, y1;
+  gint	x2, y2;
+} rect_t;
+
 typedef struct {
   gint x, y, w, h;
 } warea_t;

@@ -9,21 +9,15 @@
 /* xinerama support is optional */
 #ifdef HAVE_XINERAMA
 
-/* simple rectangle structure; defined by two x,y pairs */
-typedef struct {
-  gint	x1, y1;
-  gint	x2, y2;
-} rect_t;
-
 /* some macros for getting at width and height */
 #define RECTWIDTH(rect)		((rect)->x2 - (rect)->x1)
 #define RECTHEIGHT(rect)	((rect)->y2 - (rect)->y1)
 
-#define SWAP(tmp, a, b)	do {	\
+#define SWAP(tmp, a, b)	G_STMT_START{	\
   (tmp) = (a);		\
   (a) = (b);		\
   (b) = (tmp);		\
-} while (0)
+}G_STMT_END
 
 /* is xinerama active on the display */
 static gboolean	xinerama_active		= FALSE;
@@ -240,7 +234,6 @@ correct:
     client->y = xinerama_screens[mosti].y2 - client->height;
 }
 
-#if 0
 /*
  * used to fill rects with the dimensions of each xinerama
  * monitor in order.  the screen_t is provided so that if
@@ -266,14 +259,13 @@ gint xinerama_scrdims(screen_t *screen, gint *mon, rect_t *rect)
 
     rect->x1 = 0;
     rect->y1 = 0;
-    rect->x2 = screen->width;
-    rect->y2 = screen->height;
+    rect->x2 = screen->dpy_width;
+    rect->y2 = screen->dpy_height;
   }
 
   (*mon)++;
   return 1;
 }
-#endif
 
 
 gint xinerama_current_mon(gswm_t *gsw)

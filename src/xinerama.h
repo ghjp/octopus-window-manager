@@ -9,7 +9,7 @@ gboolean xinerama_init(Display *display);
 void xinerama_shutdown(void);
 gint xinerama_zoom(client_t *client);
 void xinerama_correctloc(client_t *client);
-//int xinerama_scrdims(screen_t *screen, int *mon, rect_t *rect);
+gint xinerama_scrdims(screen_t *screen, gint *mon, rect_t *rect);
 gint xinerama_current_mon(gswm_t *gsw);
 
 #else
@@ -18,11 +18,11 @@ gint xinerama_current_mon(gswm_t *gsw);
  * remove our routines so the main code doesn't
  * get cluttered with #ifdefs
  */
-#define xinerama_init()		((void) 0)
+#define xinerama_init(a)		((gint) 0)
 #define xinerama_shutdown()	((void) 0)
 #define xinerama_zoom(c)	(1)
 #define xinerama_correctloc(c)	((void) 0)
-#define xinerama_current_mon(c)	((int) 0)
+#define xinerama_current_mon(c)	((gint) 0)
 
 /*
  * just give the rect for the full screen, and on
@@ -35,8 +35,8 @@ static __inline int xinerama_scrdims(screen_t *screen, int *mon,
 
 	rect->x1 = 0;
 	rect->y1 = 0;
-	rect->x2 = screen->width;
-	rect->y2 = screen->height;
+	rect->x2 = screen->dpy_width;
+	rect->y2 = screen->dpy_height;
 
 	*mon = 1;
 	return 1;
