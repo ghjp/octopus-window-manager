@@ -24,7 +24,7 @@ static gboolean	xinerama_active		= FALSE;
 
 /* xinerama screen information */
 static gint		xinerama_count;
-static rect_t		*xinerama_screens;
+static rect_t		*xinerama_screens = NULL;
 
 /* find intersection length of two lines */
 static inline gint lineisect(gint p1, gint l1, gint p2, gint l2)
@@ -113,58 +113,55 @@ gboolean xinerama_init(Display *display)
 /* free screen size rectangles */
 void xinerama_shutdown(void)
 {
-  if (!xinerama_active)
-    return;
   g_free(xinerama_screens);
 }
 
 /*
- * zoom a client; make it as large as the screen that it
+ * maximize a client; make it as large as the screen that it
  * is mostly on.
  */
-gint xinerama_zoom(client_t *client)
+gboolean xinerama_maximize(client_t *client)
 {
   rect_t rect;
   gint most, mosti;
   gint area, i;
 
-  if (!xinerama_active)
-    return 1;
+  if(xinerama_active) {
 
-  /* get a rect of client dimensions */
-  rect.x1 = client->x;
-  rect.y1 = client->y;
-  rect.x2 = client->width + rect.x1;
-  rect.y2 = client->height + rect.y1;
+    /* get a rect of client dimensions */
+    rect.x1 = client->x;
+    rect.y1 = client->y;
+    rect.x2 = client->width + rect.x1;
+    rect.y2 = client->height + rect.y1;
 
-  /*
-   * determine which screen this client is mostly
-   * on by checking the area of intersection of
-   * the client's rectangle and the xinerama
-   * screen's rectangle.
-   */
-  most = mosti = 0;
-  for (i = 0; i < xinerama_count; i++) {
-    area = rect_intersection(&rect, &xinerama_screens[i]);
-    if (area > most) {
-      most = area;
-      mosti = i;
+    /*
+     * determine which screen this client is mostly
+     * on by checking the area of intersection of
+     * the client's rectangle and the xinerama
+     * screen's rectangle.
+     */
+    most = mosti = 0;
+    for (i = 0; i < xinerama_count; i++) {
+      area = rect_intersection(&rect, &xinerama_screens[i]);
+      if (area > most) {
+        most = area;
+        mosti = i;
+      }
+    }
+
+    TRACE(("%s: mosti=%d", __func__, mosti));
+    /* zoom it on the screen it's mostly on */
+    if(client->wstate.maxi_horz) {
+      client->x = xinerama_screens[mosti].x1;
+      client->width = RECTWIDTH(&xinerama_screens[mosti]) - 2 * client->wframe->bwidth;
+    }
+    if(client->wstate.maxi_vert) {
+      client->y = xinerama_screens[mosti].y1 + client->wframe->theight;
+      client->height = RECTHEIGHT(&xinerama_screens[mosti]) - client->wframe->theight
+        - 2 * client->wframe->bwidth;
     }
   }
-
-  TRACE(("%s: mosti=%d", __func__, mosti));
-  /* zoom it on the screen it's mostly on */
-  if(client->wstate.maxi_horz) {
-    client->x = xinerama_screens[mosti].x1;
-    client->width = RECTWIDTH(&xinerama_screens[mosti]) - 2 * client->wframe->bwidth;
-  }
-  if(client->wstate.maxi_vert) {
-    client->y = xinerama_screens[mosti].y1 + client->wframe->theight;
-    client->height = RECTHEIGHT(&xinerama_screens[mosti]) - client->wframe->theight
-      - 2 * client->wframe->bwidth;
-  }
-
-  return 0;
+  return xinerama_active;
 }
 
 /*

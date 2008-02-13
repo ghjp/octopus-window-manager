@@ -1056,7 +1056,7 @@ void _apply_maxi_horz(gswm_t *gsw, client_t *c, gboolean on)
     c->x_old = c->x;
     c->width_old = c->width;
     c->wstate.maxi_horz = TRUE;
-    if(xinerama_zoom(c)) {
+    if(!xinerama_maximize(c)) {
       c->x = vd->warea.x;
       c->width = vd->warea.w - 2 * c->wframe->bwidth;
     }
@@ -1084,7 +1084,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
     c->y_old = c->y;
     c->height_old = c->height;
     c->wstate.maxi_vert = TRUE;
-    if(xinerama_zoom(c)) {
+    if(!xinerama_maximize(c)) {
       c->y = th + vd->warea.y;
       c->height = vd->warea.h - th - 2 * c->wframe->bwidth;
     }
