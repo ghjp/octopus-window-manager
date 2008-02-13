@@ -13,7 +13,6 @@
 #include "action_system.h"
 #include "vdesk.h"
 #include "mwm_stuff.h"
-#include "xinerama.h"
 
 #include <X11/Xatom.h>
 #ifdef HAVE_XSHAPE
