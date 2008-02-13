@@ -122,12 +122,12 @@ void xinerama_shutdown(void)
  */
 gboolean xinerama_maximize(client_t *client)
 {
-  rect_t rect;
+  rect_t rect, *xir;
   gint most, mosti;
   gint area, i;
+  warea_t *wa = &client->curr_screen->vdesk->warea;
 
   if(xinerama_active) {
-
     /* get a rect of client dimensions */
     rect.x1 = client->x;
     rect.y1 = client->y;
@@ -148,17 +148,22 @@ gboolean xinerama_maximize(client_t *client)
         mosti = i;
       }
     }
+    xir = xinerama_screens + mosti;
 
     TRACE(("%s: mosti=%d", __func__, mosti));
     /* zoom it on the screen it's mostly on */
     if(client->wstate.maxi_horz) {
-      client->x = xinerama_screens[mosti].x1;
-      client->width = RECTWIDTH(&xinerama_screens[mosti]) - 2 * client->wframe->bwidth;
+      client->x = xir->x1 < wa->x ? wa->x: xir->x1;
+      client->width = xir->x2 - client->x - 2 * client->wframe->bwidth;
+      if(client->x + client->width > wa->x + wa->w)
+        client->width = wa->x + wa->w - client->x - 2 * client->wframe->bwidth;
     }
     if(client->wstate.maxi_vert) {
-      client->y = xinerama_screens[mosti].y1 + client->wframe->theight;
-      client->height = RECTHEIGHT(&xinerama_screens[mosti]) - client->wframe->theight
-        - 2 * client->wframe->bwidth;
+      client->y = xir->y1 < wa->y ? wa->y: xir->y1;
+      client->y += client->wframe->theight;
+      client->height = xir->y2 - client->y - 2 * client->wframe->bwidth;
+      if(client->y + client->height > wa->y + wa->h)
+        client->height = wa->y + wa->h - client->y - 2 * client->wframe->bwidth;
     }
   }
   return xinerama_active;
