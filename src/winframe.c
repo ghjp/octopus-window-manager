@@ -153,8 +153,9 @@ static gint _calc_overlap(gswm_t *gsw, client_t *c)
 {
   register GList *cl;
   screen_t *scr = c->curr_screen;
-  gint dw = scr->dpy_width;
-  gint dh = scr->dpy_height;
+  warea_t *wa = &c->curr_screen->vdesk->warea;
+  gint dw = wa->w;
+  gint dh = wa->h;
   register gint val = 0;
 
   for(cl = scr->vdesk[scr->current_vdesk].clnt_list ; cl; cl = g_list_next(cl)) {
@@ -184,8 +185,9 @@ static gint _calc_overlap(gswm_t *gsw, client_t *c)
 G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
 {
   gint val, failures; 
-  gint dw = c->curr_screen->dpy_width;
-  gint dh = c->curr_screen->dpy_height;
+  warea_t *wa = &c->curr_screen->vdesk->warea;
+  gint dw = wa->w;
+  gint dh = wa->h;
   gint wi = dw / 16;
   gint hi = dh / MAX(16, c->wframe->theight);
   gint mlen = MAX(wi, hi);
@@ -197,8 +199,8 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
   /* Global placement strategy - the screen is divided into a grid,
      and the window's top left corner is placed where it causes the
      least overlap with existing windows */
-  for (c->y = c->wframe->theight; c->y < dh; c->y += wi)
-    for (c->x = 0; c->x < dw; c->x += hi) {
+  for (c->y = wa->y + c->wframe->theight; c->y < dh; c->y += wi)
+    for (c->x = wa->x; c->x < dw; c->x += hi) {
       val = _calc_overlap(gsw, c);
       if(!val) /* Already found a non overlapping place */
         return;
@@ -261,6 +263,21 @@ static void _mouse_place_client(gswm_t *gsw, client_t *c)
   c->y += th;
 }
 
+static void _fit_client_to_warea(client_t *c)
+{
+  gint bwidth =c->wframe->bwidth;
+  warea_t *wa = &c->curr_screen->vdesk->warea;
+
+  if(c->x + c->width > wa->x + wa->w)
+    c->x = wa->x + wa->w - c->width - bwidth;
+  if(c->x < wa->x)
+    c->x = wa->x;
+  if(c->y + c->height > wa->y + wa->h)
+    c->y = wa->y + wa->h - bwidth - c->height;
+  if(c->y < wa->y)
+    c->y = wa->y;
+}
+
 /* Figure out where to map the window. c->x, c->y, c->width, and
  * c->height actually start out with values in them (whatever the
  * client passed to XCreateWindow).  Program-specified hints will
@@ -282,6 +299,7 @@ static void _init_position(gswm_t *gsw, client_t *c)
   gint xmax = c->curr_screen->dpy_width;
   gint ymax = c->curr_screen->dpy_height;
   gint th = c->wframe->theight;
+  warea_t *wa = &c->curr_screen->vdesk->warea;
 
   fix_ewmh_position_based_on_struts(gsw, c);
 
@@ -301,11 +319,12 @@ static void _init_position(gswm_t *gsw, client_t *c)
   if(c->xsize.flags & USPosition) {
     c->x = c->xsize.x;
     c->y = c->xsize.y;
-    if(0 > c->x || c->x >= xmax)
-      c->x = 0;
-    if(0 > c->y || c->y >= ymax)
-      c->y = 0;
+    if(wa->x > c->x || c->x >= xmax)
+      c->x = wa->x;
+    if(wa->y > c->y || c->y >= ymax)
+      c->y = wa->y;
     fix_ewmh_position_based_on_struts(gsw, c);
+    _fit_client_to_warea(c);
     TRACE(("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
   }
   else if(c->xsize.flags & PPosition) {
@@ -313,11 +332,12 @@ static void _init_position(gswm_t *gsw, client_t *c)
       c->x = c->xsize.x;
     if(!c->y)
       c->y = c->xsize.y;
-    if(0 > c->x || c->x >= xmax)
-      c->x = 0;
-    if(0 > c->y || c->y >= ymax)
-      c->y = 0;
+    if(wa->x > c->x || c->x >= xmax)
+      c->x = wa->x;
+    if(wa->y > c->y || c->y >= ymax)
+      c->y = wa->y;
     fix_ewmh_position_based_on_struts(gsw, c);
+    _fit_client_to_warea(c);
     TRACE(("%s PPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
   }
   else {
