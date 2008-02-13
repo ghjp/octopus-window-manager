@@ -299,7 +299,6 @@ static void _init_position(gswm_t *gsw, client_t *c)
   gint xmax = c->curr_screen->dpy_width;
   gint ymax = c->curr_screen->dpy_height;
   gint th = c->wframe->theight;
-  warea_t *wa = &c->curr_screen->vdesk->warea;
 
   fix_ewmh_position_based_on_struts(gsw, c);
 
