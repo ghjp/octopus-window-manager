@@ -1055,9 +1055,11 @@ void _apply_maxi_horz(gswm_t *gsw, client_t *c, gboolean on)
       return;
     c->x_old = c->x;
     c->width_old = c->width;
-    c->x = vd->warea.x;
-    c->width = vd->warea.w - 2 * c->wframe->bwidth;
     c->wstate.maxi_horz = TRUE;
+    if(xinerama_zoom(c)) {
+      c->x = vd->warea.x;
+      c->width = vd->warea.w - 2 * c->wframe->bwidth;
+    }
   }
   else {
     if(!c->wstate.maxi_horz)
@@ -1081,9 +1083,11 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
       return;
     c->y_old = c->y;
     c->height_old = c->height;
-    c->y = th + vd->warea.y;
-    c->height = vd->warea.h - th - 2 * c->wframe->bwidth;
     c->wstate.maxi_vert = TRUE;
+    if(xinerama_zoom(c)) {
+      c->y = th + vd->warea.y;
+      c->height = vd->warea.h - th - 2 * c->wframe->bwidth;
+    }
   }
   else {
     if(!c->wstate.maxi_vert)

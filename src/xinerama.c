@@ -85,6 +85,8 @@ gboolean xinerama_init(Display *display)
   if (xinerama_count == 0 || !sinfo)
     return FALSE;
 
+  /* mention that we are doing xinerama stuff */
+  g_message("%d monitors detected", xinerama_count);
   /*
    * turn screen info structures to rectangles and
    * free the memory associated with them.
@@ -95,7 +97,7 @@ gboolean xinerama_init(Display *display)
     xinerama_screens[i].y1 = sinfo[i].y_org;
     xinerama_screens[i].x2 = sinfo[i].x_org + sinfo[i].width;
     xinerama_screens[i].y2 = sinfo[i].y_org + sinfo[i].height;
-    g_message("xinerama_screen[%d]: x1=%d y1=%d x2=%d y2=%d",
+    g_message("  mon[%d]: x1=%4d y1=%4d x2=%4d y2=%4d",
         i,
         xinerama_screens[i].x1,
         xinerama_screens[i].y1,
@@ -104,8 +106,6 @@ gboolean xinerama_init(Display *display)
   }
   X_FREE(sinfo);
 
-  /* mention that we are doing xinerama stuff */
-  g_message("%d monitors detected", xinerama_count);
   xinerama_active = TRUE;
   return xinerama_active;
 }
@@ -152,14 +152,17 @@ gint xinerama_zoom(client_t *client)
     }
   }
 
+  TRACE(("%s: mosti=%d", __func__, mosti));
   /* zoom it on the screen it's mostly on */
-  /* FIXME */
-  /*
-  client->x = xinerama_screens[mosti].x1;
-  client->y = xinerama_screens[mosti].y1;
-  client->width = RECTWIDTH(&xinerama_screens[mosti]) - DWIDTH(client);
-  client->height = RECTHEIGHT(&xinerama_screens[mosti]) - DHEIGHT(client);
-  */
+  if(client->wstate.maxi_horz) {
+    client->x = xinerama_screens[mosti].x1;
+    client->width = RECTWIDTH(&xinerama_screens[mosti]) - 2 * client->wframe->bwidth;
+  }
+  if(client->wstate.maxi_vert) {
+    client->y = xinerama_screens[mosti].y1 + client->wframe->theight;
+    client->height = RECTHEIGHT(&xinerama_screens[mosti]) - client->wframe->theight
+      - 2 * client->wframe->bwidth;
+  }
 
   return 0;
 }
