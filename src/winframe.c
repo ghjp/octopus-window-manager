@@ -319,25 +319,15 @@ static void _init_position(gswm_t *gsw, client_t *c)
   if(c->xsize.flags & USPosition) {
     c->x = c->xsize.x;
     c->y = c->xsize.y;
-    if(wa->x > c->x || c->x >= xmax)
-      c->x = wa->x;
-    if(wa->y > c->y || c->y >= ymax)
-      c->y = wa->y;
-    fix_ewmh_position_based_on_struts(gsw, c);
     _fit_client_to_warea(c);
+    fix_ewmh_position_based_on_struts(gsw, c);
     TRACE(("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
   }
   else if(c->xsize.flags & PPosition) {
-    if(!c->x)
-      c->x = c->xsize.x;
-    if(!c->y)
-      c->y = c->xsize.y;
-    if(wa->x > c->x || c->x >= xmax)
-      c->x = wa->x;
-    if(wa->y > c->y || c->y >= ymax)
-      c->y = wa->y;
-    fix_ewmh_position_based_on_struts(gsw, c);
+    c->x = c->xsize.x;
+    c->y = c->xsize.y;
     _fit_client_to_warea(c);
+    fix_ewmh_position_based_on_struts(gsw, c);
     TRACE(("%s PPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
   }
   else {
