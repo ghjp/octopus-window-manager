@@ -232,6 +232,39 @@ static void _snap_to_borders(gswm_t *gsw, client_t *c)
       y_snapped = TRUE;
     }
 
+    /* Snap to xinerama borders */
+    {
+      rect_t mon_rect;
+      gint mon = xinerama_current_mon(gsw);
+      TRACE(("%s: mon=%d", __func__, mon));
+      if(xinerama_scrdims(scr, mon, &mon_rect)) {
+        if(!x_snapped) {
+          x1 = c->x - mon_rect.x1;
+          x2 = c->x + c->width + bw2 - (mon_rect.x2 - mon_rect.x1);
+          if(ABS(x1) < snap_val) {
+            c->x = mon_rect.x1;
+            x_snapped = TRUE;
+          }
+          else if(ABS(x2) < snap_val) {
+            c->x = (mon_rect.x2 - mon_rect.x1) - c->width - bw2;
+            x_snapped = TRUE;
+          }
+        }
+        if(!y_snapped) {
+          y1 = c->y - th - mon_rect.y1;
+          y2 = c->y + c->height + bw2 - (mon_rect.y2 - mon_rect.y1);
+          if(ABS(y1) < snap_val) {
+            c->y = th + mon_rect.y1;
+            y_snapped = TRUE;
+          }
+          else if(ABS(y2) < snap_val) {
+            c->y = (mon_rect.y2 - mon_rect.y1) - c->height - bw2;
+            y_snapped = TRUE;
+          }
+        }
+      }
+    }
+
     /* Snap to screen border */
     if(!x_snapped) {
       x1 = c->x;
