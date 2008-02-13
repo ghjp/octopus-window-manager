@@ -1,3 +1,10 @@
+octopus (0.4.0-1) unstable; urgency=low
+
+  * Added Xinerama support
+  * Improved placement of new windows
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Wed, 13 Feb 2008 23:51:32 +0100
+
 octopus (0.3.2-2) unstable; urgency=low
 
   * The kill-client action has now the shortcut "Alt-Escape" instead of
