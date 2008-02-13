@@ -464,6 +464,7 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
     _scan_clients_from_screen(gsw);
     set_ewmh_net_desktop_names(gsw);
   } /* end screen loop */
+  gsw->i_curr_scr = DefaultScreen(dpy);
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, gsw->screen[gsw->i_curr_scr].current_vdesk);
   g_message("Initialised %d screens", gsw->num_screens);
   XSetErrorHandler(handle_xerror);
