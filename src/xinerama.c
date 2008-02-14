@@ -275,8 +275,7 @@ gint xinerama_current_mon(gswm_t *gsw)
   gint x,y;
   gint i;
 
-  x=y=0;
-
+  x = y = 0;
   XQueryPointer(gsw->display, gsw->screen[gsw->i_curr_scr].rootwin, &dumwin,
       &dumwin, &x, &y, &dumint, &dumint, &mask);
 
@@ -288,6 +287,6 @@ gint xinerama_current_mon(gswm_t *gsw)
     }
   }
 
-  return 1;
+  return 0;
 }
 #endif
