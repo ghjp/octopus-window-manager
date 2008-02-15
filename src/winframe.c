@@ -128,26 +128,69 @@ void wframe_list_remove(gswm_t *gsw, wframe_t *frame)
     vd->frame_list = g_list_remove(vd->frame_list, frame);
 }
 
+#define SWAP(tmp, a, b)	G_STMT_START {	\
+	(tmp) = (a);		\
+	(a) = (b);		\
+	(b) = (tmp);		\
+} G_STMT_END
+
+/* find intersection length of two lines */
+G_INLINE_FUNC gint lineisect(gint p1, gint l1, gint p2, gint l2)
+{
+	/* make sure p1 <= p2 */
+	if (p1 > p2) {
+    gint tmp;
+		SWAP(tmp, p1, p2);
+		SWAP(tmp, l1, l2);
+	}
+
+	/* calculate the intersection */
+	if (p1 + l1 < p2)
+		return 0;
+	else if (p2 + l2 < p1 + l1)
+		return l2;
+	else
+		return p1 + l1 - p2;
+}
+
+/*
+ * find the area of the intersection of two
+ * rectangles.
+ */
+G_INLINE_FUNC gint _rect_intersection(rect_t *r1, rect_t *r2)
+{
+	gint xsect, ysect;
+
+	/*
+	 * find intersection of lines in the x and
+	 * y directions, multiply for the area of
+	 * the intersection rectangle.
+	 */
+	xsect = lineisect(r1->x1, r1->x2 - r1->x1, r2->x1,
+		r2->x2 - r2->x1);
+  if(!xsect)
+    return 0;
+	ysect = lineisect(r1->y1, r1->y2 - r1->y1, r2->y1,
+		r2->y2 - r2->y1);
+
+	return ysect * xsect;
+}
+
 static gint _intersect_area(client_t *c1, client_t *c2)
 {
-  register gint c1x1 = c1->x, c1y1 = c1->y - c1->wframe->theight;
-  register gint c1x2 = c1->x+c1->width, c1y2 = c1->y + c1->height;
-  register gint c2x1 = c2->x, c2y1 = c2->y - c2->wframe->theight;
-  register gint c2x2 = c2->x+c2->width, c2y2 = c2->y + c2->height;
+  rect_t c1_rect, c2_rect;
 
-  if(c1x2 < c2x1 || c1y2 < c2y1 || c1x1 > c2x2 || c1y1 > c2y2)
-    return 0;
+  c1_rect.x1 = c1->x;
+  c1_rect.x2 = c1->x+c1->width;
+  c1_rect.y1 = c1->y - c1->wframe->theight;
+  c1_rect.y2 = c1->y + c1->height;
 
-  if(c2x2 > c1x1 && c2y2 > c1y1)
-    return (c2x2-c1x1)*(c2y2-c1y1);
-  else if(c1x2 > c2x1 && c2y2 > c1y1)
-    return (c1x2-c2x1)*(c2y2-c1y1);
-  else if(c2x2 > c1x1 && c1y2 > c2y1)
-    return (c2x2-c1x1)*(c1y2-c2y1);
-  else if(c1x2 > c2x1 && c1y2 > c2y1)
-    return (c1x2-c2x1)*(c1y2-c2y1);
-  g_return_val_if_reached(0);
-  return 0;
+  c2_rect.x1 = c2->x;
+  c2_rect.x2 = c2->x+c2->width;
+  c2_rect.y1 = c2->y - c2->wframe->theight;
+  c2_rect.y2 = c2->y + c2->height;
+
+  return _rect_intersection(&c1_rect, &c2_rect);
 }
 
 static gint _calc_overlap(gswm_t *gsw, client_t *c, rect_t *mon_rect)
