@@ -464,7 +464,7 @@ static void _handle_configurerequest_event(gswm_t *gsw, XConfigureRequestEvent *
     }
 #if 0
     if(e->value_mask) {
-      wc.border_width = clnt->wframe->bwidth;
+      wc.border_width = GET_BORDER_WIDTH(clnt);
       wc.sibling = e->above;
       wc.stack_mode = e->detail;
       XConfigureWindow(gsw->display, clnt->wframe->win,

@@ -22,6 +22,10 @@
 
 #define STICKY -1
 
+/* Borderless client possess a border value of G_MININT */
+#define GET_BORDER_WIDTH(cl) (G_MININT == (cl)->wframe->bwidth ? 0: (cl)->wframe->bwidth)
+#define TEST_BORDERLESS(cl) (G_MININT == (cl)->wframe->bwidth)
+
 typedef struct {
   XColor unfocus, focus;
 } xcolor_t;

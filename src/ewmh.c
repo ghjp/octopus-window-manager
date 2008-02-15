@@ -609,7 +609,7 @@ void set_ewmh_net_frame_extents(gswm_t *gsw, client_t *c)
 {
   CARD32 frame_extents[4];
 
-  if(G_MININT == c->wframe->bwidth) /* Borderless client */
+  if(TEST_BORDERLESS(c)) /* Borderless client */
     frame_extents[0] = frame_extents[1] = frame_extents[2] = frame_extents[3] = 0;
   else {
     frame_extents[0] = frame_extents[1] = frame_extents[2] = frame_extents[3] = c->wframe->bwidth;

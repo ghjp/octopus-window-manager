@@ -81,12 +81,12 @@ static void _draw_outline(gswm_t *gsw, client_t *c, gboolean frameop)
   Display *dpy = gsw->display;
   screen_t *scr = c->curr_screen;
   gint th = c->wframe->theight;
-  gint bw2 = c->wframe->bwidth / 2;
+  gint bw2 = GET_BORDER_WIDTH(c) / 2;
 
   rec[0].x = c->x + bw2;
   rec[0].y = c->y - th + bw2;
-  rec[0].width = c->width + c->wframe->bwidth;
-  rec[0].height = c->height + th + c->wframe->bwidth;
+  rec[0].width = c->width + 2*bw2;
+  rec[0].height = c->height + th + 2*bw2;
   blen = 1;
   if(G_UNLIKELY(frameop)) {
     rec[1].x = c->x + c->width/4;
@@ -97,8 +97,8 @@ static void _draw_outline(gswm_t *gsw, client_t *c, gboolean frameop)
   }
   XDrawRectangles(dpy, scr->rootwin, scr->fr_info.gc_invert, rec, blen);
   if(G_LIKELY(c->wstate.mwm_title && bw2)) /* MWM */
-    XDrawLine(dpy, scr->rootwin, scr->fr_info.gc_invert, c->x + c->wframe->bwidth, c->y + bw2,
-        c->x + c->width + c->wframe->bwidth, c->y + bw2);
+    XDrawLine(dpy, scr->rootwin, scr->fr_info.gc_invert, c->x + 2*bw2, c->y + bw2,
+        c->x + c->width + 2*bw2, c->y + bw2);
 
   if(!_get_incsize(gsw, c, &txt_w, &txt_h, SIZE_LOGICAL)) {
     txt_w = c->width;
@@ -132,7 +132,7 @@ static void _snap_to_clients(client_t *c, GList *cl, gint snap_val, gboolean *x_
 
   old_bwidth = c->wframe->bwidth;
   /* For borderless clients we simulate a border width of zero */
-  if(G_MININT == c->wframe->bwidth)
+  if(TEST_BORDERLESS(c))
     c->wframe->bwidth = 0;
   for(dx = dy = snap_val; cl; cl = g_list_next(cl)) {
     register gint val, cp1, cp2, cip1, cip2, bdiff;
@@ -141,7 +141,7 @@ static void _snap_to_clients(client_t *c, GList *cl, gint snap_val, gboolean *x_
 
     if(ci->wframe == c->wframe || ci->wstate.below)
       continue;
-    else if(G_MININT == ci->wframe->bwidth) /* Borderless client */
+    else if(TEST_BORDERLESS(ci)) /* Borderless client */
       ci->wframe->bwidth = 0;
 
     if(!*x_snapped && ci->y - ci->wframe->bwidth - c->wframe->bwidth - c->height - c->y <= snap_val &&
@@ -860,18 +860,19 @@ void wa_fit_to_desktop(gswm_t *gsw, client_t *c)
   vdesk_t *vd = scr->vdesk + scr->current_vdesk;
   gint x2 = c->x + c->width;
   gint y2 = c->y + c->height;
+  gint bw = GET_BORDER_WIDTH(c);
 
 x_correct:
   if(vd->warea.x > c->x) {
     x2 -= c->x - vd->warea.x;
     c->x = vd->warea.x;
     if(x2 >= vd->warea.w)
-      x2 = vd->warea.x + vd->warea.w - 2*c->wframe->bwidth;
+      x2 = vd->warea.x + vd->warea.w - 2*bw;
   }
   else {
     tmp_val = vd->warea.x + vd->warea.w;
     if(x2 > tmp_val) {
-      x2 = tmp_val - 2*c->wframe->bwidth;
+      x2 = tmp_val - 2*bw;
       c->x = x2 - c->width;
       goto x_correct;
     }
@@ -886,13 +887,13 @@ y_correct:
 
     tmp_val = vd->warea.y + vd->warea.h;
     if(y2 >= tmp_val)
-      y2 = tmp_val - 2*c->wframe->bwidth;
+      y2 = tmp_val - 2*bw;
   }
   else {
     tmp_val = vd->warea.y + vd->warea.h;
     if(y2 > tmp_val) {
-      y2 = tmp_val - 2*c->wframe->bwidth;
-      c->y = y2 - c->height - 2*c->wframe->bwidth;
+      y2 = tmp_val - 2*bw;
+      c->y = y2 - c->height - 2*bw;
       goto y_correct;
     }
   }
@@ -1080,6 +1081,7 @@ void _apply_maxi_horz(gswm_t *gsw, client_t *c, gboolean on)
 {
   screen_t *scr = c->curr_screen;
   vdesk_t *vd = scr->vdesk + scr->current_vdesk;
+  gint bw = GET_BORDER_WIDTH(c);
 
   if(c->wstate.fullscreen)
     return;
@@ -1091,7 +1093,7 @@ void _apply_maxi_horz(gswm_t *gsw, client_t *c, gboolean on)
     c->wstate.maxi_horz = TRUE;
     if(!xinerama_maximize(c)) {
       c->x = vd->warea.x;
-      c->width = vd->warea.w - 2 * c->wframe->bwidth;
+      c->width = vd->warea.w - 2 * bw;
     }
   }
   else {
@@ -1108,6 +1110,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
   screen_t *scr = c->curr_screen;
   vdesk_t *vd = scr->vdesk + scr->current_vdesk;
   gint th = c->wframe->theight;
+  gint bw = GET_BORDER_WIDTH(c);
 
   if(c->wstate.fullscreen)
     return;
@@ -1119,7 +1122,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
     c->wstate.maxi_vert = TRUE;
     if(!xinerama_maximize(c)) {
       c->y = th + vd->warea.y;
-      c->height = vd->warea.h - th - 2 * c->wframe->bwidth;
+      c->height = vd->warea.h - th - 2 * bw;
     }
   }
   else {
@@ -1172,13 +1175,14 @@ static void _apply_fullscreen_state(gswm_t *gsw, client_t *cl, gpointer udata)
 void wa_fullscreen(gswm_t *gsw, client_t *c, gboolean on)
 {
   screen_t *scr = c->curr_screen;
+  gint bw = GET_BORDER_WIDTH(c);
 
   if(on) {
     c->x_old = c->x;
     c->y_old = c->y;
     c->width_old = c->width;
     c->height_old = c->height;
-    c->x = c->y = -c->wframe->bwidth;
+    c->x = c->y = -bw;
     c->width = scr->dpy_width;
     c->height = scr->dpy_height;
     c->wstate.fullscreen = TRUE;

@@ -25,14 +25,15 @@ G_GNUC_UNUSED static void _mouse_place_client(gswm_t *gsw, client_t *c)
   gint xmax = c->curr_screen->dpy_width;
   gint ymax = c->curr_screen->dpy_height;
   gint th = c->wframe->theight;
+  gint bw = GET_BORDER_WIDTH(c);
   
   get_mouse_position(gsw, &mouse_x, &mouse_y);
   if(c->width < xmax)
     c->x = (mouse_x < xmax ?
-        (mouse_x / (gdouble)xmax) : 1) * (xmax - c->width - 2*c->wframe->bwidth);
+        (mouse_x / (gdouble)xmax) : 1) * (xmax - c->width - 2*bw);
   if(c->height + th < ymax)
     c->y = (mouse_y < ymax ?
-        (mouse_y / (gdouble)ymax) : 1) * (ymax - c->height - th - 2*c->wframe->bwidth);
+        (mouse_y / (gdouble)ymax) : 1) * (ymax - c->height - th - 2*bw);
   c->y += th;
 }
 
@@ -520,6 +521,7 @@ void destroy_client(gswm_t *gsw, client_t *c)
 void gravitate(gswm_t *gsw, client_t *c, gint mode)
 {
   gint dx = 0, dy = 0; 
+  gint bw = GET_BORDER_WIDTH(c);
   gint gravity = (c->xsize.flags & PWinGravity) ?
     c->xsize.win_gravity : NorthWestGravity;
 
@@ -528,23 +530,23 @@ void gravitate(gswm_t *gsw, client_t *c, gint mode)
       dy = c->wframe->theight;
       break;
     case NorthEastGravity:
-      dx = -c->wframe->bwidth;
+      dx = -bw;
       dy = c->wframe->theight;
       break;
     case NorthGravity:
       dy = c->wframe->theight;
       break;
     case SouthWestGravity:
-      dy = -c->wframe->bwidth;
+      dy = -bw;
       break;
     case SouthEastGravity:
-      dx = dy = -c->wframe->bwidth;
+      dx = dy = -bw;
       break;
     case SouthGravity:
-      dy = -c->wframe->bwidth;
+      dy = -bw;
       break;
     case CenterGravity:
-      dx = -c->wframe->bwidth;
+      dx = -bw;
       dy = -c->wframe->theight/2;
       break;
   }
