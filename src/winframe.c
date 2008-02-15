@@ -10,6 +10,7 @@
 #include "winactions.h"
 #include "vdesk.h"
 #include "xinerama.h"
+#include "rect.h"
 #include <X11/Xatom.h>
 #ifdef HAVE_XSHAPE
 #include <X11/extensions/shape.h> /* SHAPE */
@@ -128,54 +129,6 @@ void wframe_list_remove(gswm_t *gsw, wframe_t *frame)
     vd->frame_list = g_list_remove(vd->frame_list, frame);
 }
 
-#define SWAP(tmp, a, b)	G_STMT_START {	\
-	(tmp) = (a);		\
-	(a) = (b);		\
-	(b) = (tmp);		\
-} G_STMT_END
-
-/* find intersection length of two lines */
-G_INLINE_FUNC gint lineisect(gint p1, gint l1, gint p2, gint l2)
-{
-	/* make sure p1 <= p2 */
-	if (p1 > p2) {
-    gint tmp;
-		SWAP(tmp, p1, p2);
-		SWAP(tmp, l1, l2);
-	}
-
-	/* calculate the intersection */
-	if (p1 + l1 < p2)
-		return 0;
-	else if (p2 + l2 < p1 + l1)
-		return l2;
-	else
-		return p1 + l1 - p2;
-}
-
-/*
- * find the area of the intersection of two
- * rectangles.
- */
-G_INLINE_FUNC gint _rect_intersection(rect_t *r1, rect_t *r2)
-{
-	gint xsect, ysect;
-
-	/*
-	 * find intersection of lines in the x and
-	 * y directions, multiply for the area of
-	 * the intersection rectangle.
-	 */
-	xsect = lineisect(r1->x1, r1->x2 - r1->x1, r2->x1,
-		r2->x2 - r2->x1);
-  if(!xsect)
-    return 0;
-	ysect = lineisect(r1->y1, r1->y2 - r1->y1, r2->y1,
-		r2->y2 - r2->y1);
-
-	return ysect * xsect;
-}
-
 static gint _intersect_area(client_t *c1, client_t *c2)
 {
   rect_t c1_rect, c2_rect;
@@ -190,7 +143,7 @@ static gint _intersect_area(client_t *c1, client_t *c2)
   c2_rect.y1 = c2->y - c2->wframe->theight;
   c2_rect.y2 = c2->y + c2->height;
 
-  return _rect_intersection(&c1_rect, &c2_rect);
+  return rect_intersection(&c1_rect, &c2_rect);
 }
 
 static gint _calc_overlap(gswm_t *gsw, client_t *c, rect_t *mon_rect)

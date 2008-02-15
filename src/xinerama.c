@@ -5,6 +5,7 @@
 
 #include "octopus.h"
 #include "xinerama.h"
+#include "rect.h"
 
 /* xinerama support is optional */
 #ifdef HAVE_XINERAMA
@@ -22,45 +23,6 @@ static gboolean	xinerama_active		= FALSE;
 static gint		xinerama_count;
 static rect_t		*xinerama_screens = NULL;
 
-/* find intersection length of two lines */
-static inline gint lineisect(gint p1, gint l1, gint p2, gint l2)
-{
-  /* make sure p1 <= p2 */
-  if (p1 > p2) {
-    gint tmpval;
-    SWAP(tmpval, p1, p2);
-    SWAP(tmpval, l1, l2);
-  }
-
-  /* calculate the intersection */
-  if (p1 + l1 < p2)
-    return 0;
-  else if (p2 + l2 < p1 + l1)
-    return l2;
-  else
-    return p1 + l1 - p2;
-}
-
-/*
- * find the area of the intersection of two
- * rectangles.
- */
-gint rect_intersection(rect_t *r1, rect_t *r2)
-{
-  gint xsect, ysect;
-
-  /*
-   * find intersection of lines in the x and
-   * y directions, multiply for the area of
-   * the intersection rectangle.
-   */
-  xsect = lineisect(r1->x1, r1->x2 - r1->x1, r2->x1,
-      r2->x2 - r2->x1);
-  ysect = lineisect(r1->y1, r1->y2 - r1->y1, r2->y1,
-      r2->y2 - r2->y1);
-
-  return ysect * xsect;
-}
 /*
  * determine if the xinerama extension exists and if the display we
  * are on is using it.
