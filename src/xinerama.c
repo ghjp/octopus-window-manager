@@ -244,21 +244,22 @@ correct:
  * on the first call to the function.  return 0 when there
  * aren't any more monitors.
  */
-void xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
+gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
 {
   if (xinerama_active) {
-    g_return_val_if_fail(mon < xinerama_count, 0);
+    g_return_val_if_fail(mon < xinerama_count, FALSE);
     rect->x1 = xinerama_screens[mon].x1;
     rect->y1 = xinerama_screens[mon].y1;
     rect->x2 = xinerama_screens[mon].x2;
     rect->y2 = xinerama_screens[mon].y2;
   } else {
-    g_return_val_if_fail(0 == mon, 0);
+    g_return_val_if_fail(0 == mon, FALSE);
     rect->x1 = 0;
     rect->y1 = 0;
     rect->x2 = screen->dpy_width;
     rect->y2 = screen->dpy_height;
   }
+  return TRUE;
 }
 
 gint xinerama_current_mon(gswm_t *gsw)

@@ -13,7 +13,7 @@ gboolean xinerama_init(Display *display);
 void xinerama_shutdown(void);
 gboolean xinerama_maximize(client_t *client);
 void xinerama_correctloc(client_t *client);
-void xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect);
+gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect);
 gint xinerama_current_mon(gswm_t *gsw);
 
 #else
@@ -32,14 +32,14 @@ gint xinerama_current_mon(gswm_t *gsw);
  * just give the rect for the full screen, and on
  * the next call (*mon == 1) return 0.
  */
-static inline gint xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
+static inline gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
 {
-  g_return_val_if_fail(0 == mon, 0);
+  g_return_val_if_fail(0 == mon, FALSE);
   rect->x1 = 0;
   rect->y1 = 0;
   rect->x2 = screen->dpy_width;
   rect->y2 = screen->dpy_height;
-  return 1;
+  return TRUE;
 }
 
 #endif
