@@ -9,10 +9,6 @@
 /* xinerama support is optional */
 #ifdef HAVE_XINERAMA
 
-/* some macros for getting at width and height */
-#define RECTWIDTH(rect)		((rect)->x2 - (rect)->x1)
-#define RECTHEIGHT(rect)	((rect)->y2 - (rect)->y1)
-
 #define SWAP(tmp, a, b)	G_STMT_START{	\
   (tmp) = (a);		\
   (a) = (b);		\
@@ -248,7 +244,7 @@ correct:
  * on the first call to the function.  return 0 when there
  * aren't any more monitors.
  */
-gint xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
+void xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
 {
   if (xinerama_active) {
     g_return_val_if_fail(mon < xinerama_count, 0);
@@ -263,9 +259,7 @@ gint xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
     rect->x2 = screen->dpy_width;
     rect->y2 = screen->dpy_height;
   }
-  return 1;
 }
-
 
 gint xinerama_current_mon(gswm_t *gsw)
 {

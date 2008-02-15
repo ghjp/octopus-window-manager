@@ -9,6 +9,7 @@
 #include "ewmh.h"
 #include "winactions.h"
 #include "vdesk.h"
+#include "xinerama.h"
 #include <X11/Xatom.h>
 #ifdef HAVE_XSHAPE
 #include <X11/extensions/shape.h> /* SHAPE */
@@ -149,14 +150,12 @@ static gint _intersect_area(client_t *c1, client_t *c2)
   return 0;
 }
 
-static gint _calc_overlap(gswm_t *gsw, client_t *c)
+static gint _calc_overlap(gswm_t *gsw, client_t *c, rect_t *mon_rect)
 {
   register GList *cl;
   screen_t *scr = c->curr_screen;
-  warea_t *wa = &c->curr_screen->vdesk->warea;
-  gint dw = wa->w;
-  gint dh = wa->h;
-  register gint val = 0;
+  gint val = 0;
+  gint dval;
 
   for(cl = scr->vdesk[scr->current_vdesk].clnt_list ; cl; cl = g_list_next(cl)) {
     client_t *cl2 = (client_t*)cl->data;
@@ -170,24 +169,25 @@ static gint _calc_overlap(gswm_t *gsw, client_t *c)
   }
 
   /* penalize outside-of-window positions hard */
-  if(c->x < 0)
-    val += 32*ABS(c->x)*c->height;
-  if(c->y < 0)
-    val += 32*ABS(c->y)*c->width;
-  if(c->x+c->width > dw)
-    val += 32*(c->x+c->width-dw)*c->height;
-  if(c->y+c->height > dh)
-    val += 32*(c->y+c->height-dh)*c->width;
+  dval = c->x - mon_rect->x1;
+  if(dval < 0)
+    val += 32*ABS(dval)*c->height;
+  dval = c->y - mon_rect->y1;
+  if(dval < 0)
+    val += 32*ABS(dval)*c->width;
+  if(c->x+c->width > mon_rect->x2)
+    val += 32*(c->x+c->width-mon_rect->x2)*c->height;
+  if(c->y+c->height > mon_rect->y2)
+    val += 32*(c->y+c->height-mon_rect->y2)*c->width;
 
   return val;
 }
 
-G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
+G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
 {
-  gint val, failures; 
-  warea_t *wa = &c->curr_screen->vdesk->warea;
-  gint dw = wa->w;
-  gint dh = wa->h;
+  gint val, failures, x_start, x_end, y_end; 
+  gint dw = RECTWIDTH(mon_rect);
+  gint dh = RECTHEIGHT(mon_rect);
   gint wi = dw / 16;
   gint hi = dh / MAX(16, c->wframe->theight);
   gint mlen = MAX(wi, hi);
@@ -195,13 +195,23 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
   gint xmin = 0;
   gint ymin = 0;
   gint minval = G_MAXINT;
+  strut_t *ms = &c->curr_screen->vdesk[c->curr_screen->current_vdesk].master_strut;
 
   /* Global placement strategy - the screen is divided into a grid,
      and the window's top left corner is placed where it causes the
      least overlap with existing windows */
-  for (c->y = wa->y + c->wframe->theight; c->y < dh; c->y += wi)
-    for (c->x = wa->x; c->x < dw; c->x += hi) {
-      val = _calc_overlap(gsw, c);
+  x_start = mon_rect->x1 < ms->west ? ms->west: mon_rect->x1;
+  x_end = mon_rect->x2;
+  if(x_end == c->curr_screen->dpy_width)
+    x_end -= ms->east;
+  c->y = mon_rect->y1 < ms->north ? ms->north: mon_rect->y1;
+  c->y += c->wframe->theight;
+  y_end = mon_rect->y2;
+  if(y_end == c->curr_screen->dpy_height)
+    y_end -= ms->south;
+  for (  ; c->y < y_end; c->y += wi)
+    for (c->x = x_start; c->x < x_end; c->x += hi) {
+      val = _calc_overlap(gsw, c, mon_rect);
       if(!val) /* Already found a non overlapping place */
         return;
       else if(val < minval) {
@@ -226,7 +236,7 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
     dy = mlen-dx - mlen2;
     c->x += dx;
     c->y += dy;
-    val = _calc_overlap(gsw, c);
+    val = _calc_overlap(gsw, c, mon_rect);
     if(val < minval) {
       minval = val;
       xmin = c->x;
@@ -235,10 +245,17 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
     else
       failures++;
   }
+  if(xmin < ms->west)
+    xmin = ms->west;
+  if(ymin < ms->north)
+    ymin = ms->north;
+
   if(minval > c->width*c->height) {
     gint x, y;
 
     get_mouse_position(gsw, &x, &y);
+    x += g_random_int_range(-c->width/3, c->width / 3);
+    y += g_random_int_range(-c->height/3, c->height / 3);
     xmin = (x * (dw - c->wframe->bwidth - c->width)) / dw;
     ymin = (y * (dh - c->wframe->bwidth - c->height)) / dh;
   }
@@ -246,11 +263,11 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c)
   c->y = ymin;
 }
 
-static void _mouse_place_client(gswm_t *gsw, client_t *c)
+static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
 {
   gint mouse_x, mouse_y;
-  gint xmax = c->curr_screen->dpy_width;
-  gint ymax = c->curr_screen->dpy_height;
+  gint xmax = RECTWIDTH(mon_rect);
+  gint ymax = RECTHEIGHT(mon_rect);
   gint th = c->wframe->theight;
   
   get_mouse_position(gsw, &mouse_x, &mouse_y);
@@ -263,7 +280,7 @@ static void _mouse_place_client(gswm_t *gsw, client_t *c)
   c->y += th;
 }
 
-static void _fit_client_to_warea(client_t *c)
+G_GNUC_UNUSED static void _fit_client_to_warea(client_t *c)
 {
   gint bwidth =c->wframe->bwidth;
   warea_t *wa = &c->curr_screen->vdesk->warea;
@@ -296,59 +313,20 @@ static void _fit_client_to_warea(client_t *c)
 
 static void _init_position(gswm_t *gsw, client_t *c)
 {
-  gint xmax = c->curr_screen->dpy_width;
-  gint ymax = c->curr_screen->dpy_height;
-  gint th = c->wframe->theight;
+  rect_t mon_rect;
 
+  xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
+
+  if(c->trans || c->w_type.dialog)
+    _mouse_place_client(gsw, c, &mon_rect);
+  else if(c->w_type.splash) {
+    c->x = (RECTWIDTH(&mon_rect) - c->width) / 2;
+    c->y = (RECTHEIGHT(&mon_rect) - c->height) / 2;
+  }
+  else
+    _minoverlap_place_client(gsw, c, &mon_rect);
   fix_ewmh_position_based_on_struts(gsw, c);
-
-  if(USSize & c->xsize.flags) {
-    if(c->xsize.width)
-      c->width = c->xsize.width;
-    if(c->xsize.height)
-      c->height = c->xsize.height;
-  }
-  else {
-    /* make sure it's big enough to click at... this is somewhat
-     * arbitrary */
-    if(c->width < 2 * th) c->width = 2 * th;
-    if(c->height < th) c->height = th;
-  }
-
-  if(c->xsize.flags & USPosition) {
-    c->x = c->xsize.x;
-    c->y = c->xsize.y;
-    _fit_client_to_warea(c);
-    fix_ewmh_position_based_on_struts(gsw, c);
-    TRACE(("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
-  }
-  else if(c->xsize.flags & PPosition) {
-    c->x = c->xsize.x;
-    c->y = c->xsize.y;
-    _fit_client_to_warea(c);
-    fix_ewmh_position_based_on_struts(gsw, c);
-    TRACE(("%s PPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
-  }
-  else {
-    if(c->x < 0)
-      c->x = 0;
-    else if(c->x > xmax)
-      c->x = xmax - th;
-
-    if(c->y < 0)
-      c->y = 0;
-    else if(c->y > ymax)
-      c->y = ymax - th;
-
-    if(c->x == 0 && c->y == 0) {
-      /* TODO CFG Make the placement policy configurable */
-      if(c->trans)
-        _mouse_place_client(gsw, c);
-      else
-        _minoverlap_place_client(gsw, c);
-      gravitate(gsw, c, GRAV_UNDO);
-    }
-  }
+  gravitate(gsw, c, GRAV_UNDO);
 }
 
 /* Calculate the greatest common divisor of 2 numbers.
