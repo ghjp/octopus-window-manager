@@ -314,12 +314,16 @@ static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   gint th = c->wframe->theight;
   
   get_mouse_position(gsw, &mouse_x, &mouse_y);
+  mouse_x -= mon_rect->x1;
+  mouse_y -= mon_rect->y1;
   if(c->width < xmax)
     c->x = (mouse_x < xmax ?
         (mouse_x / (gdouble)xmax) : 1) * (xmax - c->width - 2*c->wframe->bwidth);
   if(c->height + th < ymax)
     c->y = (mouse_y < ymax ?
         (mouse_y / (gdouble)ymax) : 1) * (ymax - c->height - th - 2*c->wframe->bwidth);
+  c->x += mon_rect->x1;
+  c->y += mon_rect->y1;
   c->y += th;
 }
 
@@ -358,17 +362,17 @@ static void _init_position(gswm_t *gsw, client_t *c)
 {
   rect_t mon_rect;
 
+  fix_ewmh_position_based_on_struts(gsw, c);
   xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
 
   if(c->trans || c->w_type.dialog)
     _mouse_place_client(gsw, c, &mon_rect);
   else if(c->w_type.splash) {
-    c->x = (RECTWIDTH(&mon_rect) - c->width) / 2;
-    c->y = (RECTHEIGHT(&mon_rect) - c->height) / 2;
+    c->x = (mon_rect.x1 + mon_rect.x2 - c->width) / 2;
+    c->y = (mon_rect.y1 + mon_rect.y2 - c->height) / 2;
   }
   else
     _minoverlap_place_client(gsw, c, &mon_rect);
-  fix_ewmh_position_based_on_struts(gsw, c);
   gravitate(gsw, c, GRAV_UNDO);
 }
 
