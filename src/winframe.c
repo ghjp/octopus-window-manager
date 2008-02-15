@@ -317,10 +317,14 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rec
     gint x, y;
 
     get_mouse_position(gsw, &x, &y);
+    x -= mon_rect->x1;
+    y -= mon_rect->y1;
     x += g_random_int_range(-c->width/3, c->width / 3);
     y += g_random_int_range(-c->height/3, c->height / 3);
     xmin = (x * (dw - c->wframe->bwidth - c->width)) / dw;
     ymin = (y * (dh - c->wframe->bwidth - c->height)) / dh;
+    xmin += mon_rect->x1;
+    ymin += mon_rect->y1;
   }
   c->x = xmin;
   c->y = ymin;
