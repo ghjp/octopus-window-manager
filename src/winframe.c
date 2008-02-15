@@ -214,96 +214,16 @@ static gint _calc_overlap(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   /* penalize outside-of-window positions hard */
   dval = c->x - mon_rect->x1;
   if(dval < 0)
-    val += 32*ABS(dval)*c->height;
+    return G_MAXINT;
   dval = c->y - mon_rect->y1;
   if(dval < 0)
-    val += 32*ABS(dval)*c->width;
-  if(c->x+c->width > mon_rect->x2)
-    val += 32*(c->x+c->width-mon_rect->x2)*c->height;
-  if(c->y+c->height > mon_rect->y2)
-    val += 32*(c->y+c->height-mon_rect->y2)*c->width;
+    return G_MAXINT;
+  if(c->x+c->width+c->wframe->bwidth >= mon_rect->x2)
+    return G_MAXINT;
+  if(c->y+c->height+c->wframe->bwidth >= mon_rect->y2)
+    return G_MAXINT;
 
   return val;
-}
-
-G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
-{
-  gint val, failures, x_start, x_end, y_end; 
-  gint dw = RECTWIDTH(mon_rect);
-  gint dh = RECTHEIGHT(mon_rect);
-  gint wi = dw / 16;
-  gint hi = dh / MAX(16, c->wframe->theight);
-  gint mlen = MAX(wi, hi);
-  gint mlen2 = mlen/2;
-  gint xmin = 0;
-  gint ymin = 0;
-  gint minval = G_MAXINT;
-  strut_t *ms = &c->curr_screen->vdesk[c->curr_screen->current_vdesk].master_strut;
-
-  /* Global placement strategy - the screen is divided into a grid,
-     and the window's top left corner is placed where it causes the
-     least overlap with existing windows */
-  x_start = mon_rect->x1 < ms->west ? ms->west: mon_rect->x1;
-  x_end = mon_rect->x2;
-  if(x_end == c->curr_screen->dpy_width)
-    x_end -= ms->east;
-  c->y = mon_rect->y1 < ms->north ? ms->north: mon_rect->y1;
-  c->y += c->wframe->theight;
-  y_end = mon_rect->y2;
-  if(y_end == c->curr_screen->dpy_height)
-    y_end -= ms->south;
-  for (  ; c->y < y_end; c->y += wi)
-    for (c->x = x_start; c->x < x_end; c->x += hi) {
-      val = _calc_overlap(gsw, c, mon_rect);
-      if(!val) /* Already found a non overlapping place */
-        return;
-      else if(val < minval) {
-        minval = val;
-        xmin = c->x;
-        ymin = c->y;
-      }
-    }
-
-  /* Local placement strategy similar to the one suggested in the 
-     specifications. Choose random displacement vector (manhattan 
-     length = cellsize) and test, if the result is better than the current
-     placement update current and continue. Stop after 5 failures. */
-
-  c->x = xmin;
-  c->y = ymin;
-
-  for(failures = 0; failures < 5; ) {
-    gint dx,dy;
-
-    dx = g_random_int_range(0, mlen) - mlen2;
-    dy = mlen-dx - mlen2;
-    c->x += dx;
-    c->y += dy;
-    val = _calc_overlap(gsw, c, mon_rect);
-    if(val < minval) {
-      minval = val;
-      xmin = c->x;
-      ymin = c->y;
-    }
-    else
-      failures++;
-  }
-  if(xmin < ms->west)
-    xmin = ms->west;
-  if(ymin < ms->north)
-    ymin = ms->north;
-
-  if(minval > c->width*c->height) {
-    gint x, y;
-
-    get_mouse_position(gsw, &x, &y);
-    x += g_random_int_range(-c->width/3, c->width / 3);
-    y += g_random_int_range(-c->height/3, c->height / 3);
-    xmin = (x * (dw - c->wframe->bwidth - c->width)) / dw;
-    ymin = (y * (dh - c->wframe->bwidth - c->height)) / dh;
-  }
-  c->x = xmin;
-  c->y = ymin;
 }
 
 static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
@@ -325,6 +245,85 @@ static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   c->x += mon_rect->x1;
   c->y += mon_rect->y1;
   c->y += th;
+}
+
+G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
+{
+  gint val, x_start, x_end, y_end; 
+  gint dw = RECTWIDTH(mon_rect);
+  gint dh = RECTHEIGHT(mon_rect);
+  gint wi = dw / 16;
+  gint hi = dh / MAX(16, c->wframe->theight);
+  gint xmin = 0;
+  gint ymin = 0;
+  gint minval = G_MAXINT;
+  strut_t *ms = &c->curr_screen->vdesk[c->curr_screen->current_vdesk].master_strut;
+
+  /* Global placement strategy - the screen is divided into a grid,
+     and the window's top left corner is placed where it causes the
+     least overlap with existing windows */
+  x_start = mon_rect->x1 < ms->west ? ms->west: mon_rect->x1;
+  x_end = mon_rect->x2 - c->width - c->wframe->bwidth;
+  if(mon_rect->x2 == c->curr_screen->dpy_width)
+    x_end -= ms->east;
+  c->y = mon_rect->y1 < ms->north ? ms->north: mon_rect->y1;
+  c->y += c->wframe->theight;
+  y_end = mon_rect->y2 - c->height - c->wframe->theight;
+  if(mon_rect->y2 == c->curr_screen->dpy_height)
+    y_end -= ms->south;
+  for (  ; c->y < y_end; c->y += wi)
+    for (c->x = x_start; c->x < x_end; c->x += hi) {
+      val = _calc_overlap(gsw, c, mon_rect);
+      if(!val) /* Already found a non overlapping place */
+        return;
+      else if(val < minval) {
+        minval = val;
+        xmin = c->x;
+        ymin = c->y;
+      }
+    }
+
+#if 0
+  /* Local placement strategy similar to the one suggested in the 
+     specifications. Choose random displacement vector (manhattan 
+     length = cellsize) and test, if the result is better than the current
+     placement update current and continue. Stop after 5 failures. */
+
+  {
+    gint failures, mlen2 = MAX(wi, hi)/2;
+
+    c->x = xmin;
+    c->y = ymin;
+    for(failures = 0; failures < 5; ) {
+      gint dx,dy;
+
+      dx = c->wframe->bwidth + g_random_int_range(-mlen2, mlen2);
+      dy = mlen2 - dx;
+      c->x += dx;
+      c->y += dy;
+      val = _calc_overlap(gsw, c, mon_rect);
+      if(val < minval) {
+        minval = val;
+        xmin = c->x;
+        ymin = c->y;
+      }
+      else
+        failures++;
+    }
+  }
+#endif
+
+  if(minval > c->width*c->height) {
+    gint x, y;
+
+    get_mouse_position(gsw, &x, &y);
+    x += g_random_int_range(-c->width/3, c->width / 3);
+    y += g_random_int_range(-c->height/3, c->height / 3);
+    xmin = (x * (dw - c->wframe->bwidth - c->width)) / dw;
+    ymin = (y * (dh - c->wframe->bwidth - c->height)) / dh;
+  }
+  c->x = xmin;
+  c->y = ymin;
 }
 
 G_GNUC_UNUSED static void _fit_client_to_warea(client_t *c)
