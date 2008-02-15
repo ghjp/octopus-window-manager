@@ -180,7 +180,7 @@ static gint _calc_overlap(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   return val;
 }
 
-static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
+static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect, gboolean randomize_pos)
 {
   gint mouse_x, mouse_y;
   gint xmax = RECTWIDTH(mon_rect);
@@ -191,6 +191,10 @@ static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   get_mouse_position(gsw, &mouse_x, &mouse_y);
   mouse_x -= mon_rect->x1;
   mouse_y -= mon_rect->y1;
+  if(randomize_pos) {
+    mouse_x += g_random_int_range(-c->width/3, c->width / 3);
+    mouse_y += g_random_int_range(-c->height/3, c->height / 3);
+  }
   if(c->width < xmax)
     c->x = (mouse_x < xmax ?
         (mouse_x / (gdouble)xmax) : 1) * (xmax - c->width - bw2);
@@ -275,15 +279,12 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rec
   }
 #endif
 
-  if(minval > c->width*c->height) {
-    get_mouse_position(gsw, &xmin, &ymin);
-    xmin += g_random_int_range(-c->width/3, c->width / 3);
-    ymin += g_random_int_range(-c->height/3, c->height / 3);
-    xmin -= c->width / 2;
-    ymin -= c->height / 2;
+  if(minval > c->width*c->height)
+    _mouse_place_client(gsw, c, mon_rect, TRUE);
+  else {
+    c->x = xmin;
+    c->y = ymin;
   }
-  c->x = xmin;
-  c->y = ymin;
 }
 
 G_GNUC_UNUSED static void _fit_client_to_warea(client_t *c)
@@ -325,7 +326,7 @@ static void _init_position(gswm_t *gsw, client_t *c)
   xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
 
   if(c->trans || c->w_type.dialog)
-    _mouse_place_client(gsw, c, &mon_rect);
+    _mouse_place_client(gsw, c, &mon_rect, FALSE);
   else if(c->w_type.splash) {
     c->x = (mon_rect.x1 + mon_rect.x2 - c->width) / 2;
     c->y = (mon_rect.y1 + mon_rect.y2 - c->height) / 2;

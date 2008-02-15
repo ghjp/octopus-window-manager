@@ -781,7 +781,7 @@ static gboolean _check_frame_sizehints(wframe_t *frame, client_t *c)
   return TRUE;
 }
 
-#define CHECK_MULTIFRAME_CAP(c) (!(c)->wstate.sticky && !(c)->wstate.shaped && !(c)->wstate.below && G_MININT != (c)->wframe->bwidth && !(PAspect & (c)->xsize.flags))
+#define CHECK_MULTIFRAME_CAP(c) (!(c)->wstate.sticky && !(c)->wstate.shaped && !(c)->wstate.below && !TEST_BORDERLESS(c) && !(PAspect & (c)->xsize.flags))
 
 void attach_first2frame(gswm_t *gsw, wframe_t *target_fr)
 {
