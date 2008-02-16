@@ -222,6 +222,7 @@ typedef struct {
   Atom    wm_net_close_window;
   Atom    wm_net_moveresize_window;
   Atom    wm_net_wm_moveresize;
+  Atom    wm_net_request_frame_extents;
   /* Allowed application window actions */
   Atom    wm_net_wm_action_move;
   Atom    wm_net_wm_action_resize;

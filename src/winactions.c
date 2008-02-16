@@ -824,6 +824,10 @@ void wa_move_north(gswm_t *gsw, client_t *c)
   c->y -= (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
+  if(c->wstate.maxi_vert) {
+    c->wstate.maxi_vert = FALSE;
+    wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
+  }
 }
 
 void wa_move_south(gswm_t *gsw, client_t *c)
@@ -833,6 +837,10 @@ void wa_move_south(gswm_t *gsw, client_t *c)
   c->y += (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
+  if(c->wstate.maxi_vert) {
+    c->wstate.maxi_vert = FALSE;
+    wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
+  }
 }
 
 void wa_move_east(gswm_t *gsw, client_t *c)
@@ -842,6 +850,10 @@ void wa_move_east(gswm_t *gsw, client_t *c)
   c->x += (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
+  if(c->wstate.maxi_horz) {
+    c->wstate.maxi_horz = FALSE;
+    wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
+  }
 }
 
 void wa_move_west(gswm_t *gsw, client_t *c)
@@ -851,6 +863,10 @@ void wa_move_west(gswm_t *gsw, client_t *c)
   c->x -= (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
+  if(c->wstate.maxi_horz) {
+    c->wstate.maxi_horz = FALSE;
+    wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
+  }
 }
 
 void wa_fit_to_desktop(gswm_t *gsw, client_t *c)
@@ -905,6 +921,28 @@ y_correct:
   _x_move_resize(gsw, c);
   c->wstate.maxi_vert = c->wstate.maxi_horz = FALSE;
   wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
+}
+
+void wa_place_client_to_monitor_warea(gswm_t *gsw, client_t *c)
+{
+  rect_t mon_rect;
+  warea_t *wa = &c->curr_screen->vdesk->warea;
+  gint bw = GET_BORDER_WIDTH(c);
+  gint xmin, xmax, ymin, ymax;
+
+  xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
+  xmin = MAX(mon_rect.x1, wa->x) + bw;
+  ymin = MAX(mon_rect.y1, wa->y);
+  xmax = MIN(mon_rect.x2, wa->x + wa->w) - bw;
+  ymax = MIN(mon_rect.y2, wa->y + wa->h) - bw;
+  if(c->x + c->width > xmax)
+    c->x = xmax - c->width;
+  if(c->x < xmin)
+    c->x = xmin;
+  if(c->y + c->height > ymax)
+    c->y = ymax - c->height;
+  if(c->y < ymin)
+    c->y = ymin;
 }
 
 void wa_resize_interactive(gswm_t *gsw, client_t *c)

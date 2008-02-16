@@ -85,7 +85,7 @@ gboolean xinerama_maximize(client_t *client)
   gint area, i;
   warea_t *wa = &client->curr_screen->vdesk->warea;
 
-  if(xinerama_active) {
+  if(G_UNLIKELY(xinerama_active)) {
     /* get a rect of client dimensions */
     rect.x1 = client->x;
     rect.y1 = client->y;
@@ -139,7 +139,7 @@ void xinerama_correctloc(client_t *client)
   gint most, mosti;
 
   /* dont do anything if no xinerama */
-  if (!xinerama_active)
+  if (G_LIKELY(!xinerama_active))
     return;
 
   /* get client area and rectangle */
@@ -208,7 +208,7 @@ correct:
  */
 gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
 {
-  if (xinerama_active) {
+  if (G_UNLIKELY(xinerama_active)) {
     g_return_val_if_fail(mon < xinerama_count, FALSE);
     rect->x1 = xinerama_screens[mon].x1;
     rect->y1 = xinerama_screens[mon].y1;

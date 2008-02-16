@@ -218,18 +218,17 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rec
   gint cx, cy;
   gint minval = G_MAXINT;
   strut_t *ms = &c->curr_screen->vdesk[c->curr_screen->current_vdesk].master_strut;
-  gint bw = GET_BORDER_WIDTH(c);
 
+  gravitate(gsw, c, GRAV_APPLY);
   /* Global placement strategy - the screen is divided into a grid,
      and the window's top left corner is placed where it causes the
      least overlap with existing windows */
   x_start = mon_rect->x1 < ms->west ? ms->west: mon_rect->x1;
-  x_end = mon_rect->x2 - c->width - bw;
+  x_end = mon_rect->x2 - c->width;
   if(mon_rect->x2 == c->curr_screen->dpy_width)
     x_end -= ms->east;
   c->y = mon_rect->y1 < ms->north ? ms->north: mon_rect->y1;
-  c->y += c->wframe->theight;
-  y_end = mon_rect->y2 - c->height - c->wframe->theight;
+  y_end = mon_rect->y2 - c->height;
   if(mon_rect->y2 == c->curr_screen->dpy_height)
     y_end -= ms->south;
   cx = c->x;
@@ -257,6 +256,7 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rec
 
   {
     gint failures, mlen2 = MAX(wi, hi)/2;
+    gint bw = GET_BORDER_WIDTH(c);
 
     c->x = xmin;
     c->y = ymin;
@@ -284,22 +284,8 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rec
   else {
     c->x = xmin;
     c->y = ymin;
+    gravitate(gsw, c, GRAV_UNDO);
   }
-}
-
-G_GNUC_UNUSED static void _fit_client_to_warea(client_t *c)
-{
-  gint bwidth = GET_BORDER_WIDTH(c);
-  warea_t *wa = &c->curr_screen->vdesk->warea;
-
-  if(c->x + c->width > wa->x + wa->w)
-    c->x = wa->x + wa->w - c->width - bwidth;
-  if(c->x < wa->x)
-    c->x = wa->x;
-  if(c->y + c->height > wa->y + wa->h)
-    c->y = wa->y + wa->h - bwidth - c->height;
-  if(c->y < wa->y)
-    c->y = wa->y;
 }
 
 /* Figure out where to map the window. c->x, c->y, c->width, and
@@ -328,12 +314,10 @@ static void _init_position(gswm_t *gsw, client_t *c)
   if(c->xsize.flags & USPosition) {
     c->x = c->xsize.x;
     c->y = c->xsize.y;
-    _fit_client_to_warea(c);
     fix_ewmh_position_based_on_struts(gsw, c);
     TRACE(("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
-    return;
   }
-  if(c->trans || c->w_type.dialog)
+  else if(c->trans || c->w_type.dialog)
     _mouse_place_client(gsw, c, &mon_rect, FALSE);
   else if(c->w_type.splash) {
     c->x = (mon_rect.x1 + mon_rect.x2 - c->width) / 2;
@@ -341,7 +325,7 @@ static void _init_position(gswm_t *gsw, client_t *c)
   }
   else 
       _minoverlap_place_client(gsw, c, &mon_rect);
-  gravitate(gsw, c, GRAV_UNDO);
+  wa_place_client_to_monitor_warea(gsw, c);
 }
 
 /* Calculate the greatest common divisor of 2 numbers.

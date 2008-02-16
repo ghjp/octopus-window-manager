@@ -120,6 +120,7 @@ void init_ewmh_support(gswm_t *gsw)
   ADD_NET_SUPPORT(gsw->xa.wm_net_close_window,            "_NET_CLOSE_WINDOW");
   ADD_NET_SUPPORT(gsw->xa.wm_net_moveresize_window,       "_NET_MOVERESIZE_WINDOW");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_moveresize,           "_NET_WM_MOVERESIZE");
+  ADD_NET_SUPPORT(gsw->xa.wm_net_request_frame_extents,   "_NET_REQUEST_FRAME_EXTENTS");
   /* Allowed application window actions */
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_action_move,          "_NET_WM_ACTION_MOVE");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_action_resize,        "_NET_WM_ACTION_RESIZE");
