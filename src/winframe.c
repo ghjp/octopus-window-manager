@@ -325,14 +325,22 @@ static void _init_position(gswm_t *gsw, client_t *c)
   fix_ewmh_position_based_on_struts(gsw, c);
   xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
 
+  if(c->xsize.flags & USPosition) {
+    c->x = c->xsize.x;
+    c->y = c->xsize.y;
+    _fit_client_to_warea(c);
+    fix_ewmh_position_based_on_struts(gsw, c);
+    TRACE(("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
+    return;
+  }
   if(c->trans || c->w_type.dialog)
     _mouse_place_client(gsw, c, &mon_rect, FALSE);
   else if(c->w_type.splash) {
     c->x = (mon_rect.x1 + mon_rect.x2 - c->width) / 2;
     c->y = (mon_rect.y1 + mon_rect.y2 - c->height) / 2;
   }
-  else
-    _minoverlap_place_client(gsw, c, &mon_rect);
+  else 
+      _minoverlap_place_client(gsw, c, &mon_rect);
   gravitate(gsw, c, GRAV_UNDO);
 }
 
