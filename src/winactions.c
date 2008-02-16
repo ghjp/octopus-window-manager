@@ -740,6 +740,8 @@ void wa_move_interactive(gswm_t *gsw, client_t *c)
 {
   _rec_t r;
 
+  if(c->wstate.fullscreen)
+    return;
   /*wa_iconify(gsw,c);*/
   _drag(gsw, c, gsw->curs.move);
   r.x = c->x;
@@ -821,6 +823,8 @@ void wa_move_north(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
+  if(c->wstate.fullscreen)
+    return;
   c->y -= (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
@@ -834,6 +838,8 @@ void wa_move_south(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
+  if(c->wstate.fullscreen)
+    return;
   c->y += (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
@@ -847,6 +853,8 @@ void wa_move_east(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
+  if(c->wstate.fullscreen)
+    return;
   c->x += (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
@@ -860,6 +868,8 @@ void wa_move_west(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
+  if(c->wstate.fullscreen)
+    return;
   c->x -= (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   _snap_to_borders(gsw, c);
   _x_move(gsw, c);
@@ -1175,7 +1185,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
 void wa_maximize_hv(gswm_t *gsw, client_t *c, gboolean horz, gboolean vert)
 {
   TRACE(("%s horz=%d vert=%d", __func__, horz, vert));
-  if(c->w_type.dock)
+  if(c->w_type.dock || c->wstate.fullscreen)
     return;
   if(horz)
     _apply_maxi_horz(gsw, c, TRUE);
@@ -1215,17 +1225,27 @@ void wa_fullscreen(gswm_t *gsw, client_t *c, gboolean on)
   screen_t *scr = c->curr_screen;
   gint bw = GET_BORDER_WIDTH(c);
 
-  if(on) {
-    c->x_old = c->x;
-    c->y_old = c->y;
-    c->width_old = c->width;
-    c->height_old = c->height;
+  if(on) { /* Switch on fullscreen mode */
+    if(c->wstate.fullscreen)
+      return;
+    if(!(c->wstate.maxi_horz || c->wstate.maxi_vert)) {
+      c->x_old = c->x;
+      c->y_old = c->y;
+      c->width_old = c->width;
+      c->height_old = c->height;
+    }
+    else {
+      c->wstate.maxi_horz = c->wstate.maxi_vert = FALSE;
+      wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
+    }
     c->x = c->y = -bw;
     c->width = scr->dpy_width;
     c->height = scr->dpy_height;
     c->wstate.fullscreen = TRUE;
   }
-  else {
+  else { /* Switch off fullscreen mode */
+    if(!c->wstate.fullscreen)
+      return;
     c->x = c->x_old;
     c->y = c->y_old;
     c->width = c->width_old;
@@ -1236,6 +1256,8 @@ void wa_fullscreen(gswm_t *gsw, client_t *c, gboolean on)
   wframe_tbar_pmap_recreate(gsw, c->wframe);
   _x_move_resize(gsw, c);
   wframe_foreach(gsw, c->wframe, _apply_fullscreen_state, c);
+  if(on)
+    focus_client(gsw, c, TRUE);
 }
 
 void wa_send_xclimsg(gswm_t *gsw, client_t *c, Atom type,
