@@ -230,11 +230,7 @@ static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   cx = c->x;
   cy = c->y;
   wi = (y_end - c->y) / 10;
-  if(0 >= wi)
-    wi = 1;
   hi = (x_end - x_start) / 10;
-  if(0 >= hi)
-    hi = 1;
   for (  ; c->y < y_end; c->y += wi) {
     for (c->x = x_start; c->x < x_end; c->x += hi) {
       val = _calc_overlap(gsw, c, mon_rect);
