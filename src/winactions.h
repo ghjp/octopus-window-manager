@@ -34,6 +34,5 @@ void wa_move_south(gswm_t *gsw, client_t *c);
 void wa_move_east(gswm_t *gsw, client_t *c);
 void wa_move_west(gswm_t *gsw, client_t *c);
 void wa_fit_to_desktop(gswm_t *gsw, client_t *c);
-void wa_place_client_to_monitor_warea(gswm_t *gsw, client_t *c);
 
 #endif

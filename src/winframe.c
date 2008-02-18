@@ -206,33 +206,35 @@ static void _mouse_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect, gboo
   c->y += th;
 }
 
-G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
+static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rect_t *mon_rect)
 {
   gint val, x_start, x_end, y_end; 
-  gint dw = RECTWIDTH(mon_rect);
-  gint dh = RECTHEIGHT(mon_rect);
-  gint wi = dw / 16;
-  gint hi = dh / MAX(16, c->wframe->theight);
+  gint wi, hi;
   gint xmin = 0;
   gint ymin = 0;
   gint cx, cy;
   gint minval = G_MAXINT;
   strut_t *ms = &c->curr_screen->vdesk[c->curr_screen->current_vdesk].master_strut;
 
-  gravitate(gsw, c, GRAV_APPLY);
   /* Global placement strategy - the screen is divided into a grid,
      and the window's top left corner is placed where it causes the
      least overlap with existing windows */
   x_start = mon_rect->x1 < ms->west ? ms->west: mon_rect->x1;
-  x_end = mon_rect->x2 - c->width;
+  x_end = mon_rect->x2 - c->width - 1;
   if(mon_rect->x2 == c->curr_screen->dpy_width)
     x_end -= ms->east;
   c->y = mon_rect->y1 < ms->north ? ms->north: mon_rect->y1;
-  y_end = mon_rect->y2 - c->height;
+  y_end = mon_rect->y2 - c->height - c->wframe->theight - 1;
   if(mon_rect->y2 == c->curr_screen->dpy_height)
     y_end -= ms->south;
   cx = c->x;
   cy = c->y;
+  wi = (y_end - c->y) / 10;
+  if(0 >= wi)
+    wi = 1;
+  hi = (x_end - x_start) / 10;
+  if(0 >= hi)
+    hi = 1;
   for (  ; c->y < y_end; c->y += wi) {
     for (c->x = x_start; c->x < x_end; c->x += hi) {
       val = _calc_overlap(gsw, c, mon_rect);
@@ -284,8 +286,28 @@ G_GNUC_UNUSED static void _minoverlap_place_client(gswm_t *gsw, client_t *c, rec
   else {
     c->x = xmin;
     c->y = ymin;
-    gravitate(gsw, c, GRAV_UNDO);
   }
+}
+
+static void _place_client_to_monitor_warea(gswm_t *gsw, client_t *c)
+{
+  rect_t mon_rect;
+  warea_t *wa = &c->curr_screen->vdesk->warea;
+  gint xmin, xmax, ymin, ymax;
+
+  xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
+  xmin = MAX(mon_rect.x1, wa->x);
+  ymin = MAX(mon_rect.y1, wa->y);
+  xmax = MIN(mon_rect.x2, wa->x + wa->w);
+  ymax = MIN(mon_rect.y2, wa->y + wa->h);
+  if(c->x + c->width > xmax)
+    c->x = xmax - c->width;
+  if(c->x < xmin)
+    c->x = xmin;
+  if(c->y + c->height > ymax)
+    c->y = ymax - c->height;
+  if(c->y < ymin)
+    c->y = ymin;
 }
 
 /* Figure out where to map the window. c->x, c->y, c->width, and
@@ -324,8 +346,8 @@ static void _init_position(gswm_t *gsw, client_t *c)
     c->y = (mon_rect.y1 + mon_rect.y2 - c->height) / 2;
   }
   else 
-      _minoverlap_place_client(gsw, c, &mon_rect);
-  wa_place_client_to_monitor_warea(gsw, c);
+    _minoverlap_place_client(gsw, c, &mon_rect);
+  _place_client_to_monitor_warea(gsw, c);
 }
 
 /* Calculate the greatest common divisor of 2 numbers.

@@ -933,28 +933,6 @@ y_correct:
   wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
 }
 
-void wa_place_client_to_monitor_warea(gswm_t *gsw, client_t *c)
-{
-  rect_t mon_rect;
-  warea_t *wa = &c->curr_screen->vdesk->warea;
-  gint bw = GET_BORDER_WIDTH(c);
-  gint xmin, xmax, ymin, ymax;
-
-  xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
-  xmin = MAX(mon_rect.x1, wa->x) + bw;
-  ymin = MAX(mon_rect.y1, wa->y);
-  xmax = MIN(mon_rect.x2, wa->x + wa->w) - bw;
-  ymax = MIN(mon_rect.y2, wa->y + wa->h) - bw;
-  if(c->x + c->width > xmax)
-    c->x = xmax - c->width;
-  if(c->x < xmin)
-    c->x = xmin;
-  if(c->y + c->height > ymax)
-    c->y = ymax - c->height;
-  if(c->y < ymin)
-    c->y = ymin;
-}
-
 void wa_resize_interactive(gswm_t *gsw, client_t *c)
 {
   gint old_width = c->width;
