@@ -344,8 +344,12 @@ static void _init_position(gswm_t *gsw, client_t *c)
     c->x = (mon_rect.x1 + mon_rect.x2 - c->width) / 2;
     c->y = (mon_rect.y1 + mon_rect.y2 - c->height) / 2;
   }
-  else 
+  else {
     _minoverlap_place_client(gsw, c, &mon_rect);
+    gravitate(gsw, c, GRAV_APPLY);
+    wa_snap_to_borders(gsw, c, TRUE);
+    gravitate(gsw, c, GRAV_UNDO);
+  }
   _place_client_to_monitor_warea(gsw, c);
 }
 

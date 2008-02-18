@@ -199,10 +199,10 @@ static void _snap_to_clients(client_t *c, GList *cl, gint snap_val, gboolean *x_
 
 #undef ABSMIN
 
-static void _snap_to_borders(gswm_t *gsw, client_t *c)
+void wa_snap_to_borders(gswm_t *gsw, client_t *c, gboolean skip_client_snapping)
 {
   gint snap_val;
-  gint bw2 = 2*c->wframe->bwidth;
+  gint bw2 = 2 * GET_BORDER_WIDTH(c);
   screen_t *scr = c->curr_screen;
   vdesk_t *vd = scr->vdesk + scr->current_vdesk;
   strut_t *cst = &vd->master_strut;
@@ -296,7 +296,7 @@ static void _snap_to_borders(gswm_t *gsw, client_t *c)
   }
 
   /* Client snapping desired */
-  if(0 < (snap_val = gsw->ucfg.client_snap)) {
+  if(!skip_client_snapping && 0 < (snap_val = gsw->ucfg.client_snap)) {
     _snap_to_clients(c, vd->clnt_list,    snap_val, &x_snapped, &y_snapped);
     _snap_to_clients(c, scr->sticky_list, snap_val, &x_snapped, &y_snapped);
   }
@@ -336,7 +336,7 @@ static void _drag(gswm_t *gsw, client_t *c, Cursor cursor)
           _draw_outline(gsw, c, frameop); /* clear */
         c->x = orig_cx + (ev.xmotion.x - x1);
         c->y = orig_cy + (ev.xmotion.y - y1);
-        _snap_to_borders(gsw, c);
+        wa_snap_to_borders(gsw, c, FALSE);
         if(gsw->ucfg.move_opaque) {
           if(OPAQUE_CHECK_DISTANCE < (ev.xmotion.time - lasttime)) {
             wa_moveresize(gsw, c);
@@ -826,7 +826,7 @@ void wa_move_north(gswm_t *gsw, client_t *c)
   if(c->wstate.fullscreen)
     return;
   c->y -= (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
-  _snap_to_borders(gsw, c);
+  wa_snap_to_borders(gsw, c, FALSE);
   _x_move(gsw, c);
   if(c->wstate.maxi_vert) {
     c->wstate.maxi_vert = FALSE;
@@ -841,7 +841,7 @@ void wa_move_south(gswm_t *gsw, client_t *c)
   if(c->wstate.fullscreen)
     return;
   c->y += (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
-  _snap_to_borders(gsw, c);
+  wa_snap_to_borders(gsw, c, FALSE);
   _x_move(gsw, c);
   if(c->wstate.maxi_vert) {
     c->wstate.maxi_vert = FALSE;
@@ -856,7 +856,7 @@ void wa_move_east(gswm_t *gsw, client_t *c)
   if(c->wstate.fullscreen)
     return;
   c->x += (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
-  _snap_to_borders(gsw, c);
+  wa_snap_to_borders(gsw, c, FALSE);
   _x_move(gsw, c);
   if(c->wstate.maxi_horz) {
     c->wstate.maxi_horz = FALSE;
@@ -871,7 +871,7 @@ void wa_move_west(gswm_t *gsw, client_t *c)
   if(c->wstate.fullscreen)
     return;
   c->x -= (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
-  _snap_to_borders(gsw, c);
+  wa_snap_to_borders(gsw, c, FALSE);
   _x_move(gsw, c);
   if(c->wstate.maxi_horz) {
     c->wstate.maxi_horz = FALSE;
@@ -926,7 +926,7 @@ y_correct:
   c->height = y2 - c->y;
 
   wa_do_all_size_constraints(gsw, c);
-  _snap_to_borders(gsw, c);
+  wa_snap_to_borders(gsw, c, FALSE);
   wframe_tbar_pmap_recreate(gsw, c->wframe);
   _x_move_resize(gsw, c);
   c->wstate.maxi_vert = c->wstate.maxi_horz = FALSE;
