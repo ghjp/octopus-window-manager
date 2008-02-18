@@ -1,3 +1,9 @@
+octopus (0.4.1-1) unstable; urgency=low
+
+  * Window placement has been reworked
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Mon, 18 Feb 2008 15:57:38 +0100
+
 octopus (0.4.0-2) unstable; urgency=low
 
   * Small bug fixed on systems with no activ xinerama display
