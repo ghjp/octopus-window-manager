@@ -129,19 +129,20 @@ void wframe_list_remove(gswm_t *gsw, wframe_t *frame)
     vd->frame_list = g_list_remove(vd->frame_list, frame);
 }
 
-static gint _intersect_area(client_t *c1, client_t *c2)
+static gint _intersect_area(client_t *c1, client_t *c2, gint bw)
 {
   rect_t c1_rect, c2_rect;
+  gint bw2 = GET_BORDER_WIDTH(c2);
 
-  c1_rect.x1 = c1->x;
-  c1_rect.x2 = c1->x+c1->width;
-  c1_rect.y1 = c1->y - c1->wframe->theight;
-  c1_rect.y2 = c1->y + c1->height;
+  c1_rect.x1 = c1->x - bw;
+  c1_rect.x2 = c1->x + c1->width + bw;
+  c1_rect.y1 = c1->y - c1->wframe->theight - bw;
+  c1_rect.y2 = c1->y + c1->height + bw;
 
-  c2_rect.x1 = c2->x;
-  c2_rect.x2 = c2->x+c2->width;
-  c2_rect.y1 = c2->y - c2->wframe->theight;
-  c2_rect.y2 = c2->y + c2->height;
+  c2_rect.x1 = c2->x - bw2;
+  c2_rect.x2 = c2->x + c2->width + bw2;
+  c2_rect.y1 = c2->y - c2->wframe->theight - bw2;
+  c2_rect.y2 = c2->y + c2->height + bw2;
 
   return rect_intersection(&c1_rect, &c2_rect);
 }
@@ -157,12 +158,12 @@ static gint _calc_overlap(gswm_t *gsw, client_t *c, rect_t *mon_rect)
   for(cl = scr->vdesk[scr->current_vdesk].clnt_list ; cl; cl = g_list_next(cl)) {
     client_t *cl2 = (client_t*)cl->data;
     if(!cl2->wstate.below && cl2 != c)
-      val += _intersect_area(c, cl2);
+      val += _intersect_area(c, cl2, bw);
   }
   for(cl = scr->sticky_list; cl; cl = g_list_next(cl)) {
     client_t *cl2 = (client_t*)cl->data;
     if(!cl2->wstate.below && cl2 != c)
-      val += _intersect_area(c, cl2);
+      val += _intersect_area(c, cl2, bw);
   }
 
   /* penalize outside-of-window positions hard */
