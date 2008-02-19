@@ -388,7 +388,7 @@ G_GNUC_UNUSED static guint _gcd(guint u, guint v)
   return v << k;  /* returns v * 2^k */
 }
 
-/* Least common multiple: gcd(a, b)·lcm(a, b) = a·b. */
+/* Least common multiple: gcd(a, b)*lcm(a, b) = a*b. */
 
 G_GNUC_UNUSED static guint _lcm(guint u, guint v)
 {
