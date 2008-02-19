@@ -170,7 +170,7 @@ void xinerama_correctloc(client_t *client)
    * on.
    */
 correct:
-  g_message("found a window \"%s\" that needs correction", client->utf8_name);
+  TRACE(("found a window \"%s\" that needs correction", client->utf8_name));
   most = mosti = 0;
   for (i = 0; i < xinerama_count; i++) {
     isect = rect_intersection(&rect, &xinerama_screens[i]);
