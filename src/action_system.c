@@ -143,7 +143,7 @@ static void _action_fit_to_workarea(gswm_t *gsw)
   client_t *fc = get_focused_client(gsw);
 
   if(fc)
-    wa_fit_to_desktop(gsw, fc);
+    wa_fit_to_workarea(gsw, fc);
 }
 
 static void _action_raise(gswm_t *gsw)

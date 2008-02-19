@@ -879,7 +879,7 @@ void wa_move_west(gswm_t *gsw, client_t *c)
   }
 }
 
-void wa_fit_to_desktop(gswm_t *gsw, client_t *c)
+void wa_fit_to_workarea(gswm_t *gsw, client_t *c)
 {
   gint tmp_val;
   screen_t *scr = c->curr_screen;
@@ -887,6 +887,8 @@ void wa_fit_to_desktop(gswm_t *gsw, client_t *c)
   gint x2 = c->x + c->width;
   gint y2 = c->y + c->height;
   gint bw = GET_BORDER_WIDTH(c);
+
+  xinerama_correctloc(c);
 
 x_correct:
   if(vd->warea.x > c->x) {

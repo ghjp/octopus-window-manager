@@ -33,7 +33,7 @@ void wa_move_north(gswm_t *gsw, client_t *c);
 void wa_move_south(gswm_t *gsw, client_t *c);
 void wa_move_east(gswm_t *gsw, client_t *c);
 void wa_move_west(gswm_t *gsw, client_t *c);
-void wa_fit_to_desktop(gswm_t *gsw, client_t *c);
+void wa_fit_to_workarea(gswm_t *gsw, client_t *c);
 void wa_snap_to_borders(gswm_t *gsw, client_t *c, gboolean skip_client_snapping);
 
 #endif
