@@ -396,11 +396,13 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
 #ifdef HAVE_XF86VM
   gsw->xf86vm = XF86VidModeQueryExtension(dpy, &si, &si); 
 #endif
-  gsw->xinerama = xinerama_init(dpy);
-  g_message("Detected X extensions:%s%s%s",
-      gsw->shape ? " SHAPE": "",
-      gsw->xinerama ? " Xinerama": "",
-      gsw->xf86vm ? " XFree86-VidModeExtension": "");
+  {
+    gboolean xinerama_present = xinerama_init(dpy);
+    g_message("Detected X extensions:%s%s%s",
+        gsw->shape ? " SHAPE": "",
+        xinerama_present ? " Xinerama": "",
+        gsw->xf86vm ? " XFree86-VidModeExtension": "");
+  }
 
   _init_cursors(gsw);
 

@@ -300,7 +300,6 @@ typedef struct {
   guint numlockmask;
   gint fd_x;
   gint shape, shape_event, xf86vm;
-  gboolean xinerama;
   user_config_t ucfg;
   interaction_t cmd, action;
   gpointer xosd;
