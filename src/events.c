@@ -765,7 +765,7 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
 static void _handle_leave_event(gswm_t *gsw, XCrossingEvent *e)
 {
   gint i;
-  g_message("%s: w=0x%lx rwin=0x%lx same_screen=%d", __func__, e->window, e->root, e->same_screen);
+  TRACE(("%s: w=0x%lx rwin=0x%lx same_screen=%d", __func__, e->window, e->root, e->same_screen));
   if(!e->same_screen) {
     for(i = 0; i < gsw->num_screens; i++) {
       if(e->root == gsw->screen[i].rootwin) {
