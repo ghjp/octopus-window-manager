@@ -236,7 +236,7 @@ void create_new_client(gswm_t *gsw, Window w)
     }
   }
   g_return_if_fail(NULL != scr);
-  g_message("%s: screen #%d", __func__, state);
+  TRACE(("%s: screen #%d", __func__, state));
 
   c = g_chunk_new0(client_t, gsw->memcache_client);
   XGetTransientForHint(dpy, w, &c->trans);
