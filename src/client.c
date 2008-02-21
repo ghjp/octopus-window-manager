@@ -223,11 +223,20 @@ void create_new_client(gswm_t *gsw, Window w)
   XWMHints *wmhints;
   GSList *win_group_list;
   Display *dpy = gsw->display;
-  screen_t *scr = gsw->screen + gsw->i_curr_scr;
+  screen_t *scr = NULL;
 
   /* Window no longer exists */
   if(!XGetWindowAttributes(dpy, w, &winattr))
     return;
+
+  for(state = 0; state < gsw->num_screens; state++) {
+    if(winattr.root == gsw->screen[state].rootwin) {
+      scr = gsw->screen + state;
+      break;
+    }
+  }
+  g_return_if_fail(NULL != scr);
+  g_message("%s: screen #%d", __func__, state);
 
   c = g_chunk_new0(client_t, gsw->memcache_client);
   XGetTransientForHint(dpy, w, &c->trans);
