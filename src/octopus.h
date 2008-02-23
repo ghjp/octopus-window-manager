@@ -154,6 +154,7 @@ typedef struct {
   gboolean splash :1;
   gboolean dialog :1;
   gboolean normal :1;
+  gboolean kde_override :1;
 } window_type_t;
 
 typedef struct _client {
@@ -218,6 +219,7 @@ typedef struct {
   Atom    wm_net_wm_window_type_splash;
   Atom    wm_net_wm_window_type_dialog;
   Atom    wm_net_wm_window_type_normal;
+  Atom    wm_kde_net_wm_window_type_override;
   /* Other Root Window Messages */
   Atom    wm_net_close_window;
   Atom    wm_net_moveresize_window;

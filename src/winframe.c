@@ -336,7 +336,7 @@ static void _init_position(gswm_t *gsw, client_t *c)
   xinerama_scrdims(c->curr_screen, xinerama_current_mon(gsw), &mon_rect);
 
   if((!c->w_type.dialog && USPosition & c->xsize.flags) ||
-      ((c->w_type.toolbar || c->w_type.menu) && (USPosition|PPosition) & c->xsize.flags)) {
+      ((c->w_type.toolbar || c->w_type.menu || c->w_type.kde_override) && (USPosition|PPosition) & c->xsize.flags)) {
     c->x = c->xsize.x;
     c->y = c->xsize.y;
     fix_ewmh_position_based_on_struts(gsw, c);

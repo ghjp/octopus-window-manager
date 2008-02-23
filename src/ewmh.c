@@ -116,6 +116,7 @@ void init_ewmh_support(gswm_t *gsw)
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_window_type_splash,   "_NET_WM_WINDOW_TYPE_SPLASH");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_window_type_dialog,   "_NET_WM_WINDOW_TYPE_DIALOG");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_window_type_normal,   "_NET_WM_WINDOW_TYPE_NORMAL");
+  ADD_NET_SUPPORT(gsw->xa.wm_kde_net_wm_window_type_override, "_KDE_NET_WM_WINDOW_TYPE_OVERRIDE");
   /* Other Root Window Messages */
   ADD_NET_SUPPORT(gsw->xa.wm_net_close_window,            "_NET_CLOSE_WINDOW");
   ADD_NET_SUPPORT(gsw->xa.wm_net_moveresize_window,       "_NET_MOVERESIZE_WINDOW");
@@ -671,6 +672,10 @@ void get_ewmh_net_wm_window_type(gswm_t *gsw, client_t *c)
       if(gsw->xa.wm_net_wm_window_type_normal == wta) {
         TRACE(("%s wm_net_wm_window_type_normal", __func__));
         c->w_type.normal = TRUE;
+      }
+      if(gsw->xa.wm_kde_net_wm_window_type_override == wta) {
+        TRACE(("%s wm_kde_net_wm_window_type_override", __func__));
+        c->w_type.kde_override = TRUE;
       }
     }
     XFree(w_type_atoms);
