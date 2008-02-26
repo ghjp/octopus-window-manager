@@ -740,7 +740,7 @@ void wa_move_interactive(gswm_t *gsw, client_t *c)
 {
   _rec_t r;
 
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   /*wa_iconify(gsw,c);*/
   _drag(gsw, c, gsw->curs.move);
@@ -823,7 +823,7 @@ void wa_move_north(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->y -= (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -838,7 +838,7 @@ void wa_move_south(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->y += (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -853,7 +853,7 @@ void wa_move_east(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->x += (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -868,7 +868,7 @@ void wa_move_west(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->x -= (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
