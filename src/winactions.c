@@ -739,16 +739,24 @@ void wa_moveresize(gswm_t *gsw, client_t *c)
 void wa_move_interactive(gswm_t *gsw, client_t *c)
 {
   _rec_t r;
+  gint x_orig, y_orig;
 
-  if(c->wstate.fullscreen || c->w_type.kde_override)
+  if(c->w_type.kde_override)
     return;
+  x_orig = c->x;
+  y_orig = c->y;
   /*wa_iconify(gsw,c);*/
   _drag(gsw, c, gsw->curs.move);
+  if(x_orig != c->x)
+    c->wstate.fullscreen = c->wstate.maxi_horz = FALSE;
+  if(y_orig != c->y)
+    c->wstate.fullscreen = c->wstate.maxi_vert = FALSE;
   r.x = c->x;
   r.y = c->y;
   r.w = c->width;
   r.h = c->height;
   wframe_foreach(gsw, c->wframe, _apply_new_pos_client, &r);
+  wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
   if(gsw->alpha_processing)
     wframe_tbar_pmap_recreate(gsw, c->wframe);
   XMoveWindow(gsw->display, c->wframe->win, c->x, c->y - c->wframe->theight);
@@ -774,6 +782,8 @@ void wa_frameop_interactive(gswm_t *gsw, client_t *c)
   client_t *c_target;
   gint x_o = c->x, y_o = c->y;
 
+  if(c->wstate.fullscreen || c->w_type.kde_override)
+    return;
   /* For frame operation we always use "wire" mode */
   move_opaque_save = gsw->ucfg.move_opaque;
   gsw->ucfg.move_opaque = FALSE;
@@ -939,6 +949,8 @@ void wa_resize_interactive(gswm_t *gsw, client_t *c)
 {
   gint old_width = c->width;
 
+  if(c->w_type.kde_override)
+    return;
   _sweep(gsw, c);
   wa_do_all_size_constraints(gsw, c);
   if(G_LIKELY(c->width != old_width || gsw->alpha_processing))
