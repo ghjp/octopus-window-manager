@@ -1177,7 +1177,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
 void wa_maximize_hv(gswm_t *gsw, client_t *c, gboolean horz, gboolean vert)
 {
   TRACE(("%s horz=%d vert=%d", __func__, horz, vert));
-  if(c->w_type.dock || c->wstate.fullscreen)
+  if(c->w_type.dock || c->wstate.fullscreen || c->w_type.kde_override)
     return;
   if(horz)
     _apply_maxi_horz(gsw, c, TRUE);
@@ -1217,6 +1217,8 @@ void wa_fullscreen(gswm_t *gsw, client_t *c, gboolean on)
   screen_t *scr = c->curr_screen;
   gint bw = GET_BORDER_WIDTH(c);
 
+  if(c->w_type.kde_override)
+    return;
   if(on) { /* Switch on fullscreen mode */
     if(c->wstate.fullscreen)
       return;
