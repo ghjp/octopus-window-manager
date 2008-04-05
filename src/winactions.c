@@ -139,7 +139,7 @@ static void _snap_to_clients(client_t *c, GList *cl, gint snap_val, gboolean *x_
     client_t *ci = cl->data;
     gint bwidth_sav = ci->wframe->bwidth;
 
-    if(ci->wframe == c->wframe || ci->wstate.below)
+    if(ci->wframe == c->wframe || ci->wstate.below || ci->w_type.kde_override)
       continue;
     else if(TEST_BORDERLESS(ci)) /* Borderless client */
       ci->wframe->bwidth = 0;
