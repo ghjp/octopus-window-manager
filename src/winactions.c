@@ -139,7 +139,7 @@ static void _snap_to_clients(client_t *c, GList *cl, gint snap_val, gboolean *x_
     client_t *ci = cl->data;
     gint bwidth_sav = ci->wframe->bwidth;
 
-    if(ci->wframe == c->wframe || ci->wstate.below)
+    if(ci->wframe == c->wframe || ci->wstate.below || ci->w_type.kde_override)
       continue;
     else if(TEST_BORDERLESS(ci)) /* Borderless client */
       ci->wframe->bwidth = 0;
@@ -739,16 +739,24 @@ void wa_moveresize(gswm_t *gsw, client_t *c)
 void wa_move_interactive(gswm_t *gsw, client_t *c)
 {
   _rec_t r;
+  gint x_orig, y_orig;
 
-  if(c->wstate.fullscreen)
+  if(c->w_type.kde_override)
     return;
+  x_orig = c->x;
+  y_orig = c->y;
   /*wa_iconify(gsw,c);*/
   _drag(gsw, c, gsw->curs.move);
+  if(x_orig != c->x)
+    c->wstate.fullscreen = c->wstate.maxi_horz = FALSE;
+  if(y_orig != c->y)
+    c->wstate.fullscreen = c->wstate.maxi_vert = FALSE;
   r.x = c->x;
   r.y = c->y;
   r.w = c->width;
   r.h = c->height;
   wframe_foreach(gsw, c->wframe, _apply_new_pos_client, &r);
+  wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
   if(gsw->alpha_processing)
     wframe_tbar_pmap_recreate(gsw, c->wframe);
   XMoveWindow(gsw->display, c->wframe->win, c->x, c->y - c->wframe->theight);
@@ -774,6 +782,8 @@ void wa_frameop_interactive(gswm_t *gsw, client_t *c)
   client_t *c_target;
   gint x_o = c->x, y_o = c->y;
 
+  if(c->wstate.fullscreen || c->w_type.kde_override)
+    return;
   /* For frame operation we always use "wire" mode */
   move_opaque_save = gsw->ucfg.move_opaque;
   gsw->ucfg.move_opaque = FALSE;
@@ -823,7 +833,7 @@ void wa_move_north(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->y -= (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -838,7 +848,7 @@ void wa_move_south(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->y += (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -853,7 +863,7 @@ void wa_move_east(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->x += (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -868,7 +878,7 @@ void wa_move_west(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
   
-  if(c->wstate.fullscreen)
+  if(c->wstate.fullscreen || c->w_type.kde_override)
     return;
   c->x -= (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
   wa_snap_to_borders(gsw, c, FALSE);
@@ -939,6 +949,8 @@ void wa_resize_interactive(gswm_t *gsw, client_t *c)
 {
   gint old_width = c->width;
 
+  if(c->w_type.kde_override)
+    return;
   _sweep(gsw, c);
   wa_do_all_size_constraints(gsw, c);
   if(G_LIKELY(c->width != old_width || gsw->alpha_processing))
@@ -1165,7 +1177,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
 void wa_maximize_hv(gswm_t *gsw, client_t *c, gboolean horz, gboolean vert)
 {
   TRACE(("%s horz=%d vert=%d", __func__, horz, vert));
-  if(c->w_type.dock || c->wstate.fullscreen)
+  if(c->w_type.dock || c->wstate.fullscreen || c->w_type.kde_override)
     return;
   if(horz)
     _apply_maxi_horz(gsw, c, TRUE);
@@ -1205,6 +1217,8 @@ void wa_fullscreen(gswm_t *gsw, client_t *c, gboolean on)
   screen_t *scr = c->curr_screen;
   gint bw = GET_BORDER_WIDTH(c);
 
+  if(c->w_type.kde_override)
+    return;
   if(on) { /* Switch on fullscreen mode */
     if(c->wstate.fullscreen)
       return;

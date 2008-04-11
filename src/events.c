@@ -762,6 +762,21 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
   }
 }
 
+static void _handle_leave_event(gswm_t *gsw, XCrossingEvent *e)
+{
+  gint i;
+  TRACE(("%s: w=0x%lx rwin=0x%lx same_screen=%d", __func__, e->window, e->root, e->same_screen));
+  if(!e->same_screen) {
+    for(i = 0; i < gsw->num_screens; i++) {
+      if(e->root == gsw->screen[i].rootwin) {
+        g_message("We entered screen number %d", i);
+        gsw->i_curr_scr = i;
+        break;
+      }
+    }
+  }
+}
+
 static void _handle_focusin_event(gswm_t *gsw, XFocusInEvent *e)
 {
   client_t *clnt;
@@ -842,6 +857,9 @@ void process_xevent(gswm_t *gsw)
       break;
     case EnterNotify:
       _handle_enter_event(gsw, &ev.xcrossing);
+      break;
+    case LeaveNotify:
+      _handle_leave_event(gsw, &ev.xcrossing);
       break;
     case FocusIn:
       _handle_focusin_event(gsw, &ev.xfocus);

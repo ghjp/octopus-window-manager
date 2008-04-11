@@ -434,7 +434,7 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
 
     /* Try to get the window manager of the screen.
        If this call fails then another window manager is already running */
-    attr.event_mask = ChildMask | PropertyChangeMask | EnterWindowMask | ButtonMask;
+    attr.event_mask = ChildMask | PropertyChangeMask | EnterWindowMask | LeaveWindowMask | ButtonMask;
     XChangeWindowAttributes(dpy, srwin, CWEventMask, &attr);
 
     XDefineCursor(dpy, srwin, gsw->curs.arrow);
