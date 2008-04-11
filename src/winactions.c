@@ -376,8 +376,8 @@ static void _adapt_size_constraints(XSizeHints *xsh, gint *w, gint *h)
   }
 
   if(xsh->flags & PMaxSize) {
-    if(*w > xsh->max_width) *w = xsh->max_width;
-    if(*h > xsh->max_height) *h = xsh->max_height;
+    if(xsh->max_width && *w > xsh->max_width) *w = xsh->max_width;
+    if(xsh->max_height && *h > xsh->max_height) *h = xsh->max_height;
   }
 
   /* TODO Check the algorithm again */
