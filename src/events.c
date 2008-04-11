@@ -762,6 +762,7 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
   }
 }
 
+#if 0
 static void _handle_leave_event(gswm_t *gsw, XCrossingEvent *e)
 {
   gint i;
@@ -776,6 +777,7 @@ static void _handle_leave_event(gswm_t *gsw, XCrossingEvent *e)
     }
   }
 }
+#endif
 
 static void _handle_focusin_event(gswm_t *gsw, XFocusInEvent *e)
 {
@@ -858,9 +860,11 @@ void process_xevent(gswm_t *gsw)
     case EnterNotify:
       _handle_enter_event(gsw, &ev.xcrossing);
       break;
+#if 0
     case LeaveNotify:
       _handle_leave_event(gsw, &ev.xcrossing);
       break;
+#endif
     case FocusIn:
       _handle_focusin_event(gsw, &ev.xfocus);
       break;
