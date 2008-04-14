@@ -341,7 +341,8 @@ static void _init_position(gswm_t *gsw, client_t *c)
     c->y = c->xsize.y;
     fix_ewmh_position_based_on_struts(gsw, c);
     TRACE(("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y));
-    return;
+    if(!c->w_type.normal)
+      return;
   }
   else if(c->w_type.dialog || c->trans) {
     _mouse_place_client(gsw, c, &mon_rect, FALSE);
