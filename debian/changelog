@@ -1,3 +1,10 @@
+octopus (0.4.1-2) unstable; urgency=low
+
+  * Increased window placement a lot (especially Qt windows)
+  * Fullscreen/Maximize handling improved a lot
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Fri,  7 Mar 2008 15:42:39 +0100
+
 octopus (0.4.1-1) unstable; urgency=low
 
   * Window placement has been reworked
