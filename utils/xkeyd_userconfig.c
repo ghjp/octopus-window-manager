@@ -190,7 +190,7 @@ out1:
 void init_xml_config(user_cfg_t *ucfg_p)
 {
   ucfg_p->keysym_command_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-  ucfg_p->keycode_command_hash = g_hash_table_new_full(NULL, g_str_equal, NULL, g_free);
+  ucfg_p->keycode_command_hash = g_hash_table_new_full(NULL, g_direct_equal, NULL, g_free);
 }
 
 void finalize_xml_config(user_cfg_t *ucfg_p)
