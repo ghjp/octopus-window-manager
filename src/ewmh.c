@@ -181,6 +181,15 @@ void init_ewmh_support(gswm_t *gsw)
       g_warning("%s gethostname call failed: %s", __func__, g_strerror(errno));
 #endif
 #undef HNAME_MAXLEN
+    {
+      XClassHint *wm_class_hint = XAllocClassHint();
+      if(wm_class_hint) {
+        wm_class_hint->res_name = PACKAGE_NAME;
+        wm_class_hint->res_class = "Octopus";
+        XSetClassHint(dpy, scr->extended_hints_win, wm_class_hint);
+      }
+      X_FREE(wm_class_hint);
+    }
   }
 
   XChangeProperty(dpy, scr->rootwin, gsw->xa.wm_net_supporting_wm_check, XA_WINDOW, 32,
