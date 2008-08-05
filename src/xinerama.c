@@ -74,41 +74,45 @@ void xinerama_shutdown(void)
   g_free(xinerama_screens);
 }
 
+static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
+{
+  gint i, area, most, mosti;
+  /*
+   * determine which screen this client is mostly
+   * on by checking the area of intersection of
+   * the client's rectangle and the xinerama
+   * screen's rectangle.
+   */
+  most = mosti = 0;
+  for (i = 0; i < xinerama_count; i++) {
+    area = rect_intersection(c_rect, &xinerama_screens[i]);
+    if (area > most) {
+      most = area;
+      mosti = i;
+    }
+  }
+  TRACE(("%s: mosti=%d", __func__, mosti));
+  return xinerama_screens + mosti;
+}
+
 /*
  * maximize a client; make it as large as the screen that it
  * is mostly on.
  */
 gboolean xinerama_maximize(client_t *client)
 {
-  rect_t rect, *xir;
-  gint most, mosti;
-  gint area, i;
+  rect_t cl_rect, *xir;
   warea_t *wa = &client->curr_screen->vdesk->warea;
 
   if(G_UNLIKELY(xinerama_active)) {
     /* get a rect of client dimensions */
-    rect.x1 = client->x;
-    rect.y1 = client->y;
-    rect.x2 = client->width + rect.x1;
-    rect.y2 = client->height + rect.y1;
+    cl_rect.x1 = client->x;
+    cl_rect.y1 = client->y;
+    cl_rect.x2 = client->width + cl_rect.x1;
+    cl_rect.y2 = client->height + cl_rect.y1;
 
-    /*
-     * determine which screen this client is mostly
-     * on by checking the area of intersection of
-     * the client's rectangle and the xinerama
-     * screen's rectangle.
-     */
-    most = mosti = 0;
-    for (i = 0; i < xinerama_count; i++) {
-      area = rect_intersection(&rect, &xinerama_screens[i]);
-      if (area > most) {
-        most = area;
-        mosti = i;
-      }
-    }
-    xir = xinerama_screens + mosti;
+    xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
 
-    TRACE(("%s: mosti=%d", __func__, mosti));
     /* zoom it on the screen it's mostly on */
     if(client->wstate.maxi_horz) {
       client->x = xir->x1 < wa->x ? wa->x: xir->x1;
@@ -134,27 +138,26 @@ gboolean xinerama_maximize(client_t *client)
  */
 void xinerama_correctloc(client_t *client)
 {
-  rect_t rect;
-  gint isect, carea, i, cnt;
-  gint most, mosti;
+  rect_t cl_rect, *xir;
+  gint carea, i, cnt;
 
   /* dont do anything if no xinerama */
   if (G_LIKELY(!xinerama_active))
     return;
 
   /* get client area and rectangle */
-  rect.x1 = client->x;
-  rect.y1 = client->y;
-  rect.x2 = client->width + rect.x1;
-  rect.y2 = client->height + rect.y1;
-  carea = RECTWIDTH(&rect) * RECTHEIGHT(&rect);
+  cl_rect.x1 = client->x;
+  cl_rect.y1 = client->y;
+  cl_rect.x2 = client->width + cl_rect.x1;
+  cl_rect.y2 = client->height + cl_rect.y1;
+  carea = RECTWIDTH(&cl_rect) * RECTHEIGHT(&cl_rect);
 
   /*
    * determine if the client is stretched across more
    * than one xinerama screen.
    */
   for (i = 0, cnt = 0; i < xinerama_count; i++) {
-    isect = rect_intersection(&rect, &xinerama_screens[i]);
+    gint isect = rect_intersection(&cl_rect, &xinerama_screens[i]);
     if (isect) {
       if (isect == carea)
         return;
@@ -171,30 +174,23 @@ void xinerama_correctloc(client_t *client)
    */
 correct:
   TRACE(("found a window \"%s\" that needs correction", client->utf8_name));
-  most = mosti = 0;
-  for (i = 0; i < xinerama_count; i++) {
-    isect = rect_intersection(&rect, &xinerama_screens[i]);
-    if (isect > most) {
-      most = isect;
-      mosti = i;
-    }
-  }
+  xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
 
   /* make sure it is small enough to fit */
-  if (RECTWIDTH(&rect) >= RECTWIDTH(&xinerama_screens[mosti]))
+  if (RECTWIDTH(&cl_rect) >= RECTWIDTH(xir))
     return;
-  if (RECTHEIGHT(&rect) >= RECTWIDTH(&xinerama_screens[mosti]))
+  if (RECTHEIGHT(&cl_rect) >= RECTWIDTH(xir))
     return;
 
   /* push it into the screen */
-  if (client->x < xinerama_screens[mosti].x1)
-    client->x = xinerama_screens[mosti].x1;
-  else if (client->x + client->width > xinerama_screens[mosti].x2)
-    client->x = xinerama_screens[mosti].x2 - client->width;
-  if (client->y < xinerama_screens[mosti].y1)
-    client->y = xinerama_screens[mosti].y1;
-  else if (client->y + client->height > xinerama_screens[mosti].y2)
-    client->y = xinerama_screens[mosti].y2 - client->height;
+  if (client->x < xir->x1)
+    client->x = xir->x1;
+  else if (client->x + client->width > xir->x2)
+    client->x = xir->x2 - client->width;
+  if (client->y < xir->y1)
+    client->y = xir->y1;
+  else if (client->y + client->height > xir->y2)
+    client->y = xir->y2 - client->height;
 }
 
 /*
