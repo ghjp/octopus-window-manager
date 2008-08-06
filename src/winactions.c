@@ -963,9 +963,11 @@ void wa_resize_interactive(gswm_t *gsw, client_t *c)
 G_INLINE_FUNC void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
 {
   screen_t *scr = c->curr_screen;
-  gint east_inc = (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
-  gint new_width;
+  gint east_inc, new_width, sw;
 
+  /* The argument east_inc is a dummy here. We don't need the height */
+  xinerama_get_screensize_on_which_client_resides(c, &sw, &east_inc);
+  east_inc = (sw * gsw->ucfg.resize_inc_fraction) / 100;
   if(!grow)
     east_inc = -east_inc;
   if(0 > (new_width = c->width + east_inc))
@@ -976,9 +978,11 @@ G_INLINE_FUNC void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
 G_INLINE_FUNC void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
 {
   screen_t *scr = c->curr_screen;
-  gint south_inc = (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
-  gint new_height;
+  gint south_inc, sh, new_height;
 
+  /* The argument south_inc is a dummy here. We don't need the width */
+  xinerama_get_screensize_on_which_client_resides(c, &south_inc, &sh);
+  south_inc = (sh * gsw->ucfg.resize_inc_fraction) / 100;
   if(!grow)
     south_inc = -south_inc;
   if(0 > (new_height = c->height + south_inc))
@@ -989,9 +993,11 @@ G_INLINE_FUNC void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
 G_INLINE_FUNC void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
 {
   screen_t *scr = c->curr_screen;
-  gint north_inc = (scr->dpy_height * gsw->ucfg.resize_inc_fraction) / 100;
-  gint new_height;
+  gint north_inc, sh, new_height;
 
+  /* The argument north_inc is a dummy here. We don't need the width */
+  xinerama_get_screensize_on_which_client_resides(c, &north_inc, &sh);
+  north_inc = (sh * gsw->ucfg.resize_inc_fraction) / 100;
   if(!grow)
     north_inc = -north_inc;
   if(0 > (new_height = c->height + north_inc))
@@ -1003,9 +1009,11 @@ G_INLINE_FUNC void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
 G_INLINE_FUNC void _modify_size_west(gswm_t *gsw, client_t *c, gboolean grow)
 {
   screen_t *scr = c->curr_screen;
-  gint west_inc = (scr->dpy_width * gsw->ucfg.resize_inc_fraction) / 100;
-  gint new_width;
+  gint west_inc, sw, new_width;
 
+  /* The argument west_inc is a dummy here. We don't need the height */
+  xinerama_get_screensize_on_which_client_resides(c, &sw, &west_inc);
+  west_inc = (sw * gsw->ucfg.resize_inc_fraction) / 100;
   if(!grow)
     west_inc = -west_inc;
   if(0 > (new_width = c->width + west_inc))
