@@ -77,6 +77,9 @@ void xinerama_shutdown(void)
 static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
 {
   gint i, area, most, mosti;
+
+  /* This function is only valid on a xinerama setup */
+  g_return_val_if_fail(xinerama_active, NULL);
   /*
    * determine which screen this client is mostly
    * on by checking the area of intersection of
@@ -105,13 +108,19 @@ static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
 
 void xinerama_get_screensize_on_which_client_resides(client_t *client, gint *width, gint *height)
 {
-  rect_t cl_rect, *xir;
-  /* get a rect of client dimensions */
-  FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
+  if(G_UNLIKELY(xinerama_active)) {
+    rect_t cl_rect, *xir;
+    /* get a rect of client dimensions */
+    FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
 
-  xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
-  *width = xir->x2 - xir->x1;
-  *height = xir->y2 - xir->y1;
+    xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
+    *width = xir->x2 - xir->x1;
+    *height = xir->y2 - xir->y1;
+  }
+  else {
+    *width = client->curr_screen->dpy_width;
+    *height = client->curr_screen->dpy_height;
+  }
 }
 
 /*
