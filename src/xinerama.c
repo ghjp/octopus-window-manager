@@ -95,6 +95,23 @@ static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
   return xinerama_screens + mosti;
 }
 
+#define FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client) \
+  G_STMT_START { \
+    (cl_rect).x1 = (cl_rect).x2 = (client)->x; \
+    (cl_rect).y1 = (cl_rect).y2 = (client)->y; \
+    (cl_rect).x2 += (client)->width; \
+    (cl_rect).y2 += (client)->height; \
+  } G_STMT_END
+
+void xinerama_get_screensize_on_which_client_resides(client_t *client, gint *width, gint *height)
+{
+  rect_t cl_rect, *xir;
+  /* get a rect of client dimensions */
+  FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
+
+  xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
+}
+
 /*
  * maximize a client; make it as large as the screen that it
  * is mostly on.
@@ -106,10 +123,7 @@ gboolean xinerama_maximize(client_t *client)
 
   if(G_UNLIKELY(xinerama_active)) {
     /* get a rect of client dimensions */
-    cl_rect.x1 = client->x;
-    cl_rect.y1 = client->y;
-    cl_rect.x2 = client->width + cl_rect.x1;
-    cl_rect.y2 = client->height + cl_rect.y1;
+    FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
 
     xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
 
@@ -146,10 +160,7 @@ void xinerama_correctloc(client_t *client)
     return;
 
   /* get client area and rectangle */
-  cl_rect.x1 = client->x;
-  cl_rect.y1 = client->y;
-  cl_rect.x2 = client->width + cl_rect.x1;
-  cl_rect.y2 = client->height + cl_rect.y1;
+  FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
   carea = RECTWIDTH(&cl_rect) * RECTHEIGHT(&cl_rect);
 
   /*
