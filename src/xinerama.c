@@ -110,6 +110,8 @@ void xinerama_get_screensize_on_which_client_resides(client_t *client, gint *wid
   FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
 
   xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
+  *width = xir->x2 - xir->x1;
+  *height = xir->y2 - xir->y1;
 }
 
 /*
