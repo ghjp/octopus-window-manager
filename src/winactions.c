@@ -962,7 +962,6 @@ void wa_resize_interactive(gswm_t *gsw, client_t *c)
 
 G_INLINE_FUNC void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
 {
-  screen_t *scr = c->curr_screen;
   gint east_inc, new_width, sw;
 
   /* The argument east_inc is a dummy here. We don't need the height */
@@ -977,7 +976,6 @@ G_INLINE_FUNC void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
 
 G_INLINE_FUNC void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
 {
-  screen_t *scr = c->curr_screen;
   gint south_inc, sh, new_height;
 
   /* The argument south_inc is a dummy here. We don't need the width */
@@ -992,7 +990,6 @@ G_INLINE_FUNC void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
 
 G_INLINE_FUNC void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
 {
-  screen_t *scr = c->curr_screen;
   gint north_inc, sh, new_height;
 
   /* The argument north_inc is a dummy here. We don't need the width */
@@ -1008,7 +1005,6 @@ G_INLINE_FUNC void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
 
 G_INLINE_FUNC void _modify_size_west(gswm_t *gsw, client_t *c, gboolean grow)
 {
-  screen_t *scr = c->curr_screen;
   gint west_inc, sw, new_width;
 
   /* The argument west_inc is a dummy here. We don't need the height */
