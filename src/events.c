@@ -106,17 +106,11 @@ static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
     case XK_Page_Down:
       switch_vdesk_up(gsw);
       break;
-    case XK_F1:
-      switch_vdesk(gsw, 0);
+    case XK_F1 ... XK_F12:
+      switch_vdesk(gsw, ks - XK_F1);
       break;
-    case XK_F2:
-      switch_vdesk(gsw, 1);
-      break;
-    case XK_F3:
-      switch_vdesk(gsw, 2);
-      break;
-    case XK_F4:
-      switch_vdesk(gsw, 3);
+    case XK_1 ... XK_9:
+      switch_vdesk(gsw, ks - XK_1);
       break;
     case XK_r:
       action_system_interpret(gsw, "restart");

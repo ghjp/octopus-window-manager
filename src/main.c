@@ -246,8 +246,12 @@ static void _scan_clients_from_screen(gswm_t *gsw)
   XUngrabServer(dpy);
 }
 
-static void _inst_root_kbd_shortcuts(Display *dpy, Window srwin, guint mod_mask)
+static void _inst_root_kbd_shortcuts(gswm_t *gsw, guint mod_mask)
 {
+  Display *dpy = gsw->display;
+  Window srwin = gsw->screen[gsw->i_curr_scr].rootwin;
+  gint i, num_vd = MIN(12, gsw->screen[gsw->i_curr_scr].num_vdesk);
+
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Return")),
       mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("Page_Up")),
@@ -260,14 +264,17 @@ static void _inst_root_kbd_shortcuts(Display *dpy, Window srwin, guint mod_mask)
       mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("a")),
       ShiftMask|mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F1")),
-      mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F2")),
-      mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F3")),
-      mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
-  XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("F4")),
-      mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
+  for(i = 1; i <= num_vd; i++) {
+    gchar keysym_name[4];
+    g_snprintf(keysym_name, sizeof(keysym_name), "F%d", i);
+    XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym(keysym_name)),
+        mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
+    if(10 > i) {
+      g_snprintf(keysym_name, sizeof(keysym_name), "%d", i);
+      XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym(keysym_name)),
+          mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
+    }
+  }
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("e")),
       mod_mask, srwin, True, GrabModeAsync, GrabModeAsync);
   XGrabKey(dpy, XKeysymToKeycode(dpy, XStringToKeysym("i")),
@@ -295,8 +302,8 @@ void setup_root_kb_shortcuts(gswm_t *gsw)
   XUngrabButton(dpy, AnyButton, AnyModifier, srwin);
   XUngrabKey(dpy, AnyKey, AnyModifier, srwin);
   /* TODO CFG Don't hardcode the key binding */
-  _inst_root_kbd_shortcuts(dpy, srwin, mod_mask);
-  _inst_root_kbd_shortcuts(dpy, srwin, mod_mask | gsw->numlockmask);
+  _inst_root_kbd_shortcuts(gsw, mod_mask);
+  _inst_root_kbd_shortcuts(gsw, mod_mask | gsw->numlockmask);
 }
 
 void set_root_prop_window(gswm_t *gsw, Atom at, glong val)

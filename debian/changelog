@@ -1,3 +1,13 @@
+octopus (0.4.3-1) unstable; urgency=low
+
+  * Keyboard shortcuts added for vdesk switching if more than 4 virtual
+    desktops are configured
+  * vdesk change is also possible with keys 1 to 9 (Not only with the
+    function keys F1 to F12. Some keyboards do not possess good function
+    keys (for example the smaller netbooks).
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Mon,  5 Jan 2009 12:48:02 +0100
+
 octopus (0.4.2-1) unstable; urgency=low
 
   * The resize fraction in xinerama mode depends of the actual screen
