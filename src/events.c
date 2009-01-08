@@ -265,6 +265,10 @@ static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
         break;
     }
   }
+  else if((clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window)))) {
+    TRACE(("%s: Button click inside client '%s' detected", __func__, clnt->utf8_name));
+    XAllowEvents(gsw->display, ReplayPointer, CurrentTime);
+  }
 }
 
 static void _handle_buttonrelease_event(gswm_t *gsw, XButtonReleasedEvent *e)
