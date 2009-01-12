@@ -569,11 +569,6 @@ void get_mouse_position(gswm_t *gsw, gint *x, gint *y)
       &mouse_root, &mouse_win, x, y, &win_x, &win_y, &mask);  
 }
 
-void lower_win(gswm_t *gsw, client_t *c)
-{
-    XLowerWindow(gsw->display, c->wframe->win);
-}
-
 client_t *get_next_focusable_client(gswm_t *gsw)
 {
   GList *cle;
