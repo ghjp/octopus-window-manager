@@ -1,8 +1,9 @@
 octopus (0.4.3-2) unstable; urgency=low
 
   * Focus new client if the mouse is pressed inside this client
+  * React only any of the 3 buttons
 
- -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Thu,  8 Jan 2009 21:09:13 +0100
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 18 Jan 2009 16:00:18 +0100
 
 octopus (0.4.3-1) unstable; urgency=low
 
