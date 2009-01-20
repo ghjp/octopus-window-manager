@@ -262,6 +262,83 @@ application is used. But it can be overridden in the configuration file.
 .BI "jump \fIpattern\fR"
 Search a window with \fIpattern\fR in its title name. If a window is found
 jump to its virtual desktop, raise it and set the input focus to this window.
+.SS KEYBOARD SHORTCUTS
+.B octopus
+is optimized for a keyboard centric working model. Especially software engineers who have to write
+a lot of code or system administrators will benefit from the keyboard mode. To distinguish the shortcuts
+for the window manager from the keys for the applications a modifier key is used by \fBoctopus\fR. The default one is the \fIAlt\fR key. But you can redefine this key by the configuration file. An excellent
+alternative on Unix machines is the \fIWindows\fR key. The following shortcuts inside \fBoctopus\fR
+are defined:
+.TP
+.BI Mod\-Tab
+.I frame\-client\-next
+.TP
+.BI Mod\-a
+.I attach
+.TP
+.BI Mod\-A
+.I frame-attach
+.TP
+.BI Mod\-d
+.I detach
+.TP
+.BI Mod\-e
+.I exec
+.TP
+.BI Mod\-i
+Start OSD action input system. All actions specified in section
+.RB "\*(lqUSER INTERFACE\*(rq"
+can be entered here with command completion support.
+.TP
+.BI Mod\-m
+this shortcut performs a
+.I unmaximize\-full
+or
+.I maximize\-full
+operation depending on if the client is already maximized or not.
+.TP
+.BI Mod\-v
+this shortcut performs a
+.I unmaximize\-vert
+or
+.I maximize\-vert
+operation depending on if the client is already vertically maximized or not.
+.TP
+.BI Mod\-h
+this shortcut performs a
+.I unmaximize\-horz
+or
+.I maximize\-horz
+operation depending on if the client is already horizontally maximized or not.
+.TP
+.BI Mod\-Return
+.I xterm
+.TP
+.BI Mod\-Page_Up
+.I vdesk\-prev
+.TP
+.BI Mod\-Page_Down
+.I vdesk\-next
+.TP
+.BI Mod\-F1 .. Mod\-F12
+.I vdesk\-goto 0
+.br
+ ..
+.br
+.I vdesk\-goto 12
+.br
+These shortcuts are defined according to the number of virtual desktops which are defined. The default
+is 4 desktops.
+.TP
+.BI Mod\-1 .. Mod\-9
+.I vdesk\-goto 0
+.br
+ ..
+.br
+.I vdesk\-goto 8
+.br
+These shortcuts are defined according to the number of virtual desktops which are defined. The default
+is 4 desktops.
 .SH FILES
 The
 .B octopus
