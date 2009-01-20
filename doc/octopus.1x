@@ -62,92 +62,109 @@ by builtin commands which can be entered by the OSD interface.
 A summary of commands is included below.
 .TP
 .BI attach
-foo foo
+Pop the most recent window from the stack an place it onto the current desktop.
 .TP
 .BI attach\-all
-foo foo
+Pop all remaining windows from the stack an place them onto the current desktop.
 .TP
 .BI client\-next
-foo foo
+Set input focus to the next client of the current desktop. This command
+ignores the grouping of the clients by frames. If you want to focus the next
+frame use the command \fBframe\-next\fR.
 .TP
 .BI delete\-client
-foo foo
+Kill the actually focused client gracefully.
 .TP
 .BI detach
-foo foo
+Push the actually focused client onto the top of the window stack
 .TP
 .BI dump\-state
-foo foo
+Print the internal state of the window manager. This is mainly useful
+for debugging only.
 .TP
-.BI "exec \fIcommand\fR"
+.BI exec\ \fIcommand\fR
 Execute the given shell
 .I command
 in the background. This action is normally used to start a GUI application
 like a web browser.
 .TP
-.BI "exec\-term \fIcommand\fR"
+.BI exec\-term\ \fIcommand\fR
 Execute the given shell
 .I command
 in a X terminal environment. This action is normally used to start applications
 which need a terminal.
 .TP
 .BI fit\-to\-workarea
-foo foo
+If the actually focused client is not completely placed on the workarea
+this command helps you to reach this goal.
 .TP
 .BI frame\-attach
-foo foo
+Pop the most recent window from the stack an place it into the actually
+focused frame.
 .TP
 .BI frame\-client\-next
 Focus next client inside the actually focused frame. If only on application
 is inside this frame the operation does nothing relevant.
 .TP
 .BI frame\-next
-foo foo
+Set input focus to the client in the next frame of the current desktop.
 .TP
 .BI fullscreen\-on
-foo foo
+Set frame in fullscreen mode. This is useful for applications which either
+don't support fullscreen or in a wrong way. Please remember: This an
+.B octopus
+specific way to this.
 .TP
 .BI fullscreen\-off
-foo foo
+Switch of fullscreen again.
 .TP
 .BI grow\-east
-foo foo
+Resize actual frame to the right side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-north
-foo foo
+Resize actual frame to the top by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-north\-east
-foo foo
+Resize actual frame to the top and the right side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-north\-west
-foo foo
+Resize actual frame to the top and the left side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-south
-foo foo
+Resize actual frame to the bottom by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-south\-east
-foo foo
+Resize actual frame to the bottom and the right side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-south\-west
-foo foo
+Resize actual frame to the bottom and the left side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI grow\-west
+Resize actual frame to the the left side by a percentage value which can be redfined
+in the configuration file.
 foo foo
 .TP
 .BI kill\-client
-foo foo
+Kill the actually focused client the hard way toget ride of it.
 .TP
 .BI lower
-foo foo
+Lower the frame inside the frame stack hirarchy.
 .TP
 .BI maximize\-full
-foo foo
+Maximize the frame across the whole workarea.
 .TP
 .BI maximize\-horz
-foo foo
+Maximize the frame across the whole horizontal workarea.
 .TP
 .BI maximize\-vert
-foo foo
+Maximize the frame across the whole vertical workarea.
 .TP
 .BI move\-east
 foo foo
