@@ -45,6 +45,9 @@ focus behaviour
 .I Autoraise
 of windows if they are entered by the mouse
 .IP "\(bu" 4
+.I "Snap to border"
+behaviour to get smarter window placement
+.IP "\(bu" 4
 Standard conform Xinerama support
 .IP "\(bu" 4
 Titlebars and shaped windows
@@ -56,7 +59,7 @@ Full UTF support for the titlebars.
 Xft font support (anti\-aliased fonts) through libcairo.
 .IP "\(bu" 4
 EWMH conform
-.PP
+.SH USAGE
 As already mentioned above the window manager can be completely controlled
 by builtin commands which can be entered by the OSD interface.
 A summary of commands is included below.
@@ -119,43 +122,42 @@ specific way to this.
 Switch of fullscreen again.
 .TP
 .BI grow\-east
-Resize actual frame to the right side by a percentage value which can be redfined
+Increase size of actual frame to the right side by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-north
-Resize actual frame to the top by a percentage value which can be redfined
+Increase size of actual frame to the top by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-north\-east
-Resize actual frame to the top and the right side by a percentage value which can be redfined
+Increase size of actual frame to the top and the right side by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-north\-west
-Resize actual frame to the top and the left side by a percentage value which can be redfined
+Increase size of actual frame to the top and the left side by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-south
-Resize actual frame to the bottom by a percentage value which can be redfined
+Increase size of actual frame to the bottom by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-south\-east
-Resize actual frame to the bottom and the right side by a percentage value which can be redfined
+Increase size of actual frame to the bottom and the right side by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-south\-west
-Resize actual frame to the bottom and the left side by a percentage value which can be redfined
+Increase size of actual frame to the bottom and the left side by a percentage value which can be redfined
 in the configuration file.
 .TP
 .BI grow\-west
-Resize actual frame to the the left side by a percentage value which can be redfined
+Increase size of actual frame to the left side by a percentage value which can be redfined
 in the configuration file.
-foo foo
 .TP
 .BI kill\-client
 Kill the actually focused client the hard way toget ride of it.
 .TP
 .BI lower
-Lower the frame inside the frame stack hirarchy.
+Lower the frame inside the frame stack hierarchy.
 .TP
 .BI maximize\-full
 Maximize the frame across the whole workarea.
@@ -167,73 +169,86 @@ Maximize the frame across the whole horizontal workarea.
 Maximize the frame across the whole vertical workarea.
 .TP
 .BI move\-east
-foo foo
+Move the frame by a percentage of the screen width to the right side.
 .TP
 .BI move\-north
-foo foo
+Move the frame by a percentage of the screen height to the upper workarea border.
 .TP
 .BI move\-south
-foo foo
+Move the frame by a percentage of the screen height to the bottom workarea border.
 .TP
 .BI move\-west
-foo foo
+Move the frame by a percentage of the screen width to the left side.
 .TP
 .BI quit
-foo foo
+Stop the execution of the window manager.
 .TP
 .BI raise
-foo foo
+Raise the frame to the top of the window hierarchy.
 .TP
 .BI rehash
-foo foo
+This window manager supports command completion. This action rescans all the executables which
+can be found in the directories specified through the
+.IB PATH
+environment variable.
 .TP
 .BI restart
-foo foo
+Restarts the window manager. If you make changes to the configuration file and you want that the
+changes get immediately effective than perform this action.
 .TP
 .BI shrink\-east
-foo foo
+Decrease size of actual frame to the right side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-north
-foo foo
+Decrease size of actual frame to the top by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-north\-east
-foo foo
+Decrease size of actual frame to the bottom and the right side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-north\-west
-foo foo
+Decrease size of actual frame to the top and the left side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-south
-foo foo
+Decrease size of actual frame to the bottom by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-south\-east
-foo foo
+Decrease size of actual frame to the bottom and the right side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-south\-west
-foo foo
+Decrease size of actual frame to the bottom and the left side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI shrink\-west
-foo foo
+Decrease size of actual frame to the left side by a percentage value which can be redfined
+in the configuration file.
 .TP
 .BI toggle\-sticky
-foo foo
+Toggle the sticky property of a window. Sticky windows can be seen on any virtual desktop.
 .TP
 .BI unmaximize\-full
-foo foo
+Undo the maximization of the frame across the whole workarea.
 .TP
 .BI unmaximize\-horz
-foo foo
+Undo the horizontal maximization of the frame.
 .TP
 .BI unmaximize\-vert
-foo foo
+Undo the vertical maximization of the frame.
 .TP
 .BI vdesk\-next
-foo foo
+Switch to the next virtual desktop.
 .TP
 .BI vdesk\-prev
-foo foo
+Switch to the previous virtual desktop.
 .TP
-.BI vdesk\-goto 
-foo foo
+.BI "vdesk\-goto \fInumber\fR"
+Switch to the virtual desktop specified by
+.I number
 .TP
 .BI xterm
 Start a new X terminal emulator. As default the
@@ -246,6 +261,9 @@ jump to its virtual desktop, raise it and set the input focus to this window.
 
 
 .SH FILES
+The
+.B octopus
+config file is located at
 .PP
 .nf
 .I $HOME/.config/octopus/config.xml
@@ -255,6 +273,10 @@ jump to its virtual desktop, raise it and set the input focus to this window.
 This variable is used to determine which X server to use.
 .IP HOME
 This variable is used to locate the user specific configuration files.
+.IP PATH
+This variable is used by the
+.I rehash
+action to find programs which can be executed later by \fBoctopus\fR.
 .SH "SEE ALSO"
 .BR octopus_setbg (1x),
 .BR octopus_xkeyd (1x).
