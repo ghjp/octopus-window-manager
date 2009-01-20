@@ -1,0 +1,248 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH octopus 1x "January 20, 2009"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+octopus \- a lightweight x11 window manager
+.SH SYNOPSIS
+.B octopus
+.SH DESCRIPTION
+.B octopus
+is a window manager for the X Window System. It provides the following features:
+.IP "\(bu" 4
+Possibility to group a multitude of application windows in a single frame
+(Tabbed windows)
+.IP "\(bu" 4
+Window stack. You can push/pop windows to/from this stack to move windows from
+one virtual desktop to another.
+.IP "\(bu" 4
+OSD CLI (on-screen command line interface) with command completion
+.IP "\(bu" 4
+Built in scripting support. Every window manager action can be accessed by a
+built in command.
+.IP "\(bu" 4
+The window manager can be expanded by your own user defined commands.
+The commands are composed of already defined commands.
+.IP "\(bu" 4
+Help to discover windows by name
+.IP "\(bu" 4
+.I Focus-follows-mouse 
+focus behaviour
+.IP "\(bu" 4
+.I Autoraise
+of windows if they are entered by the mouse
+.IP "\(bu" 4
+Standard conform Xinerama support
+.IP "\(bu" 4
+Titlebars and shaped windows
+.IP "\(bu" 4
+Transparency of the titlebar
+.IP "\(bu" 4
+Full UTF support for the titlebars.
+.IP "\(bu" 4
+Xft font support (anti\-aliased fonts) through libcairo.
+.IP "\(bu" 4
+EWMH conform
+.PP
+As already mentioned above the window manager can be completely controlled
+by builtin commands which can be entered by the OSD interface.
+A summary of commands is included below.
+.TP
+.BI attach
+foo foo
+.TP
+.BI attach\-all
+foo foo
+.TP
+.BI client\-next
+foo foo
+.TP
+.BI delete\-client
+foo foo
+.TP
+.BI detach
+foo foo
+.TP
+.BI dump\-state
+foo foo
+.TP
+.BI "exec \fIcommand\fR"
+Execute the given shell
+.I command
+in the background. This action is normally used to start a GUI application
+like a web browser.
+.TP
+.BI "exec\-term \fIcommand\fR"
+Execute the given shell
+.I command
+in a X terminal environment. This action is normally used to start applications
+which need a terminal.
+.TP
+.BI fit\-to\-workarea
+foo foo
+.TP
+.BI frame\-attach
+foo foo
+.TP
+.BI frame\-client\-next
+Focus next client inside the actually focused frame. If only on application
+is inside this frame the operation does nothing relevant.
+.TP
+.BI frame\-next
+foo foo
+.TP
+.BI fullscreen\-on
+foo foo
+.TP
+.BI fullscreen\-off
+foo foo
+.TP
+.BI grow\-east
+foo foo
+.TP
+.BI grow\-north
+foo foo
+.TP
+.BI grow\-north\-east
+foo foo
+.TP
+.BI grow\-north\-west
+foo foo
+.TP
+.BI grow\-south
+foo foo
+.TP
+.BI grow\-south\-east
+foo foo
+.TP
+.BI grow\-south\-west
+foo foo
+.TP
+.BI grow\-west
+foo foo
+.TP
+.BI kill\-client
+foo foo
+.TP
+.BI lower
+foo foo
+.TP
+.BI maximize\-full
+foo foo
+.TP
+.BI maximize\-horz
+foo foo
+.TP
+.BI maximize\-vert
+foo foo
+.TP
+.BI move\-east
+foo foo
+.TP
+.BI move\-north
+foo foo
+.TP
+.BI move\-south
+foo foo
+.TP
+.BI move\-west
+foo foo
+.TP
+.BI quit
+foo foo
+.TP
+.BI raise
+foo foo
+.TP
+.BI rehash
+foo foo
+.TP
+.BI restart
+foo foo
+.TP
+.BI shrink\-east
+foo foo
+.TP
+.BI shrink\-north
+foo foo
+.TP
+.BI shrink\-north\-east
+foo foo
+.TP
+.BI shrink\-north\-west
+foo foo
+.TP
+.BI shrink\-south
+foo foo
+.TP
+.BI shrink\-south\-east
+foo foo
+.TP
+.BI shrink\-south\-west
+foo foo
+.TP
+.BI shrink\-west
+foo foo
+.TP
+.BI toggle\-sticky
+foo foo
+.TP
+.BI unmaximize\-full
+foo foo
+.TP
+.BI unmaximize\-horz
+foo foo
+.TP
+.BI unmaximize\-vert
+foo foo
+.TP
+.BI vdesk\-next
+foo foo
+.TP
+.BI vdesk\-prev
+foo foo
+.TP
+.BI vdesk\-goto 
+foo foo
+.TP
+.BI xterm
+Start a new X terminal emulator. As default the
+.I xterm
+application is used. But it can be overridden in the configuration file.
+.TP
+.BI "jump \fIpattern\fR"
+Search a window with \fIpattern\fR in its title name. If a window is found
+jump to its virtual desktop, raise it and set the input focus to this window.
+
+
+.SH FILES
+.PP
+.nf
+.I $HOME/.config/octopus/config.xml
+.fi
+.SH "ENVIRONMENT VARIABLES"
+.IP DISPLAY
+This variable is used to determine which X server to use.
+.IP HOME
+This variable is used to locate the user specific configuration files.
+.SH "SEE ALSO"
+.BR octopus_setbg (1x),
+.BR octopus_xkeyd (1x).
+.SH AUTHOR
+octopus was written by Dr. Johann Pfefferl <pfefferl@gmx.net>.
+.PP
+This manual page was written by Dr. Johann Pfefferl <pfefferl@gmx.net>,
+for the Debian project (but may be used by others).
