@@ -21,7 +21,11 @@ octopus \- a lightweight x11 window manager
 .B octopus
 .SH DESCRIPTION
 .B octopus
-is a window manager for the X Window System. It provides the following features:
+is a window manager for the X Window System. It is intended mainly for experienced users
+which do not need a full featured environment like KDE or Gnome. The final desktop is lightweight
+and fast with an advanced user interface. \fBoctopus\fR focuses on efficient window management with
+execellent keyboard support.
+.SS FEATURES
 .IP "\(bu" 4
 Possibility to group a multitude of application windows in a single frame
 (Tabbed windows)
@@ -59,7 +63,7 @@ Full UTF support for the titlebars.
 Xft font support (anti\-aliased fonts) through libcairo.
 .IP "\(bu" 4
 EWMH conform
-.SH USAGE
+.SS USER INTERFACE
 As already mentioned above the window manager can be completely controlled
 by builtin commands which can be entered by the OSD interface.
 A summary of commands is included below.
@@ -258,8 +262,6 @@ application is used. But it can be overridden in the configuration file.
 .BI "jump \fIpattern\fR"
 Search a window with \fIpattern\fR in its title name. If a window is found
 jump to its virtual desktop, raise it and set the input focus to this window.
-
-
 .SH FILES
 The
 .B octopus
