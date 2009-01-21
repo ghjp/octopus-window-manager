@@ -24,7 +24,8 @@ octopus_xkeyd \- A utility for binding commands to a hot key.
 is a small utility to grab keys in X and start an associated shell command.
 It is intended to be used as a companion utility for the
 .B octopus
-window manager. But it can also be used standalone.
+window manager. But it can also be used standalone. This tool comes in very handy
+if you have a keyboard with special multimedia or internet hotkeys.
 .SH USAGE
 You have to create a file
 .I $HOME/.config/octopus/xkeyb.xml
