@@ -171,7 +171,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-man_MANS = octopus.1x
+man_MANS = octopus.1
 EXTRA_DIST = $(man_MANS)
 all: all-am
 
