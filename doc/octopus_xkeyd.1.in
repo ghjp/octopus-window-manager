@@ -16,7 +16,7 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-octopus_xkeyd \- A utility for binding commands to a hot key.
+octopus_xkeyd \- An utility for binding commands to a hot key.
 .SH SYNOPSIS
 .B octopus_xkeyd
 .SH DESCRIPTION
