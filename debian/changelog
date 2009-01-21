@@ -1,3 +1,9 @@
+octopus (0.4.3-3) unstable; urgency=low
+
+  * Added manual pages and example configuration files for the provided programs.
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Wed, 21 Jan 2009 20:33:42 +0100
+
 octopus (0.4.3-2) unstable; urgency=low
 
   * Focus new client if the mouse is pressed inside this client
