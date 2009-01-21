@@ -114,5 +114,5 @@ else
 	AC_MSG_RESULT([no])
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile utils/Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile utils/Makefile doc/Makefile examples/Makefile])
 AC_OUTPUT

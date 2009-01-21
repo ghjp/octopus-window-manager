@@ -1,2 +1,2 @@
-SUBDIRS = src utils doc
+SUBDIRS = src utils doc examples
 EXTRA_DIST = debian

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<octopus version="@PACKAGE_VERSION@">
+  <config model="IBM Thinkpad R51">
+  
+    <!-- User define functions -->
+  
+    <userdef keysym="XF86AudioRaiseVolume" command="amixer -q sset PCM,0 2%+"/>
+    <userdef keysym="XF86AudioLowerVolume" command="amixer -q sset PCM,0 2%-"/>
+    <userdef keysym="XF86AudioMute"        command="amixer -q sset Master,0 toggle"/>
+    <userdef keysym="XF86Eject"            command="eject"/>
+    <userdef keycode="159"                 command="xine"/>
+  </config>
+</octopus>
