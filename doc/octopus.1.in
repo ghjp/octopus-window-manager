@@ -395,13 +395,17 @@ are performed. Which one depends on thr gravity setting of the window.
 .BI Mod\-Home
 .I fit\-to\-workarea
 .SH FILES
-The
+The optional personal
 .B octopus
-config file is located at
+config file could be located at
 .PP
 .nf
 .I $HOME/.config/octopus/config.xml
 .fi
+.PP
+An example configuration file can be found here
+.nf
+.I @pkgdatadir@/config.xml
 .SH "ENVIRONMENT VARIABLES"
 .IP DISPLAY
 This variable is used to determine which X server to use.

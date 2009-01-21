@@ -8,3 +8,5 @@ config.xml: config.xml.in
 
 xkeyb.xml: xkeyb.xml.in
 	$(edit) $< >$@
+
+MOSTLYCLEANFILES = $(pkgdata_DATA)

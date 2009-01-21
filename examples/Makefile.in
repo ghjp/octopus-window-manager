@@ -182,6 +182,7 @@ pkgdata_DATA = config.xml xkeyb.xml
 edit = sed \
        -e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),g'
 
+MOSTLYCLEANFILES = $(pkgdata_DATA)
 all: all-am
 
 .SUFFIXES:
@@ -292,6 +293,7 @@ install-strip:
 	  `test -z '$(STRIP)' || \
 	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
 mostlyclean-generic:
+	-test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 
 clean-generic:
 
