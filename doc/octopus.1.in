@@ -314,6 +314,9 @@ operation depending on if the client is already horizontally maximized or not.
 .BI Mod\-Return
 .I xterm
 .TP
+.BI Mod\-Escape
+.I delete\-client
+.TP
 .BI Mod\-Page_Up
 .I vdesk\-prev
 .TP

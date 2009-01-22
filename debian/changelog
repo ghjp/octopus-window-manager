@@ -1,8 +1,9 @@
 octopus (0.4.3-3) unstable; urgency=low
 
   * Added manual pages and example configuration files for the provided programs.
+  * Added missing documentation for keyboard shortcut Mod-Escape
 
- -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Wed, 21 Jan 2009 20:33:42 +0100
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Thu, 22 Jan 2009 19:19:59 +0100
 
 octopus (0.4.3-2) unstable; urgency=low
 
