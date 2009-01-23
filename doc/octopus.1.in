@@ -423,7 +423,8 @@ This variable is used by the
 action to find programs which can be executed later by \fBoctopus\fR.
 .SH "SEE ALSO"
 .BR octopus_setbg (1),
-.BR octopus_xkeyd (1).
+.BR octopus_xkeyd (1),
+.BR wmctrl (1)
 .SH AUTHOR
 octopus was written by Dr. Johann Pfefferl <pfefferl@gmx.net>.
 .PP
