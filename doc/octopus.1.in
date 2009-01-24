@@ -397,6 +397,121 @@ are performed. Which one depends on thr gravity setting of the window.
 .TP
 .BI Mod\-Home
 .I fit\-to\-workarea
+.SS MOUSE CONTROLS
+Every shown frame consists of a titlebar. This titlebar has 2 buttons on the left
+and right side. In between these 2 buttons is an area which shows a tab for each client
+bound to that frame.
+.TP
+.BI "Left button area"
+If the
+.I left mouse button
+is pressed on this area, the
+.BI detach
+action is performed on the client.
+.br
+If the
+.I middle mouse button
+is pressed on this area, the
+.BI attach
+action is performed on the client.
+.br
+If the
+.I right mouse button
+is pressed on this area, the
+.BI frame\-attach
+action is performed on the client.
+If the
+.I input wheel
+is used on this button, the action
+.BI frame\-client\-next
+is triggered.
+.TP
+.BI "Right button area"
+If the
+.I left mouse button
+is pressed on this area, the
+.BI delete\-client
+action is performed on the client.
+.br
+If the
+.I middle mouse button
+is pressed on this area, the
+.BI maximize\-full
+or
+.BI unmaximize\-full
+action is performed on the frame. It depends on the current state of the frame what will happen.
+It toggles the frame from maximized to normal size.
+.br
+If the
+.I right mouse button
+is pressed on this area, the
+.BI toggle\-sticky
+action is performed on the client.
+If the
+.I input wheel
+is used on this button, the action
+.BI raise
+or
+.BI lower
+is triggered. Which one is used depends on the direction the input wheel is scrolled.
+.TP
+.BI "Titlebar area"
+If the
+.I left mouse button
+is pressed and hold on this area, the frame can be moved interactively.
+.br
+If the
+.I middle mouse button
+is pressed and hold on this area, the corresponding client can be dragged onto another frame.
+If the mouse is released afterwards a
+.BI frame\-attach
+is done by the window manager.
+If the mouse is released on the root window a simple
+.BI attach
+is done.
+.br
+If the
+.I right mouse button
+is pressed and hold on this area, the frame can be resized interactively.
+If the press happens in the middle of the titlebar you can resize the frame
+to the north direction. If it occurs on the left part, the resize will be possible
+in both north and west direction. The right part allows you to resize the frame
+in north and east direction.
+.br
+If the
+.I input wheel
+is used on this area, the action
+.BI raise
+or
+.BI lower
+is triggered. Which one is used depends on the direction the input wheel is scrolled.
+.PP
+Moreover the mouse can be used in combination with the modifier key inside the frame
+to resize and move it or to attach/detach a client to/from a frame.
+.TP
+.BI Mod\-Left_Btn
+Move a frame interactively.
+.TP
+.BI Mod\-Right_Btn
+Resize a frame interactively. It depends on the area where the mouse click happens in which
+direction the frame can be resized. The window area is divided into 9 areas. Simply try it out
+and you get a guess how it works.
+.TP
+.BI Mod\-Middle_Btn
+The corresponding client can be dragged onto another frame.
+If the mouse is released afterwards a
+.BI frame\-attach
+is done by the window manager.
+If the mouse is released on the root window a simple
+.BI attach
+is done.
+.TP
+.BI Mod\-Scroll_wheel
+Either the action
+.BI raise
+or
+.BI lower
+is triggered. Which one is used depends on the direction the input wheel is scrolled.
 .SH NOTES
 When it receives a SIGUSR1,
 .B octopus
