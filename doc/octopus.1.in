@@ -512,6 +512,12 @@ Either the action
 or
 .BI lower
 is triggered. Which one is used depends on the direction the input wheel is scrolled.
+.PP
+The scrolling of the input wheel on the root window causes a
+.BI vdesk\-prev
+or
+.BI vdesk\-next
+action. The direction of the scrolling determines which one is done.
 .SH NOTES
 When it receives a SIGUSR1,
 .B octopus
