@@ -1,3 +1,11 @@
+octopus (0.4.3-4) unstable; urgency=low
+
+  * Bugfix: "click-to-type" focus is lost when client was added to an already
+    existing frame
+  * Manual pages updated
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sat, 24 Jan 2009 17:18:09 +0100
+
 octopus (0.4.3-3) unstable; urgency=low
 
   * Added manual pages and example configuration files for the provided programs.
