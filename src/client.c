@@ -387,12 +387,6 @@ void create_new_client(gswm_t *gsw, Window w)
       focus_client(gsw, c, FALSE);
     }
   }
-  XGrabButton(dpy, Button1, 0, c->win, True, ButtonPressMask,
-      GrabModeSync, GrabModeSync, None, None);
-  XGrabButton(dpy, Button2, 0, c->win, True, ButtonPressMask,
-      GrabModeSync, GrabModeSync, None, None);
-  XGrabButton(dpy, Button3, 0, c->win, True, ButtonPressMask,
-      GrabModeSync, GrabModeSync, None, None);
 }
 
 static void _disintegrate_client(gswm_t *gsw, client_t *c)

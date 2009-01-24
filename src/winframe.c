@@ -576,6 +576,7 @@ void wframe_bind_client(gswm_t *gsw, wframe_t *frame, client_t *c)
   set_ewmh_net_frame_extents(gsw, c);
   set_frame_id_xprop(gsw, c->win, c->wframe->id);
   wframe_foreach(gsw, c->wframe, _adjust_client_stuff, c);
+  wa_grab_client_buttons_event(dpy, c);
 }   
 
 void wframe_unbind_client(gswm_t *gsw, client_t *c)
@@ -586,7 +587,7 @@ void wframe_unbind_client(gswm_t *gsw, client_t *c)
 
   XGetWindowAttributes(dpy, c->win, &winattr);
   gravitate(gsw, c, GRAV_UNDO);
-  XUngrabButton(dpy, AnyButton, AnyModifier, c->win);
+  wa_ungrab_client_buttons_event(dpy, c);
   XUngrabKey(dpy, AnyKey, AnyModifier, c->win);
   XReparentWindow(dpy, c->win, scr->rootwin, c->x, c->y);
   /* If window is already mapped XReparentWindow generates an unmap event */

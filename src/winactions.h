@@ -29,6 +29,20 @@ void wa_sticky(gswm_t *gsw, client_t *c, gboolean on);
 #define wa_raise(gsw, c) G_STMT_START{ XRaiseWindow((gsw)->display, (c)->wframe->win); XRaiseWindow((gsw)->display, (c)->win); }G_STMT_END
 #define wa_lower(gsw, c) XLowerWindow((gsw)->display, (c)->wframe->win)
 #define wa_set_input_focus(gsw, c) XSetInputFocus((gsw)->display, (c)->win, RevertToPointerRoot, CurrentTime)
+#define wa_grab_client_buttons_event(dpy, c) G_STMT_START{ \
+  XGrabButton(dpy, Button1, 0, (c)->win, True, ButtonPressMask, \
+      GrabModeSync, GrabModeSync, None, None); \
+  XGrabButton(dpy, Button2, 0, (c)->win, True, ButtonPressMask, \
+      GrabModeSync, GrabModeSync, None, None); \
+  XGrabButton(dpy, Button3, 0, (c)->win, True, ButtonPressMask, \
+      GrabModeSync, GrabModeSync, None, None); \
+}G_STMT_END
+
+#define wa_ungrab_client_buttons_event(dpy, c) G_STMT_START{ \
+  XUngrabButton(dpy, Button1, 0, (c)->win); \
+  XUngrabButton(dpy, Button2, 0, (c)->win); \
+  XUngrabButton(dpy, Button3, 0, (c)->win); \
+}G_STMT_END
 void wa_move_north(gswm_t *gsw, client_t *c);
 void wa_move_south(gswm_t *gsw, client_t *c);
 void wa_move_east(gswm_t *gsw, client_t *c);
