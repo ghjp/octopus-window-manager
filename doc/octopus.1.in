@@ -397,6 +397,9 @@ are performed. Which one depends on thr gravity setting of the window.
 .TP
 .BI Mod\-Home
 .I fit\-to\-workarea
+.TP
+.BI Mod\-Ctrl\-r
+.I restart
 .SS MOUSE CONTROLS
 Every shown frame consists of a titlebar. This titlebar has 2 buttons on the left
 and right side. In between these 2 buttons is an area which shows a tab for each client
