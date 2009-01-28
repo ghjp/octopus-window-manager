@@ -498,8 +498,8 @@ static void _action_dump_state(gswm_t *gsw)
       scr->id, g_list_length(scr->sticky_frlist), len);
   count += len;
   len = g_list_length(scr->desktop_list);
-  g_message("scr=%d: Desktop client list length: %u/%u",
-      scr->id, g_list_length(scr->desktop_list), len);
+  g_message("scr=%d: Desktop frame/client list length: %u/%u",
+      scr->id, g_list_length(scr->desktop_frlist), len);
   count += len;
 
   len = g_hash_table_size(gsw->win2clnt_hash);

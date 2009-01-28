@@ -94,9 +94,10 @@ typedef struct {
   vdesk_t *vdesk;
   GList *sticky_list;
   GList *detached_list;
+  GList *desktop_list;
   GList *sticky_frlist;
   GList *detached_frlist;
-  GList *desktop_list;
+  GList *desktop_frlist;
   GHashTable *win_group_hash;
   gint id;
   gint dpy_width, dpy_height;

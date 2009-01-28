@@ -753,11 +753,10 @@ gint main(gint argc, gchar **argv)
       remap_client(xsrv_source, (client_t*)(scr->sticky_list->data));
     g_list_free(scr->sticky_list);
     g_list_free(scr->sticky_frlist);
-    while(scr->desktop_list) {
-      g_debug("xxx: %s", ((client_t*)(scr->desktop_list->data))->utf8_name);
+    while(scr->desktop_list)
       remap_client(xsrv_source, (client_t*)(scr->desktop_list->data));
-    }
     g_list_free(scr->desktop_list);
+    g_list_free(scr->desktop_frlist);
     g_free(scr->vdesk);
     g_array_free(scr->extended_client_list, TRUE);
     g_hash_table_destroy(scr->win_group_hash);

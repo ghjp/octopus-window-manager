@@ -244,6 +244,7 @@ void update_ewmh_net_client_list(gswm_t *gsw)
 
   scr->extended_client_list = g_array_set_size(scr->extended_client_list, 0);
   _append_clients_from_framelist(scr->extended_client_list, scr->detached_frlist);
+  _append_clients_from_framelist(scr->extended_client_list, scr->desktop_frlist);
   for(i = 0; i < scr->num_vdesk; i++) {
     if(i != scr->current_vdesk) {
       vd = scr->vdesk + i;

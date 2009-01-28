@@ -395,7 +395,6 @@ static void _disintegrate_client(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
 
-  g_debug("%s: %s", __func__, c->utf8_name);
   /* Cleanup the client lists. If a client isn't found in one list, this
      circumstance is silently ignored */
   if(c->window_group) {
@@ -487,14 +486,13 @@ void unmap_client(gswm_t *gsw, client_t *c)
 
 void remap_client(gswm_t *gsw, client_t *c)
 {
-  g_debug("%s (%s)", __func__, c->utf8_name);
   set_wm_state(gsw, c, NormalState);
-  if(c->w_type.desktop)
-    wa_lower(gsw, c);
   wframe_unbind_client(gsw, c);
   wframe_update_stat_indicator(gsw);
   _disintegrate_client(gsw, c);
   XMapWindow(gsw->display, c->win);
+  if(c->w_type.desktop)
+    XLowerWindow(gsw->display, c->win);
   _free_client(gsw, c);
 }
 
@@ -642,7 +640,11 @@ void focus_client(gswm_t *gsw, client_t *c, gboolean raise)
   g_slist_foreach(win_grp_list, _check_trans, &cti);
 
   recreate_pmap = wframe_get_active_client(gsw, c->wframe) != c ? TRUE: FALSE;
-  if(c->wstate.sticky) {
+  if(c->w_type.desktop) {
+    scr->desktop_frlist = g_list_remove(scr->desktop_frlist, c->wframe);
+    scr->desktop_frlist = g_list_prepend(scr->desktop_frlist, c->wframe);
+  }
+  else if(c->wstate.sticky) {
     scr->sticky_frlist = g_list_remove(scr->sticky_frlist, c->wframe);
     scr->sticky_frlist = g_list_prepend(scr->sticky_frlist, c->wframe);
   }
@@ -700,7 +702,6 @@ void attach(gswm_t *gsw, client_t *c)
   else
     g_return_if_reached();
 
-  g_debug("%s %s", __func__, c->utf8_name);
   wframe_list_add(gsw, c->wframe);
   wa_unhide(gsw, c, TRUE);
   set_wm_state(gsw, c, NormalState);
