@@ -387,12 +387,15 @@ void create_new_client(gswm_t *gsw, Window w)
       focus_client(gsw, c, FALSE);
     }
   }
+  if(c->w_type.desktop)
+    wa_lower(gsw, c);
 }
 
 static void _disintegrate_client(gswm_t *gsw, client_t *c)
 {
   screen_t *scr = c->curr_screen;
 
+  g_debug("%s: %s", __func__, c->utf8_name);
   /* Cleanup the client lists. If a client isn't found in one list, this
      circumstance is silently ignored */
   if(c->window_group) {
@@ -404,6 +407,7 @@ static void _disintegrate_client(gswm_t *gsw, client_t *c)
   }
   scr->sticky_list = g_list_remove(scr->sticky_list, c);
   scr->detached_list = g_list_remove(scr->detached_list, c);
+  scr->desktop_list = g_list_remove(scr->desktop_list, c);
   if(0 <= c->i_vdesk && c->i_vdesk < scr->num_vdesk)
     scr->vdesk[c->i_vdesk].clnt_list =
       g_list_remove(scr->vdesk[c->i_vdesk].clnt_list, c);
@@ -483,8 +487,10 @@ void unmap_client(gswm_t *gsw, client_t *c)
 
 void remap_client(gswm_t *gsw, client_t *c)
 {
-  TRACE(("%s (%s)", __func__, c->utf8_name));
+  g_debug("%s (%s)", __func__, c->utf8_name);
   set_wm_state(gsw, c, NormalState);
+  if(c->w_type.desktop)
+    wa_lower(gsw, c);
   wframe_unbind_client(gsw, c);
   wframe_update_stat_indicator(gsw);
   _disintegrate_client(gsw, c);
@@ -660,15 +666,19 @@ void focus_client(gswm_t *gsw, client_t *c, gboolean raise)
 
 G_INLINE_FUNC void _insert_client_into_list(screen_t *scr, client_t *c)
 {
-  if(c->wstate.sticky) {
+  if(G_UNLIKELY(c->w_type.desktop)) {
+    scr->desktop_list = g_list_prepend(scr->desktop_list, c);
+  }
+  else if(G_UNLIKELY(c->wstate.sticky)) {
     c->i_vdesk = STICKY;
     if(!g_list_find(scr->sticky_list, c))
       scr->sticky_list = g_list_prepend(scr->sticky_list, c);
   }
-  else
+  else {
     if(!g_list_find(scr->vdesk[c->i_vdesk].clnt_list, c))
       scr->vdesk[c->i_vdesk].clnt_list =
         g_list_prepend(scr->vdesk[c->i_vdesk].clnt_list, c);
+  }
 }
 
 void attach(gswm_t *gsw, client_t *c)
@@ -690,6 +700,7 @@ void attach(gswm_t *gsw, client_t *c)
   else
     g_return_if_reached();
 
+  g_debug("%s %s", __func__, c->utf8_name);
   wframe_list_add(gsw, c->wframe);
   wa_unhide(gsw, c, TRUE);
   set_wm_state(gsw, c, NormalState);
@@ -707,6 +718,9 @@ void detach(gswm_t *gsw, client_t *c)
   screen_t *scr = c->curr_screen;
   client_t *cwh = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(c->win));
 
+  /* Desktop type windows can not be detached */
+  if(G_UNLIKELY(c->w_type.desktop))
+    return;
   /* Due to race conditions under some conditions it could happen
      that this routine is called more than once for a client. E. g. More than one
      keyboard press is reported by the X server */

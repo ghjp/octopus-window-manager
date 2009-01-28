@@ -105,6 +105,8 @@ void wframe_list_add(gswm_t *gsw, wframe_t *frame)
   screen_t *scr = gsw->screen + gsw->i_curr_scr;
   client_t *c = wframe_get_active_client(gsw, frame);
 
+  if(G_UNLIKELY(c->w_type.desktop))
+    return;
   if(c->wstate.sticky) {
     if(!g_list_find(scr->sticky_frlist, frame))
       scr->sticky_frlist = g_list_append(scr->sticky_frlist, frame);
@@ -522,7 +524,7 @@ void wframe_bind_client(gswm_t *gsw, wframe_t *frame, client_t *c)
   c->wframe = frame ? frame: _wframe_new(gsw);
   /* Set properties of new frame */
   if(G_LIKELY(!frame)) {
-    if(c->wstate.mwm_border && !c->wstate.shaped) {
+    if(c->wstate.mwm_border && !c->wstate.shaped && !c->w_type.desktop) {
       c->wframe->bwidth =  scr->fr_info.border_width;
       c->wframe->theight = scr->fr_info.tbar_height;
       XSetWindowBorderWidth(dpy, c->wframe->win, c->wframe->bwidth);
@@ -585,6 +587,7 @@ void wframe_unbind_client(gswm_t *gsw, client_t *c)
   Display *dpy = gsw->display;
   screen_t *scr = c->curr_screen;
 
+  g_debug("%s %s", __func__, c->utf8_name);
   XGetWindowAttributes(dpy, c->win, &winattr);
   gravitate(gsw, c, GRAV_UNDO);
   wa_ungrab_client_buttons_event(dpy, c);
@@ -616,6 +619,7 @@ void wframe_remove_client(gswm_t *gsw, client_t *c)
   /* Last client has gone */
   if(G_LIKELY(!frame->client_list)) {
     /* Live of frame is over */
+    g_debug("%s: live is over for %s", __func__, c->utf8_name);
     wframe_list_remove(gsw, frame);
     _wframe_destroy(gsw, frame);
   }

@@ -96,6 +96,7 @@ typedef struct {
   GList *detached_list;
   GList *sticky_frlist;
   GList *detached_frlist;
+  GList *desktop_list;
   GHashTable *win_group_hash;
   gint id;
   gint dpy_width, dpy_height;

@@ -26,7 +26,7 @@ void wa_send_xclimsg(gswm_t *gsw, client_t *c, Atom type,
 void wa_send_xclimsgwm(gswm_t *gsw, client_t *c, Atom type, Atom arg);
 void wa_send_wm_delete(gswm_t *gsw, client_t *c);
 void wa_sticky(gswm_t *gsw, client_t *c, gboolean on);
-#define wa_raise(gsw, c) G_STMT_START{ XRaiseWindow((gsw)->display, (c)->wframe->win); XRaiseWindow((gsw)->display, (c)->win); }G_STMT_END
+#define wa_raise(gsw, c) G_STMT_START{ if(G_LIKELY(!(c)->w_type.desktop)) { XRaiseWindow((gsw)->display, (c)->wframe->win); XRaiseWindow((gsw)->display, (c)->win); } }G_STMT_END
 #define wa_lower(gsw, c) XLowerWindow((gsw)->display, (c)->wframe->win)
 #define wa_set_input_focus(gsw, c) XSetInputFocus((gsw)->display, (c)->win, RevertToPointerRoot, CurrentTime)
 #define wa_grab_client_buttons_event(dpy, c) G_STMT_START{ \
