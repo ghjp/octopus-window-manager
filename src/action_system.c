@@ -158,25 +158,8 @@ static void _action_lower(gswm_t *gsw)
 {
   client_t *fc = get_focused_client(gsw);
 
-  if(fc) {
-    Window wl[2];
-    GList *cl;
-    screen_t *scr = gsw->screen + gsw->i_curr_scr;
+  if(fc)
     wa_lower(gsw, fc);
-    //for(cl = scr->desktop_list ; cl; cl = g_list_next(cl))
-      //wa_lower(gsw, (client_t*)cl->data);
-    wl[0] = fc->wframe->win;
-    cl = g_list_first(scr->desktop_list);
-    if(cl) {
-      XEvent ev;
-      fc = (client_t*)cl->data;
-      wl[1] = fc->wframe->win;
-      XRestackWindows(gsw->display, wl, G_N_ELEMENTS(wl));
-      XSync(gsw->display, False);
-      while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
-        /* DO NOTHING */;
-    }
-  }
 }
 
 static void _action_client_next(gswm_t *gsw)

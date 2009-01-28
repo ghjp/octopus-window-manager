@@ -1336,3 +1336,17 @@ void wa_sticky(gswm_t *gsw, client_t *c, gboolean on)
   set_ewmh_net_wm_states(gsw, c);
 }
 
+void wa_lower(gswm_t *gsw, client_t *fc)
+{
+  Window wl[2];
+  GList *cl;
+  screen_t *scr = gsw->screen + gsw->i_curr_scr;
+  wl[0] = fc->wframe->win;
+  XLowerWindow(gsw->display, wl[0]);
+  cl = g_list_first(scr->desktop_list);
+  if(cl && cl != fc) {
+    fc = (client_t*)cl->data;
+    wl[1] = fc->wframe->win;
+    XRestackWindows(gsw->display, wl, G_N_ELEMENTS(wl));
+  }
+}
