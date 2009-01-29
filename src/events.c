@@ -757,7 +757,8 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
     clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(ev.xcrossing.window));
   if(clnt) {
     TRACE(("EnterNotify frame=%ld w=%ld (%s)", clnt->wframe->win, clnt->win, clnt->utf8_name));
-    focus_client(gsw, clnt, TRUE);
+    if(clnt != get_focused_client(gsw))
+      focus_client(gsw, clnt, TRUE);
   }
 }
 

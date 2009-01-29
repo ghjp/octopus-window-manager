@@ -643,6 +643,7 @@ void focus_client(gswm_t *gsw, client_t *c, gboolean raise)
   if(c->w_type.desktop) {
     scr->desktop_frlist = g_list_remove(scr->desktop_frlist, c->wframe);
     scr->desktop_frlist = g_list_prepend(scr->desktop_frlist, c->wframe);
+    return;
   }
   else if(c->wstate.sticky) {
     scr->sticky_frlist = g_list_remove(scr->sticky_frlist, c->wframe);
