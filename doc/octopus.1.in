@@ -62,7 +62,7 @@ Full UTF support for the titlebars.
 .IP "\(bu" 4
 Xft font support (anti\-aliased fonts) through libcairo.
 .IP "\(bu" 4
-EWMH conform
+EWMH and ICCCH conform
 .SS USER INTERFACE
 As already mentioned above the window manager can be completely controlled
 by builtin commands which can be entered by the OSD interface.
