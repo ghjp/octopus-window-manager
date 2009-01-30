@@ -294,14 +294,10 @@ void create_new_client(gswm_t *gsw, Window w)
     if(XGetWMProtocols(dpy, c->win, &protocols, &n)) {
       gint i;
       for (i=0; i<n; i++)
-        if(protocols[i] == gsw->xa.wm_delete) {
-          g_debug("%s: PR_DEL flag present: %s", __func__, c->utf8_name);
+        if(protocols[i] == gsw->xa.wm_delete)
           c->wstate.pr_delete = TRUE;
-        }
-        else if(protocols[i] == gsw->xa.wm_take_focus) {
+        else if(protocols[i] == gsw->xa.wm_take_focus)
           c->wstate.pr_take_focus = TRUE;
-          g_debug("%s: PR_TAKE_FOCUS flag present: %s", __func__, c->utf8_name);
-        }
       XFree(protocols);
     }
   }
