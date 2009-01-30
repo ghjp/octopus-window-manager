@@ -203,7 +203,12 @@ static void _action_frame_next(gswm_t *gsw)
     for(cle = g_list_last(vd->frame_list); cle; cle = g_list_previous(cle)) {
       wframe_t *next_frame = cle->data;
       client_t *next_c = wframe_get_active_client(gsw, next_frame);
-      if(next_c->wstate.input_focus) {
+      if(next_c->wstate.input_focus || next_c->wstate.pr_take_focus) {
+        /* Input model is one of:
+         * - Passive
+         * - Locally active
+         * - Globally active
+         */
         wa_raise(gsw, next_c);
         focus_client(gsw, next_c, FALSE);
         break;

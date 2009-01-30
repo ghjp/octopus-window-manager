@@ -132,6 +132,9 @@ typedef struct {
   gboolean fullscreen :1;
   gboolean above :1;
   gboolean below :1;
+  /* WM_PROTOCOLS */
+  gboolean pr_delete :1;
+  gboolean pr_take_focus :1;
   /* Misc */
   gboolean mwm_title :1; /* MWM */
   gboolean mwm_border :1; /* MWM */

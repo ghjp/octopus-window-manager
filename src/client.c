@@ -287,6 +287,24 @@ void create_new_client(gswm_t *gsw, Window w)
   }
 #endif
 
+  {
+    Atom *protocols;
+    gint n;
+
+    if(XGetWMProtocols(dpy, c->win, &protocols, &n)) {
+      gint i;
+      for (i=0; i<n; i++)
+        if(protocols[i] == gsw->xa.wm_delete) {
+          g_debug("%s: PR_DEL flag present: %s", __func__, c->utf8_name);
+          c->wstate.pr_delete = TRUE;
+        }
+        else if(protocols[i] == gsw->xa.wm_take_focus) {
+          c->wstate.pr_take_focus = TRUE;
+          g_debug("%s: PR_TAKE_FOCUS flag present: %s", __func__, c->utf8_name);
+        }
+      XFree(protocols);
+    }
+  }
   /* Try to find the window group leader information and some MWM hints */
   c->window_group = _get_wm_client_leader(gsw, c);
   c->wstate.input_focus = TRUE;
@@ -663,8 +681,11 @@ void focus_client(gswm_t *gsw, client_t *c, gboolean raise)
   if(recreate_pmap) 
     wframe_tbar_pmap_recreate(gsw, c->wframe);
   scr->vdesk[scr->current_vdesk].focused = c;
-  wa_send_xclimsg(gsw, c, gsw->xa.wm_protocols, gsw->xa.wm_take_focus, CurrentTime, 0, 0, 0);
-  wa_set_input_focus(gsw, c);
+  /* "Globally active" input model */
+  if(G_UNLIKELY(!c->wstate.input_focus && c->wstate.pr_take_focus))
+    wa_send_xclimsgwm(gsw, c, gsw->xa.wm_protocols, gsw->xa.wm_take_focus);
+  else
+    wa_set_input_focus(gsw, c);
 }
 
 G_INLINE_FUNC void _insert_client_into_list(screen_t *scr, client_t *c)

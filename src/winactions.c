@@ -1297,20 +1297,10 @@ void wa_send_xclimsgwm(gswm_t *gsw, client_t *c, Atom type, Atom arg)
 
 void wa_send_wm_delete(gswm_t *gsw, client_t *c)
 {
-  gint i, n, found = 0;
-  Atom *protocols;
-  Display *dpy = gsw->display;
-
-  if(XGetWMProtocols(dpy, c->win, &protocols, &n)) {
-    for (i=0; i<n; i++)
-      if(protocols[i] == gsw->xa.wm_delete)
-        found++;
-    XFree(protocols);
-  }
-  if(found)
+  if(G_LIKELY(c->wstate.pr_delete))
     wa_send_xclimsgwm(gsw, c, gsw->xa.wm_protocols, gsw->xa.wm_delete);
   else
-    XKillClient(dpy, c->win);
+    XKillClient(gsw->display, c->win);
 }
 
 void wa_sticky(gswm_t *gsw, client_t *c, gboolean on)
@@ -1341,7 +1331,6 @@ void wa_lower(gswm_t *gsw, client_t *fc)
   Window wl[2];
   GList *cl;
   screen_t *scr = gsw->screen + gsw->i_curr_scr;
-  client_t *focused_clnt = get_focused_client(gsw);
   wl[0] = fc->wframe->win;
   XLowerWindow(gsw->display, wl[0]);
   cl = g_list_first(scr->desktop_list);
