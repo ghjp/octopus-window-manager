@@ -1,3 +1,10 @@
+octopus (0.4.4-1) unstable; urgency=low
+
+  * Support for "desktop" type applications added
+  * Support for the four X11 input models added (especially java applications)
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Fri, 30 Jan 2009 20:35:50 +0100
+
 octopus (0.4.3-5) unstable; urgency=low
 
   * Manual pages describe now also the available mouse controls
