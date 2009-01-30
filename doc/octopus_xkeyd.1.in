@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH octopus_xkeyd 1 "January 20, 2009"
+.TH OCTOPUS_XKEYD 1 "January 20, 2009" "octopus_xkeyd @PACKAGE_VERSION@" "User commands"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
