@@ -1,3 +1,9 @@
+octopus (0.4.4-3) unstable; urgency=low
+
+  * Bugfix for the "jump" action if a desktop switch is necessary
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Fri,  6 Feb 2009 21:44:37 +0100
+
 octopus (0.4.4-2) unstable; urgency=low
 
   * Added remote utility
