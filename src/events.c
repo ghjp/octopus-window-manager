@@ -712,7 +712,6 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
     }
   }
   else if(e->message_type == gsw->xa.wm_octopus_command) {
-    g_debug("wm_octopus_command message");
     _process_remote_command(gsw);
   }
 }
