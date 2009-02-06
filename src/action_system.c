@@ -542,10 +542,8 @@ static void _action_jump_to(gswm_t *gsw, gchar *name_pattern)
   js_info.c_found = NULL;
   g_hash_table_foreach(gsw->win2clnt_hash, _compare_name_of_client, &js_info);
   if(js_info.c_found) {
-    if(STICKY !=  js_info.c_found->i_vdesk)
-      switch_vdesk(gsw, js_info.c_found->i_vdesk);
-    wa_raise(gsw, js_info.c_found);
-    focus_client(gsw, js_info.c_found, FALSE);
+    /* Simulate a _NET_ACTIVE_WINDOW request from pager */
+    wa_send_xclimsg(gsw, js_info.c_found, gsw->xa.wm_net_active_window, 2, 0, 0, 0, 0);
     TRACE(("%s: %s", __func__, js_info.c_found->utf8_name));
   }
 }
