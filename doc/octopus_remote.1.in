@@ -39,7 +39,7 @@ configuration file can also be given.
 Start a new xterm
 .PP
 .nf
-.B "octopus_remote 'xterm;exec xcalc;exec-term mutt'
+.B "octopus_remote 'xterm;exec xcalc;exec\-term mutt'
 .fi
 Start a new xterm and the calculator. Moreover run the terminal based command
 .I mutt
