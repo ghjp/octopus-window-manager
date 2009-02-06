@@ -70,6 +70,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
   if(old_focused_client)
     focus_client(gsw, old_focused_client, TRUE);
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, v);
+  XSync(gsw->display, False);
 }
 
 void switch_vdesk_up(gswm_t *gsw)
