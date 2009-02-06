@@ -547,6 +547,26 @@ static void _handle_property_event(gswm_t *gsw, XPropertyEvent *e)
   }
 }
 
+static void _process_remote_command(gswm_t *gsw)
+{
+  Atom realType;
+  gulong n, extra;
+  gint format, status;
+  guchar *value;
+  screen_t *scr = gsw->screen + gsw->i_curr_scr;
+
+  status = XGetWindowProperty(gsw->display, scr->rootwin,
+      gsw->xa.wm_octopus_command, 0L, 512L, False,
+      XA_STRING, &realType, &format,
+      &n, &extra, &value);
+  g_return_if_fail(Success == status);
+  if(value) {
+    TRACE(("%s: %s", __func__, value));
+    action_system_interpret(gsw, (gpointer)value);
+    X_FREE(value);
+  }
+}
+
 static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
 {
   client_t *clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window));
@@ -690,6 +710,10 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
         new_desktop != scr->current_vdesk) {
       switch_vdesk(gsw, new_desktop);
     }
+  }
+  else if(e->message_type == gsw->xa.wm_octopus_command) {
+    g_debug("wm_octopus_command message");
+    _process_remote_command(gsw);
   }
 }
 

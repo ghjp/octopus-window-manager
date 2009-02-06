@@ -1,3 +1,9 @@
+octopus (0.4.4-2) unstable; urgency=low
+
+  * Added remote utility
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Fri,  6 Feb 2009 19:20:29 +0100
+
 octopus (0.4.4-1) unstable; urgency=low
 
   * Support for "desktop" type applications added

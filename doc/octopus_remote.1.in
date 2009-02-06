@@ -1,0 +1,62 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH OCTOPUS_REMOTE 1 "Feburary, 2009" "octopus_remote @PACKAGE_VERSION@" "User commands"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+octopus_remote \- send remote commands to octopus process
+.SH SYNOPSIS
+.B octopus_remote
+.I cmd_string
+[
+.I cmd_string
+]....
+.SH DESCRIPTION
+.B octopus_remote
+is a small utility to send commands to the
+.B octopus
+window manager. Any command listed on the
+.B octopus
+manual page is supported by this utility. Moreover user defined commands in the
+configuration file can also be given.
+.SH EXAMPLES
+.PP
+.nf
+.B "octopus_remote xterm"
+.fi
+Start a new xterm
+.PP
+.nf
+.B "octopus_remote 'xterm;exec xcalc;exec-term mutt'
+.fi
+Start a new xterm and the calculator. Moreover run the terminal based command
+.I mutt
+inside a xterm window. The semicolons separate several single commands. The apostrophes
+are necessary. Otherwise they are interpreted by the shell.
+.PP
+.nf
+.B "octopus_remote restart"
+.fi
+Restart the window manager.
+.SH "ENVIRONMENT VARIABLES"
+.IP DISPLAY
+This variable is used to determine which X server to connect to.
+.SH "SEE ALSO"
+.BR octopus (1),
+.SH AUTHOR
+octopus_remote was written by Dr. Johann Pfefferl <pfefferl@gmx.net>.
+.PP
+This manual page was written by Dr. Johann Pfefferl <pfefferl@gmx.net>,
+for the Debian project (but may be used by others).

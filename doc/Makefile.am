@@ -1,5 +1,5 @@
-EXTRA_DIST = octopus.1.in octopus_setbg.1.in octopus_xkeyd.1.in
-man_MANS = octopus.1 octopus_setbg.1 octopus_xkeyd.1
+EXTRA_DIST = octopus.1.in octopus_setbg.1.in octopus_xkeyd.1.in octopus_remote.1.in
+man_MANS = octopus.1 octopus_setbg.1 octopus_xkeyd.1 octopus_remote.1
 
 edit = sed \
        -e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),g' \
@@ -14,4 +14,7 @@ octopus_xkeyd.1: octopus_xkeyd.1.in
 octopus_setbg.1: octopus_setbg.1.in
 	$(edit) $< >$@
 
-MOSTLYCLEANFILES = octopus.1 octopus_xkeyd.1 octopus_setbg.1
+octopus_remote.1: octopus_remote.1.in
+	$(edit) $< >$@
+
+MOSTLYCLEANFILES = octopus.1 octopus_xkeyd.1 octopus_setbg.1 octopus_remote.1

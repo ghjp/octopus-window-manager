@@ -28,7 +28,7 @@ static gint handle_xioerror(Display *dsply)
   return 0;
 }
 
-static void wmcommand(Display *dpy, gchar *data)
+static void send_wmcommand(Display *dpy, gchar *data)
 {
   XEvent	ev;
   Atom cmd_prop;
@@ -68,14 +68,10 @@ gint main(gint argc, gchar **argv)
     g_critical("XOpenDisplay failed");
     return EXIT_FAILURE;
   }
-  g_message("Running on display `%s'", DisplayString(dpy));
   XSetErrorHandler(handle_xerror);
   XSetIOErrorHandler(handle_xioerror); /* Fatal error handler */
-  g_message("argc=%d", argc);
-  for(i = 1; i < argc; i++) {
-    g_message("c=%s", argv[i]);
-    wmcommand(dpy, argv[i]);
-  }
+  for(i = 1; i < argc; i++)
+    send_wmcommand(dpy, argv[i]);
   XCloseDisplay(dpy);
   return EXIT_SUCCESS;
 }

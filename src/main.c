@@ -352,6 +352,7 @@ static void _init_icccm_and_misc_atoms(gswm_t *gsw)
   gsw->xa.wm_mwm_hints = XInternAtom(dpy, "_MOTIF_WM_HINTS", False);
   /* Octopus atoms */
   gsw->xa.wm_octopus_frame_id = XInternAtom(dpy, "_OCTOPUS_FRAME_ID", False);
+  gsw->xa.wm_octopus_command = XInternAtom(dpy, "_OCTOPUS_COMMAND", False);
   /* Misc */
   gsw->xa.wm_utf8_string = XInternAtom(dpy, "UTF8_STRING", False);
   gsw->xa.wm_xrootpmap_id = XInternAtom(dpy, "_XROOTPMAP_ID", False);

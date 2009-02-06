@@ -171,13 +171,13 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = octopus.1.in octopus_setbg.1.in octopus_xkeyd.1.in
-man_MANS = octopus.1 octopus_setbg.1 octopus_xkeyd.1
+EXTRA_DIST = octopus.1.in octopus_setbg.1.in octopus_xkeyd.1.in octopus_remote.1.in
+man_MANS = octopus.1 octopus_setbg.1 octopus_xkeyd.1 octopus_remote.1
 edit = sed \
        -e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),g' \
        -e 's,@pkgdatadir\@,$(pkgdatadir),g'
 
-MOSTLYCLEANFILES = octopus.1 octopus_xkeyd.1 octopus_setbg.1
+MOSTLYCLEANFILES = octopus.1 octopus_xkeyd.1 octopus_setbg.1 octopus_remote.1
 all: all-am
 
 .SUFFIXES:
@@ -404,6 +404,9 @@ octopus_xkeyd.1: octopus_xkeyd.1.in
 	$(edit) $< >$@
 
 octopus_setbg.1: octopus_setbg.1.in
+	$(edit) $< >$@
+
+octopus_remote.1: octopus_remote.1.in
 	$(edit) $< >$@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

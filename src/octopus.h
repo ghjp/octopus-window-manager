@@ -257,6 +257,7 @@ typedef struct {
   Atom    wm_net_wm_strut;
   /* Octopus atoms */
   Atom    wm_octopus_frame_id;
+  Atom    wm_octopus_command;
   /* Misc */
   Atom    wm_utf8_string;
   Atom    wm_xrootpmap_id;
