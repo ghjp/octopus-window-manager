@@ -41,7 +41,7 @@ static void show_help(gchar *prgname)
   g_printerr(" -c don't center image\n");
   g_printerr(" -s don't scale image if aspect ratio of image and screen matches\n");
   g_printerr(" -h show this help\n -? show this help\n");
-  exit(4);
+  exit(EXIT_FAILURE);
 }
 
 static void install_new_bg_rootpixmap(Display *dpy, Window rootwin, Pixmap pmap)
@@ -64,7 +64,7 @@ static void install_new_bg_rootpixmap(Display *dpy, Window rootwin, Pixmap pmap)
   XSetCloseDownMode(dpy, RetainPermanent);
 }
 
-int main(gint argc, gchar **argv)
+gint main(gint argc, gchar **argv)
 {
   Display *dpy;
   Window rootwin;
@@ -96,7 +96,7 @@ int main(gint argc, gchar **argv)
     img_fname = argv[optind++];
   if(!(dpy = XOpenDisplay(0))) {
     g_critical("XOpenDisplay failed");
-    return 1;
+    return EXIT_FAILURE;
   }
   scr = DefaultScreen(dpy);
   rootwin = RootWindow(dpy, scr);
@@ -107,7 +107,7 @@ int main(gint argc, gchar **argv)
   imgpb = gdk_pixbuf_new_from_file(img_fname, &error);
   if(error) {
     g_critical(error->message);
-    return 2;
+    return EXIT_FAILURE;
   }
   iw = gdk_pixbuf_get_width(imgpb);
   ih = gdk_pixbuf_get_height(imgpb);
@@ -213,5 +213,5 @@ int main(gint argc, gchar **argv)
   }
 
   XCloseDisplay(dpy);
-  return 0;
+  return EXIT_SUCCESS;
 }

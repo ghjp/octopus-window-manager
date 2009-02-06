@@ -33,7 +33,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = octopus_setbg$(EXEEXT) octopus_xkeyd$(EXEEXT)
+bin_PROGRAMS = octopus_setbg$(EXEEXT) octopus_xkeyd$(EXEEXT) \
+	octopus_remote$(EXEEXT)
 subdir = utils
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -47,6 +48,12 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+octopus_remote_SOURCES = octopus_remote.c
+octopus_remote_OBJECTS = octopus_remote-octopus_remote.$(OBJEXT)
+octopus_remote_LDADD = $(LDADD)
+octopus_remote_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(octopus_remote_CFLAGS) \
+	$(CFLAGS) $(octopus_remote_LDFLAGS) $(LDFLAGS) -o $@
 octopus_setbg_SOURCES = octopus_setbg.c
 octopus_setbg_OBJECTS = octopus_setbg-octopus_setbg.$(OBJEXT)
 octopus_setbg_LDADD = $(LDADD)
@@ -72,8 +79,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = octopus_setbg.c $(octopus_xkeyd_SOURCES)
-DIST_SOURCES = octopus_setbg.c $(octopus_xkeyd_SOURCES)
+SOURCES = octopus_remote.c octopus_setbg.c $(octopus_xkeyd_SOURCES)
+DIST_SOURCES = octopus_remote.c octopus_setbg.c \
+	$(octopus_xkeyd_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -206,6 +214,8 @@ octopus_setbg_CFLAGS = @GDK_PIXBUF_XLIB_CFLAGS@
 octopus_setbg_LDFLAGS = @GDK_PIXBUF_XLIB_LIBS@
 octopus_xkeyd_CFLAGS = @GDK_PIXBUF_XLIB_CFLAGS@
 octopus_xkeyd_LDFLAGS = @GDK_PIXBUF_XLIB_LIBS@
+octopus_remote_CFLAGS = @GDK_PIXBUF_XLIB_CFLAGS@
+octopus_remote_LDFLAGS = @GDK_PIXBUF_XLIB_LIBS@
 noinst_HEADERS = xkeyd_userconfig.h
 octopus_xkeyd_SOURCES = octopus_xkeyd.c xkeyd_userconfig.c
 all: all-am
@@ -269,6 +279,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+octopus_remote$(EXEEXT): $(octopus_remote_OBJECTS) $(octopus_remote_DEPENDENCIES) 
+	@rm -f octopus_remote$(EXEEXT)
+	$(octopus_remote_LINK) $(octopus_remote_OBJECTS) $(octopus_remote_LDADD) $(LIBS)
 octopus_setbg$(EXEEXT): $(octopus_setbg_OBJECTS) $(octopus_setbg_DEPENDENCIES) 
 	@rm -f octopus_setbg$(EXEEXT)
 	$(octopus_setbg_LINK) $(octopus_setbg_OBJECTS) $(octopus_setbg_LDADD) $(LIBS)
@@ -282,6 +295,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_remote-octopus_remote.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_setbg-octopus_setbg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_xkeyd-octopus_xkeyd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus_xkeyd-xkeyd_userconfig.Po@am__quote@
@@ -306,6 +320,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+octopus_remote-octopus_remote.o: octopus_remote.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_remote_CFLAGS) $(CFLAGS) -MT octopus_remote-octopus_remote.o -MD -MP -MF $(DEPDIR)/octopus_remote-octopus_remote.Tpo -c -o octopus_remote-octopus_remote.o `test -f 'octopus_remote.c' || echo '$(srcdir)/'`octopus_remote.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus_remote-octopus_remote.Tpo $(DEPDIR)/octopus_remote-octopus_remote.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='octopus_remote.c' object='octopus_remote-octopus_remote.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_remote_CFLAGS) $(CFLAGS) -c -o octopus_remote-octopus_remote.o `test -f 'octopus_remote.c' || echo '$(srcdir)/'`octopus_remote.c
+
+octopus_remote-octopus_remote.obj: octopus_remote.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_remote_CFLAGS) $(CFLAGS) -MT octopus_remote-octopus_remote.obj -MD -MP -MF $(DEPDIR)/octopus_remote-octopus_remote.Tpo -c -o octopus_remote-octopus_remote.obj `if test -f 'octopus_remote.c'; then $(CYGPATH_W) 'octopus_remote.c'; else $(CYGPATH_W) '$(srcdir)/octopus_remote.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus_remote-octopus_remote.Tpo $(DEPDIR)/octopus_remote-octopus_remote.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='octopus_remote.c' object='octopus_remote-octopus_remote.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_remote_CFLAGS) $(CFLAGS) -c -o octopus_remote-octopus_remote.obj `if test -f 'octopus_remote.c'; then $(CYGPATH_W) 'octopus_remote.c'; else $(CYGPATH_W) '$(srcdir)/octopus_remote.c'; fi`
 
 octopus_setbg-octopus_setbg.o: octopus_setbg.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_setbg_CFLAGS) $(CFLAGS) -MT octopus_setbg-octopus_setbg.o -MD -MP -MF $(DEPDIR)/octopus_setbg-octopus_setbg.Tpo -c -o octopus_setbg-octopus_setbg.o `test -f 'octopus_setbg.c' || echo '$(srcdir)/'`octopus_setbg.c
