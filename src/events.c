@@ -581,7 +581,7 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
     else if(e->message_type == gsw->xa.wm_net_active_window) {
       switch(e->data.l[0]) { /* Source indication */
         case 2: /* Request from pager */
-          g_debug("%s _NET_ACTIVE_WINDOW request from pager", __func__);
+          TRACE(("%s _NET_ACTIVE_WINDOW request from pager", __func__));
           if(!clnt->wstate.sticky)
             switch_vdesk(gsw, clnt->i_vdesk);
           if(clnt->wstate.hidden)
