@@ -26,6 +26,8 @@
 #define GET_BORDER_WIDTH(cl) (G_MININT == (cl)->wframe->bwidth ? 0: (cl)->wframe->bwidth)
 #define TEST_BORDERLESS(cl) (G_MININT == (cl)->wframe->bwidth)
 
+typedef struct _gswm gswm_t;
+
 typedef struct {
   XColor unfocus, focus;
 } xcolor_t;
@@ -286,6 +288,14 @@ typedef struct {
 } interaction_t;
 
 typedef struct {
+  gchar *font;
+  gdouble red, green, blue;
+  guint iw, ih;
+  Window win;
+  gswm_t *gsw;
+} osd_cli_t;
+
+struct _gswm {
   GSource gs;
   GMainContext* gmc;
   Display *display;
@@ -311,7 +321,8 @@ typedef struct {
   user_config_t ucfg;
   interaction_t cmd, action;
   gpointer xosd;
+  osd_cli_t *osdcli;
   Colormap installed_cmap;
-} gswm_t;
+};
 
 #endif /* _OCTOPUS_H */

@@ -9,50 +9,82 @@
 #include <X11/extensions/shape.h>
 #include <cairo-xlib.h>
 
-Window osd_window = None;
-
-gint osd_cli_create(gswm_t *gsw)
+osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, gdouble blue)
 {
   Window rootwin;
+  gint swidth, sheight, depth;
   Display *dpy = gsw->display;
   screen_t *screen = gsw->screen + gsw->i_curr_scr;
   gint scr = screen->id;
-  gint swidth, sheight, depth;
-  gint iw, ih;
-  GRand *rand = g_rand_new();
+  osd_cli_t *obj = g_new0(osd_cli_t, 1);
 
-  if(!(dpy = XOpenDisplay(0))) {
-    g_critical("XOpenDisplay failed");
-    return 1;
-  }
+  obj->gsw = gsw;
+  obj->red = red;
+  obj->green = green;
+  obj->blue = blue;
+  obj->font = g_strdup(font);
+
   rootwin = screen->rootwin;
   swidth = screen->dpy_width;
   sheight = screen->dpy_height;
   depth = DefaultDepth(dpy, scr);
-  iw = swidth;
-  ih = sheight * 50 / 1000;
+  obj->iw = swidth;
+  obj->ih = sheight * 50 / 1000;
   g_message("scr=%d swidth=%d sheight=%d", scr, swidth, sheight);
 
   if(TRUE) {
     XSetWindowAttributes xwinattr = {
       .override_redirect = True,
     };
-    osd_window = XCreateWindow(dpy, rootwin, 0, sheight - ih, iw, ih, 0,
+    obj->win = XCreateWindow(dpy, rootwin, 0, sheight - obj->ih, obj->iw, obj->ih, 0,
         CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect, &xwinattr);
   }
   else
-    osd_window = XCreateSimpleWindow(dpy, rootwin, 0, sheight - ih, iw, ih, 0,
+    obj->win = XCreateSimpleWindow(dpy, rootwin, 0, sheight - obj->ih, obj->iw, obj->ih, 0,
         BlackPixel(dpy, scr), BlackPixel(dpy, scr));
-  if(osd_window) {
+  osd_cli_set_text(obj, "Dummy");
+  return obj;
+}
+
+gint osd_cli_destroy(osd_cli_t *obj)
+{
+  g_message(__func__);
+  XDestroyWindow(obj->gsw->display, obj->win);
+  g_free(obj->font);
+  g_free(obj);
+  return TRUE;
+}
+
+void osd_cli_show(osd_cli_t *obj)
+{
+  g_message(__func__);
+  XMapRaised(obj->gsw->display, obj->win);
+  //XFlush(obj->dpy);
+}
+
+void osd_cli_hide(osd_cli_t *obj)
+{
+  g_message(__func__);
+  XUnmapWindow(obj->gsw->display, obj->win);
+}
+
+void osd_cli_set_text(osd_cli_t *obj, gchar *text)
+{
+  Display *dpy = obj->gsw->display;
+  guint iw = obj->iw;
+  guint ih = obj->ih;
+  screen_t *screen = obj->gsw->screen + obj->gsw->i_curr_scr;
+  gint scr = screen->id;
+
+  if(obj->win) {
     Pixmap mask_bitmap, pmap = None;
 
     /* Construct window shape */
-    if((mask_bitmap = XCreatePixmap(dpy, osd_window, iw, ih, 1))) {
+    if((mask_bitmap = XCreatePixmap(dpy, obj->win, iw, ih, 1))) {
       gdouble tw, th, tx, ty;
       cairo_text_extents_t extents;
-      const gchar *mask_text = "Enter: Mask Queue text demo!!";
-      const gchar *mask_font = "Sans";
+      const gchar *mask_font = obj->font;
       cairo_surface_t *mask_surface = cairo_xlib_surface_create_for_bitmap(
           dpy, mask_bitmap, ScreenOfDisplay(dpy, scr), iw, ih);
       cairo_t *cr_mask = cairo_create(mask_surface);
@@ -70,7 +102,7 @@ gint osd_cli_create(gswm_t *gsw)
 
       tw = iw;
       th = ih;
-      cairo_text_extents(cr_mask, mask_text, &extents);
+      cairo_text_extents(cr_mask, text, &extents);
       g_message("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
           extents.width + extents.x_bearing, extents.height,
           extents.x_bearing, extents.y_bearing,
@@ -81,7 +113,7 @@ gint osd_cli_create(gswm_t *gsw)
       tx = -extents.x_bearing;
       ty = -extents.y_bearing;
       g_message("tw=%lf th=%lf", tw, th);
-      //XResizeWindow(dpy, osd_window, tw, th); iw = tw; ih = th;
+      //XResizeWindow(dpy, obj->win, tw, th); iw = tw; ih = th;
       /*
          cairo_arc(cr_mask, iw / 2., ih / 2., iw * 0.25, 0, 2 * G_PI);
          cairo_set_source_rgb(cr_mask, 1, 1, 1);
@@ -94,7 +126,7 @@ gint osd_cli_create(gswm_t *gsw)
          cairo_set_source_rgb(cr_mask, 1,0,0);
          cairo_fill(cr_mask);
          */
-      cairo_show_text(cr_mask, mask_text);
+      cairo_show_text(cr_mask, text);
       cairo_destroy(cr_mask);
 
 #if 0
@@ -114,7 +146,7 @@ gint osd_cli_create(gswm_t *gsw)
 
 
       /* Create background relief */
-      if((pmap = XCreatePixmap(dpy, DefaultRootWindow(dpy), iw, ih, depth))) {
+      if((pmap = XCreatePixmap(dpy, DefaultRootWindow(dpy), iw, ih, DefaultDepth(dpy, scr)))) {
         G_GNUC_UNUSED cairo_pattern_t *pat;
         cairo_surface_t *cr_xlib_surf = cairo_xlib_surface_create(dpy, pmap,
             DefaultVisual(dpy, scr), iw, ih);
@@ -168,7 +200,7 @@ gint osd_cli_create(gswm_t *gsw)
         cairo_move_to(cr, tx, ty);
         cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
         cairo_set_font_size(cr, ih);
-        cairo_text_path(cr, mask_text);
+        cairo_text_path(cr, text);
         /*
            pat = cairo_pattern_create_linear(0, 0, tw, 0);
            cairo_pattern_add_color_stop_rgb(pat, 0, .12, .39, 1.);
@@ -181,7 +213,7 @@ gint osd_cli_create(gswm_t *gsw)
            cairo_fill_preserve(cr);
            */
         //cairo_set_source_rgb(cr, .9, .9, .98);
-        cairo_set_source_rgb(cr, .12, .39, 1.);
+        cairo_set_source_rgb(cr, obj->red, obj->green, obj->blue);
         cairo_set_line_width(cr, 2);
         cairo_stroke(cr);
 
@@ -189,21 +221,10 @@ gint osd_cli_create(gswm_t *gsw)
       }
     }
 
-    XShapeCombineMask(dpy, osd_window, ShapeBounding, 0, 0, mask_bitmap, ShapeSet);
+    XShapeCombineMask(dpy, obj->win, ShapeBounding, 0, 0, mask_bitmap, ShapeSet);
     XFreePixmap(dpy, mask_bitmap);
-    XSetWindowBackgroundPixmap(dpy, osd_window, pmap);
+    XSetWindowBackgroundPixmap(dpy, obj->win, pmap);
     XFreePixmap(dpy, pmap);
-    XStoreName(dpy, osd_window, "Cairo OSD Demo");
-    XMapWindow(dpy, osd_window);
-    XFlush(dpy);
+    XStoreName(dpy, obj->win, "Cairo OSD Demo");
   }
-  g_rand_free(rand);
-  return TRUE;
-}
-
-gint osd_cli_destroy(gswm_t *gsw)
-{
-  g_message(__func__);
-  XDestroyWindow(gsw->display, osd_window);
-  return TRUE;
 }
