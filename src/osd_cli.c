@@ -232,11 +232,12 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
 
 void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...)
 {
-  gchar buf[1024];
+  gchar *buf;
   va_list ap;
 
   va_start(ap, fmt);
-  g_vsnprintf(buf, sizeof(buf), fmt, ap);
+  buf = g_strdup_vprintf(fmt, ap);
   va_end(ap);
   osd_cli_set_text(obj, buf);
+  g_free(buf);
 }
