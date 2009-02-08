@@ -26,7 +26,6 @@
 #include "userconfig.h"
 #include "input.h"
 #include "xinerama.h"
-#include "osd_cli.h"
 
 #include <X11/cursorfont.h>
 #include <X11/keysym.h> /* XK_Num_Lock */
@@ -725,8 +724,6 @@ gint main(gint argc, gchar **argv)
     /* We want to destroy everything with the call g_main_loop_unref */
     g_source_unref(tsource);
   }
-  /* Setup the OSD command line interface */
-  xsrv_source->osdcli = osd_cli_create(xsrv_source, "Droid Sans", 1.0, .39, 1.);
   /*
    * Now we are ready to enter the main event loop
    */
@@ -734,7 +731,6 @@ gint main(gint argc, gchar **argv)
   g_main_loop_run(gml);
   g_message("%s event loop stops", __func__);
 
-  osd_cli_hide(xsrv_source->osdcli);
   /* Must be the first */
   input_destroy(xsrv_source);
   /* Cleanup all screen relevant resources */
@@ -814,7 +810,6 @@ gint main(gint argc, gchar **argv)
   action_system_destroy(xsrv_source);
   g_ptr_array_free(xsrv_source->ucfg.vdesk_names, TRUE);
   xinerama_shutdown();
-  osd_cli_destroy(xsrv_source->osdcli);
 
   XSetInputFocus(xsrv_source->display, PointerRoot, RevertToPointerRoot, CurrentTime);
   XCloseDisplay(xsrv_source->display);

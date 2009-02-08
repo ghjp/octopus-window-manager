@@ -23,6 +23,9 @@ void input_create(gswm_t *gsw)
   color_intensity_t *ci = &gsw->ucfg.focused_color;
   xosd *osd = xosd_create(OSD_HEIGHT);
 
+  /* Setup the OSD command line interface */
+  gsw->osdcli = osd_cli_create(gsw, "Droid Sans", 1.0, .39, 1.);
+  g_return_if_fail(gsw->osdcli);
   gsw->xosd = osd;
   g_return_if_fail(gsw->xosd);
   xosd_set_font(osd, gsw->ucfg.osd_font);
@@ -41,6 +44,9 @@ void input_destroy(gswm_t *gsw)
   g_return_if_fail(gsw->xosd);
   xosd_destroy(gsw->xosd);
   gsw->xosd = NULL;
+  g_return_if_fail(gsw->osdcli);
+  osd_cli_destroy(gsw->osdcli);
+  gsw->osdcli = NULL;
 }
 
 void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)

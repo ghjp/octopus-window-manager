@@ -36,7 +36,7 @@ osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, 
     XSetWindowAttributes xwinattr = {
       .override_redirect = True,
     };
-    obj->win = XCreateWindow(dpy, rootwin, 0, sheight - obj->ih, obj->iw, obj->ih, 0,
+    obj->win = XCreateWindow(dpy, rootwin, 0, 0 /*sheight - obj->ih*/, obj->iw, obj->ih, 0,
         CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect, &xwinattr);
   }
