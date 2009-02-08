@@ -52,7 +52,8 @@ am_octopus_OBJECTS = octopus-main.$(OBJEXT) octopus-client.$(OBJEXT) \
 	octopus-vdesk.$(OBJEXT) octopus-ewmh.$(OBJEXT) \
 	octopus-winframe.$(OBJEXT) octopus-userconfig.$(OBJEXT) \
 	octopus-action_system.$(OBJEXT) octopus-input.$(OBJEXT) \
-	octopus-xinerama.$(OBJEXT) octopus-rect.$(OBJEXT)
+	octopus-xinerama.$(OBJEXT) octopus-rect.$(OBJEXT) \
+	octopus-osd_cli.$(OBJEXT)
 octopus_OBJECTS = $(am_octopus_OBJECTS)
 octopus_LDADD = $(LDADD)
 octopus_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -203,8 +204,8 @@ top_srcdir = @top_srcdir@
 octopus_CFLAGS = @GLIB_CFLAGS@ @X_CFLAGS@ @CAIRO_CFLAGS@ @LIBXOSD_CFLAGS@
 #octopus_LDFLAGS = @GLIB_LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@ -lX11
 octopus_LDFLAGS = @GLIB_LIBS@ @X_LIBS@ @X_EXTRA_LIBS@ @CAIRO_LIBS@ @LIBXOSD_LIBS@ -lX11 
-noinst_HEADERS = action_system.h client.h events.h ewmh.h glib_log_ext.h input.h main.h mwm_stuff.h octopus.h userconfig.h vdesk.h winactions.h winframe.h xinerama.h rect.h
-octopus_SOURCES = main.c client.c events.c winactions.c vdesk.c ewmh.c winframe.c userconfig.c action_system.c input.c xinerama.c rect.c
+noinst_HEADERS = action_system.h client.h events.h ewmh.h glib_log_ext.h input.h main.h mwm_stuff.h octopus.h userconfig.h vdesk.h winactions.h winframe.h xinerama.h rect.h osd_cli.h
+octopus_SOURCES = main.c client.c events.c winactions.c vdesk.c ewmh.c winframe.c userconfig.c action_system.c input.c xinerama.c rect.c osd_cli.c
 all: all-am
 
 .SUFFIXES:
@@ -282,6 +283,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-ewmh.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-input.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-osd_cli.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-rect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-userconfig.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/octopus-vdesk.Po@am__quote@
@@ -477,6 +479,20 @@ octopus-rect.obj: rect.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rect.c' object='octopus-rect.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -c -o octopus-rect.obj `if test -f 'rect.c'; then $(CYGPATH_W) 'rect.c'; else $(CYGPATH_W) '$(srcdir)/rect.c'; fi`
+
+octopus-osd_cli.o: osd_cli.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -MT octopus-osd_cli.o -MD -MP -MF $(DEPDIR)/octopus-osd_cli.Tpo -c -o octopus-osd_cli.o `test -f 'osd_cli.c' || echo '$(srcdir)/'`osd_cli.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus-osd_cli.Tpo $(DEPDIR)/octopus-osd_cli.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='osd_cli.c' object='octopus-osd_cli.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -c -o octopus-osd_cli.o `test -f 'osd_cli.c' || echo '$(srcdir)/'`osd_cli.c
+
+octopus-osd_cli.obj: osd_cli.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -MT octopus-osd_cli.obj -MD -MP -MF $(DEPDIR)/octopus-osd_cli.Tpo -c -o octopus-osd_cli.obj `if test -f 'osd_cli.c'; then $(CYGPATH_W) 'osd_cli.c'; else $(CYGPATH_W) '$(srcdir)/osd_cli.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/octopus-osd_cli.Tpo $(DEPDIR)/octopus-osd_cli.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='osd_cli.c' object='octopus-osd_cli.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(octopus_CFLAGS) $(CFLAGS) -c -o octopus-osd_cli.obj `if test -f 'osd_cli.c'; then $(CYGPATH_W) 'osd_cli.c'; else $(CYGPATH_W) '$(srcdir)/osd_cli.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

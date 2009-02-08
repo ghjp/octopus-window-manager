@@ -26,6 +26,7 @@
 #include "userconfig.h"
 #include "input.h"
 #include "xinerama.h"
+#include "osd_cli.h"
 
 #include <X11/cursorfont.h>
 #include <X11/keysym.h> /* XK_Num_Lock */
@@ -724,6 +725,8 @@ gint main(gint argc, gchar **argv)
     /* We want to destroy everything with the call g_main_loop_unref */
     g_source_unref(tsource);
   }
+  /* Setup the OSD command line interface */
+  osd_cli_create(xsrv_source);
   /*
    * Now we are ready to enter the main event loop
    */
@@ -810,6 +813,7 @@ gint main(gint argc, gchar **argv)
   action_system_destroy(xsrv_source);
   g_ptr_array_free(xsrv_source->ucfg.vdesk_names, TRUE);
   xinerama_shutdown();
+  osd_cli_destroy(xsrv_source);
 
   XSetInputFocus(xsrv_source->display, PointerRoot, RevertToPointerRoot, CurrentTime);
   XCloseDisplay(xsrv_source->display);
