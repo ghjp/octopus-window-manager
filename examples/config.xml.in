@@ -32,26 +32,28 @@
 
 	<theme name="industrial">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.22" green="0.44" blue="0.67"/>
 			<focused_text_color red="1.0" green="1.0" blue="1.0"/>
 			<unfocused_color red="0.13" green="0.26" blue="0.40"/>
 			<unfocused_text_color red="0.6" green="0.6" blue="0.6"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.22" green="0.44" blue="0.67"/>
+			<osd_text_color red="1.0" green="1.0" blue="1.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="black">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.00" green="0.00" blue="0.00"/>
 			<unfocused_color red="0.10" green="0.10" blue="0.10"/>
 			<focused_text_color red="1.0" green="1.0" blue="1.0"/>
 			<unfocused_text_color red="0.5" green="0.5" blue="0.5"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.00" green="0.00" blue="0.00"/>
+			<osd_text_color red="1.0" green="1.0" blue="1.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0.02/0.02/0.02"/>
 	</theme>
 
 	<theme name="snow">
@@ -62,8 +64,9 @@
 			<focused_text_color red="0.0" green="0.0" blue="0.0"/>
 			<unfocused_text_color red="0.3" green="0.3" blue="0.3"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.90" green="0.90" blue="0.90"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0.02/0.02/0.02"/>
 	</theme>
 
 	<theme name="fuchsia">
@@ -75,91 +78,95 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="graphite">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.30" green="0.30" blue="0.30"/>
 			<unfocused_color red="0.10" green="0.10" blue="0.10"/>
 			<focused_text_color red="1.0" green="1.0" blue="1.0"/>
 			<unfocused_text_color red="0.4" green="0.4" blue="0.4"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.30" green="0.30" blue="0.30"/>
+			<osd_text_color red="1.0" green="1.0" blue="1.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="lime">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.64" green="1.0" blue="0.0"/>
 			<unfocused_color red="0.76" green="1.0" blue="0.36"/>
 			<focused_text_color red="0.0" green="0.0" blue="0.0"/>
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.64" green="1.0" blue="0.0"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/0/0"/>
 	</theme>
 
 	<theme name="ginger">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="1.0" green="0.89" blue="0.19"/>
 			<unfocused_color red="1.0" green="0.93" blue="0.51"/>
 			<focused_text_color red="0.0" green="0.0" blue="0.0"/>
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="1.0" green="0.89" blue="0.19"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0/0/0"/>
 	</theme>
 
 	<theme name="mofit">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.65" green="0.81" blue="0.35"/>
 			<unfocused_color red="0.42" green="0.54" blue="0.23"/>
 			<focused_text_color red="0.90" green="0.90" blue="0.98"/>
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="neon">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.63" green="0.89" blue="0.98"/>
 			<unfocused_color red="0.46" green="0.56" blue="0.59"/>
 			<focused_text_color red="0.0" green="0.0" blue="0.0"/>
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.63" green="0.89" blue="0.98"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0/0/0"/>
 	</theme>
 
 	<theme name="peppermint">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.56" green="0.93" blue="0.56"/>
 			<unfocused_color red="0.39" green="0.64" blue="0.39"/>
 			<focused_text_color red="0.95" green="0.95" blue="0.95"/>
 			<unfocused_text_color red="0.3" green="0.3" blue="0.3"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.56" green="0.93" blue="0.56"/>
+			<osd_text_color red="0.95" green="0.95" blue="0.95"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0/0/0"/>
 	</theme>
 
 	<theme name="chili">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.89" green="0" blue="0"/>
 			<unfocused_color red="0.65" green="0" blue="0"/>
 			<focused_text_color red="0.90" green="0.90" blue="0.98"/>
 			<unfocused_text_color red="0.4" green="0.4" blue="0.4"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.89" green="0" blue="0"/>
+			<osd_text_color red="0.90" green="0.90" blue="0.98"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="orange">
@@ -171,19 +178,19 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.3"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="denim">
 		<window_frame>
-			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal"/>
+			<layout border_width="2" titlebar_height="16" titlebar_font_family="Opal" osd_font_family="Droid Sans" osd_height="24"/>
 			<focused_color red="0.12" green="0.39" blue="1.0"/>
 			<unfocused_color red="0.36" green="0.56" blue="1.0"/>
 			<focused_text_color red="0.90" green="0.90" blue="0.98"/>
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.12" green="0.39" blue="1.0"/>
+			<osd_text_color red="0.90" green="0.90" blue="0.98"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 </octopus>
