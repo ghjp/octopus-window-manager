@@ -22,23 +22,14 @@ void input_create(gswm_t *gsw)
 {
   color_intensity_t *ci = &gsw->ucfg.focused_color;
   xosd *osd = xosd_create(OSD_HEIGHT);
-  osd_color_t fgc, bgc;
-
-  bgc.red = 1.0;
-  bgc.green = .39;
-  bgc.blue = 1.;
-
-  fgc.red = .9;
-  fgc.green = .9;
-  fgc.blue = .98;
 
   /* Setup the OSD command line interface */
-  gsw->osdcli = osd_cli_create(gsw, "Droid Sans", &fgc, &bgc);
+  gsw->osdcli = osd_cli_create(gsw, "Droid Sans");
   g_return_if_fail(gsw->osdcli);
   gsw->xosd = osd;
   g_return_if_fail(gsw->xosd);
-  xosd_set_font(osd, gsw->ucfg.osd_font);
-  xosd_set_colour(osd, gsw->ucfg.osd_color);
+  xosd_set_font(osd, gsw->ucfg.xosd_font);
+  xosd_set_colour(osd, gsw->ucfg.xosd_color);
   xosd_set_outline_offset(osd, 1);
   /*xosd_set_shadow_offset (osd, 1);*/
   xosd_set_outline_colour(osd, ci->rgbi_str);

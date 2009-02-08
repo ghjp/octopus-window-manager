@@ -73,10 +73,13 @@ typedef struct {
   gchar *titlebar_font_family, *xterm_cmd, *xterm_terminal_cmd;
   color_intensity_t focused_color, unfocused_color;
   color_intensity_t focused_text_color, unfocused_text_color;
-  gchar *osd_font, *osd_color;
+  gchar *xosd_font, *xosd_color;
   gdouble alpha_east, alpha_west;
   guint modifier;
   GPtrArray *vdesk_names;
+  color_intensity_t osd_fgc, osd_bgc;
+  gchar *osd_font;
+  gint osd_height;
 } user_config_t;
 
 typedef struct {
@@ -288,15 +291,9 @@ typedef struct {
 } interaction_t;
 
 typedef struct {
-  gdouble red, green, blue;
-} osd_color_t;
-
-typedef struct {
-  gchar *font;
-  osd_color_t bgcolor, fgcolor;
+  gswm_t *gsw;
   guint iw, ih;
   Window win;
-  gswm_t *gsw;
 } osd_cli_t;
 
 struct _gswm {

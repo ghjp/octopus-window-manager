@@ -375,13 +375,13 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   XSetIOErrorHandler(handle_xioerror); /* Fatal error handler */
 
   /* Check necessary fonts */
-  gsw->font = XLoadQueryFont(dpy, gsw->ucfg.osd_font);
+  gsw->font = XLoadQueryFont(dpy, gsw->ucfg.xosd_font);
   if(!gsw->font) {
-    g_critical("Unable to load user OSD font `%s'", gsw->ucfg.osd_font);
+    g_critical("Unable to load user OSD font `%s'", gsw->ucfg.xosd_font);
     /* Try to get the default font */
-    g_free(gsw->ucfg.osd_font);
-    gsw->ucfg.osd_font = g_strdup("fixed");
-    gsw->font = XLoadQueryFont(dpy, gsw->ucfg.osd_font);
+    g_free(gsw->ucfg.xosd_font);
+    gsw->ucfg.xosd_font = g_strdup("fixed");
+    gsw->font = XLoadQueryFont(dpy, gsw->ucfg.xosd_font);
     if(!gsw->font)
       g_error("Failed to load the default font 'fixed'");
   }
@@ -792,9 +792,12 @@ gint main(gint argc, gchar **argv)
   g_free(xsrv_source->ucfg.unfocused_color.rgbi_str);
   g_free(xsrv_source->ucfg.focused_text_color.rgbi_str);
   g_free(xsrv_source->ucfg.unfocused_text_color.rgbi_str);
-  g_free(xsrv_source->ucfg.osd_font);
-  g_free(xsrv_source->ucfg.osd_color);
+  g_free(xsrv_source->ucfg.xosd_font);
+  g_free(xsrv_source->ucfg.xosd_color);
   g_free(xsrv_source->screen);
+  g_free(xsrv_source->ucfg.osd_font);
+  g_free(xsrv_source->ucfg.osd_bgc.rgbi_str);
+  g_free(xsrv_source->ucfg.osd_fgc.rgbi_str);
   g_array_free(xsrv_source->net_wm_states_array, TRUE);
   g_array_free(xsrv_source->auto_raise_frames, TRUE);
   g_hash_table_destroy(xsrv_source->win2clnt_hash);

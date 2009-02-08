@@ -1,7 +1,7 @@
 #ifndef _OSD_CLI_H
 #define _OSD_CLI_H
 
-osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, osd_color_t *fgc, osd_color_t *bgc);
+osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font);
 gint osd_cli_destroy(osd_cli_t *obj);
 void osd_cli_show(osd_cli_t *obj);
 void osd_cli_hide(osd_cli_t *obj);
