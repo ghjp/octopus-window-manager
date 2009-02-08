@@ -288,8 +288,12 @@ typedef struct {
 } interaction_t;
 
 typedef struct {
-  gchar *font;
   gdouble red, green, blue;
+} osd_color_t;
+
+typedef struct {
+  gchar *font;
+  osd_color_t bgcolor, fgcolor;
   guint iw, ih;
   Window win;
   gswm_t *gsw;

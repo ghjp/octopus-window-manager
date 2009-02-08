@@ -22,9 +22,18 @@ void input_create(gswm_t *gsw)
 {
   color_intensity_t *ci = &gsw->ucfg.focused_color;
   xosd *osd = xosd_create(OSD_HEIGHT);
+  osd_color_t fgc, bgc;
+
+  bgc.red = 1.0;
+  bgc.green = .39;
+  bgc.blue = 1.;
+
+  fgc.red = .9;
+  fgc.green = .9;
+  fgc.blue = .98;
 
   /* Setup the OSD command line interface */
-  gsw->osdcli = osd_cli_create(gsw, "Droid Sans", 1.0, .39, 1.);
+  gsw->osdcli = osd_cli_create(gsw, "Droid Sans", &fgc, &bgc);
   g_return_if_fail(gsw->osdcli);
   gsw->xosd = osd;
   g_return_if_fail(gsw->xosd);
@@ -147,7 +156,7 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   xosd_display(osd, OSD_HEIGHT-1, XOSD_string, "");
   xosd_display(osd, 0, XOSD_string, prompt);
 
-  osd_cli_set_text(gsw->osdcli, prompt);
+  osd_cli_set_text(gsw->osdcli, (gchar*)prompt);
   osd_cli_show(gsw->osdcli);
 
   cmpl_len = scr->dpy_width / (gsw->font->max_bounds.rbearing - gsw->font->min_bounds.lbearing);

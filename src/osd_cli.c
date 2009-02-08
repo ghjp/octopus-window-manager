@@ -9,7 +9,7 @@
 #include <X11/extensions/shape.h>
 #include <cairo-xlib.h>
 
-osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, gdouble blue)
+osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, osd_color_t *fgc, osd_color_t *bgc)
 {
   Window rootwin;
   gint swidth, sheight, depth;
@@ -19,9 +19,8 @@ osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, 
   osd_cli_t *obj = g_new0(osd_cli_t, 1);
 
   obj->gsw = gsw;
-  obj->red = red;
-  obj->green = green;
-  obj->blue = blue;
+  obj->fgcolor = *fgc;
+  obj->bgcolor = *bgc;
   obj->font = g_strdup(font);
 
   rootwin = screen->rootwin;
@@ -30,7 +29,7 @@ osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, 
   depth = DefaultDepth(dpy, scr);
   obj->iw = swidth;
   obj->ih = sheight * 50 / 1000;
-  g_message("scr=%d swidth=%d sheight=%d", scr, swidth, sheight);
+  TRACE(("scr=%d swidth=%d sheight=%d", scr, swidth, sheight));
 
   if(TRUE) {
     XSetWindowAttributes xwinattr = {
@@ -50,7 +49,6 @@ osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, 
 
 gint osd_cli_destroy(osd_cli_t *obj)
 {
-  g_message(__func__);
   XDestroyWindow(obj->gsw->display, obj->win);
   g_free(obj->font);
   g_free(obj);
@@ -59,14 +57,12 @@ gint osd_cli_destroy(osd_cli_t *obj)
 
 void osd_cli_show(osd_cli_t *obj)
 {
-  g_message(__func__);
   XMapRaised(obj->gsw->display, obj->win);
   //XFlush(obj->dpy);
 }
 
 void osd_cli_hide(osd_cli_t *obj)
 {
-  g_message(__func__);
   XUnmapWindow(obj->gsw->display, obj->win);
 }
 
@@ -78,11 +74,11 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
   screen_t *screen = obj->gsw->screen + obj->gsw->i_curr_scr;
   gint scr = screen->id;
 
-  if(obj->win) {
+  if(G_LIKELY(obj->win)) {
     Pixmap mask_bitmap, pmap = None;
 
     /* Construct window shape */
-    if((mask_bitmap = XCreatePixmap(dpy, obj->win, iw, ih, 1))) {
+    if(G_LIKELY((mask_bitmap = XCreatePixmap(dpy, obj->win, iw, ih, 1)))) {
       gdouble tw, th, tx, ty;
       cairo_text_extents_t extents;
       const gchar *mask_font = obj->font;
@@ -104,16 +100,16 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
       tw = iw;
       th = ih;
       cairo_text_extents(cr_mask, text, &extents);
-      g_message("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
+      TRACE(("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
           extents.width + extents.x_bearing, extents.height,
           extents.x_bearing, extents.y_bearing,
-          extents.x_advance, extents.y_advance);
+          extents.x_advance, extents.y_advance));
 
       tw = extents.x_advance;
       th = extents.height;
       tx = -extents.x_bearing;
       ty = -extents.y_bearing;
-      g_message("tw=%lf th=%lf", tw, th);
+      TRACE(("tw=%lf th=%lf", tw, th));
       //XResizeWindow(dpy, obj->win, tw, th); iw = tw; ih = th;
       /*
          cairo_arc(cr_mask, iw / 2., ih / 2., iw * 0.25, 0, 2 * G_PI);
@@ -147,13 +143,13 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
 
 
       /* Create background relief */
-      if((pmap = XCreatePixmap(dpy, DefaultRootWindow(dpy), iw, ih, DefaultDepth(dpy, scr)))) {
+      if(G_LIKELY((pmap = XCreatePixmap(dpy, DefaultRootWindow(dpy), iw, ih, DefaultDepth(dpy, scr))))) {
         G_GNUC_UNUSED cairo_pattern_t *pat;
         cairo_surface_t *cr_xlib_surf = cairo_xlib_surface_create(dpy, pmap,
             DefaultVisual(dpy, scr), iw, ih);
         cairo_t *cr = cairo_create(cr_xlib_surf);
 
-        g_message("Pixmap creation successful: pixmap = 0x%lx", pmap);
+        TRACE(("Pixmap creation successful: pixmap = 0x%lx", pmap));
         cairo_surface_destroy(cr_xlib_surf); /* A reference is hold by cr */
         /**
           cairo_save(cr);
@@ -194,7 +190,7 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
 #endif
         /* Background color */
         //cairo_set_source_rgb(cr, .12, .39, 1.);
-        cairo_set_source_rgb(cr, .9, .9, .98);
+        cairo_set_source_rgb(cr, obj->fgcolor.red, obj->fgcolor.green, obj->fgcolor.blue);
         cairo_rectangle(cr, 0, 0, iw, ih);
         cairo_fill(cr);
         /* Try some text path tricks */
@@ -214,7 +210,7 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
            cairo_fill_preserve(cr);
            */
         //cairo_set_source_rgb(cr, .9, .9, .98);
-        cairo_set_source_rgb(cr, obj->red, obj->green, obj->blue);
+        cairo_set_source_rgb(cr, obj->bgcolor.red, obj->bgcolor.green, obj->bgcolor.blue);
         cairo_set_line_width(cr, 2);
         cairo_stroke(cr);
 
