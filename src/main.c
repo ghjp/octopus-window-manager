@@ -727,7 +727,6 @@ gint main(gint argc, gchar **argv)
   }
   /* Setup the OSD command line interface */
   xsrv_source->osdcli = osd_cli_create(xsrv_source, "Droid Sans", 1.0, .39, 1.);
-  osd_cli_show(xsrv_source->osdcli);
   /*
    * Now we are ready to enter the main event loop
    */

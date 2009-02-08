@@ -6,5 +6,6 @@ gint osd_cli_destroy(osd_cli_t *obj);
 void osd_cli_show(osd_cli_t *obj);
 void osd_cli_hide(osd_cli_t *obj);
 void osd_cli_set_text(osd_cli_t *obj, gchar *text);
+void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...);
 
 #endif

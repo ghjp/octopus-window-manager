@@ -44,6 +44,7 @@ osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, 
     obj->win = XCreateSimpleWindow(dpy, rootwin, 0, sheight - obj->ih, obj->iw, obj->ih, 0,
         BlackPixel(dpy, scr), BlackPixel(dpy, scr));
   osd_cli_set_text(obj, "OSD CLI interface " PACKAGE_STRING);
+  XStoreName(dpy, obj->win, "OSD CLI interface " PACKAGE_STRING);
   return obj;
 }
 
@@ -225,6 +226,17 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
     XFreePixmap(dpy, mask_bitmap);
     XSetWindowBackgroundPixmap(dpy, obj->win, pmap);
     XFreePixmap(dpy, pmap);
-    XStoreName(dpy, obj->win, "Cairo OSD Demo");
+    XClearWindow(dpy, obj->win);
   }
+}
+
+void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...)
+{
+  gchar buf[1024];
+  va_list ap;
+
+  va_start(ap, fmt);
+  g_vsnprintf(buf, sizeof(buf), fmt, ap);
+  va_end(ap);
+  osd_cli_set_text(obj, buf);
 }

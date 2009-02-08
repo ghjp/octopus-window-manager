@@ -6,6 +6,7 @@
 #include "octopus.h"
 #include "input.h"
 #include "winframe.h"
+#include "osd_cli.h"
 
 #include <X11/keysym.h> /* XK_x, ... */
 #ifdef HAVE_XF86VM
@@ -140,6 +141,9 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   xosd_display(osd, OSD_HEIGHT-1, XOSD_string, "");
   xosd_display(osd, 0, XOSD_string, prompt);
 
+  osd_cli_set_text(gsw->osdcli, prompt);
+  osd_cli_show(gsw->osdcli);
+
   cmpl_len = scr->dpy_width / (gsw->font->max_bounds.rbearing - gsw->font->min_bounds.lbearing);
   while(TRUE) {
     XEvent ev;
@@ -202,10 +206,12 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
         xosd_display(osd, 0, XOSD_printf, "%s%s", prompt, dest->str);
         off_cl = CLAMP(off_cl, 0, (gint)avail_actions->len);
         xosd_display(osd, OSD_HEIGHT-1, XOSD_string, avail_actions->str + off_cl);
+        osd_cli_printf(gsw->osdcli, "%s%s", prompt, dest->str);
         break;
     }
   }
 leave_loop:
+  osd_cli_hide(gsw->osdcli);
   xosd_hide(osd);
 #ifdef HAVE_XF86VM
   if(gsw->xf86vm)
