@@ -43,7 +43,7 @@ osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font, gdouble red, gdouble green, 
   else
     obj->win = XCreateSimpleWindow(dpy, rootwin, 0, sheight - obj->ih, obj->iw, obj->ih, 0,
         BlackPixel(dpy, scr), BlackPixel(dpy, scr));
-  osd_cli_set_text(obj, "Dummy");
+  osd_cli_set_text(obj, "OSD CLI interface " PACKAGE_STRING);
   return obj;
 }
 
