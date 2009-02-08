@@ -22,6 +22,8 @@ void input_create(gswm_t *gsw)
   /* Setup the OSD command line interface */
   gsw->osd_cmd = osd_cli_create(gsw);
   g_return_if_fail(gsw->osd_cmd);
+  gsw->osd_info = osd_cli_create(gsw);
+  g_return_if_fail(gsw->osd_info);
 }
 
 void input_destroy(gswm_t *gsw)

@@ -44,31 +44,40 @@ osd_cli_t *osd_cli_create(gswm_t *gsw)
   return obj;
 }
 
-gint osd_cli_destroy(osd_cli_t *obj)
+void osd_cli_destroy(osd_cli_t *obj)
 {
+  g_return_if_fail(obj);
   XDestroyWindow(obj->gsw->display, obj->win);
   g_free(obj);
-  return TRUE;
 }
 
 void osd_cli_show(osd_cli_t *obj)
 {
+  g_return_if_fail(obj);
   XMapRaised(obj->gsw->display, obj->win);
   //XFlush(obj->dpy);
 }
 
 void osd_cli_hide(osd_cli_t *obj)
 {
+  g_return_if_fail(obj);
   XUnmapWindow(obj->gsw->display, obj->win);
 }
 
 void osd_cli_set_text(osd_cli_t *obj, gchar *text)
 {
-  Display *dpy = obj->gsw->display;
-  guint iw = obj->iw;
-  guint ih = obj->ih;
-  screen_t *screen = obj->gsw->screen + obj->gsw->i_curr_scr;
-  gint scr = screen->id;
+  Display *dpy;
+  guint iw, ih;
+  screen_t *screen;
+  gint scr;
+
+  g_return_if_fail(obj && text);
+
+  dpy = obj->gsw->display;
+  iw = obj->iw;
+  ih = obj->ih;
+  screen = obj->gsw->screen + obj->gsw->i_curr_scr;
+  scr = screen->id;
 
   if(G_LIKELY(obj->win)) {
     Pixmap mask_bitmap, pmap = None;
@@ -227,6 +236,7 @@ void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...)
   gchar *buf;
   va_list ap;
 
+  g_return_if_fail(obj);
   va_start(ap, fmt);
   buf = g_strdup_vprintf(fmt, ap);
   va_end(ap);
@@ -236,6 +246,7 @@ void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...)
 
 void osd_cli_set_horizontal_offset(osd_cli_t *obj, gint offset)
 {
+  g_return_if_fail(obj);
   if(obj->horiz_offset != offset) {
     obj->horiz_offset = offset;
     XMoveWindow(obj->gsw->display, obj->win, obj->horiz_offset, obj->vert_offset);
@@ -244,6 +255,7 @@ void osd_cli_set_horizontal_offset(osd_cli_t *obj, gint offset)
 
 void osd_cli_set_vertical_offset(osd_cli_t *obj, gint offset)
 {
+  g_return_if_fail(obj);
   if(obj->vert_offset != offset) {
     obj->vert_offset = offset;
     XMoveWindow(obj->gsw->display, obj->win, obj->horiz_offset, obj->vert_offset);

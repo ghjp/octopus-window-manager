@@ -320,7 +320,7 @@ struct _gswm {
   gint shape, shape_event, xf86vm;
   user_config_t ucfg;
   interaction_t cmd, action;
-  osd_cli_t *osd_cmd;
+  osd_cli_t *osd_cmd, *osd_info;
   Colormap installed_cmap;
 };
 
