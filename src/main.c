@@ -374,16 +374,10 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   XSetErrorHandler(handle_init_xerror);
   XSetIOErrorHandler(handle_xioerror); /* Fatal error handler */
 
-  /* Check necessary fonts */
-  gsw->font = XLoadQueryFont(dpy, gsw->ucfg.xosd_font);
+  /* Try to get the default font */
+  gsw->font = XLoadQueryFont(dpy, "fixed");
   if(!gsw->font) {
-    g_critical("Unable to load user OSD font `%s'", gsw->ucfg.xosd_font);
-    /* Try to get the default font */
-    g_free(gsw->ucfg.xosd_font);
-    gsw->ucfg.xosd_font = g_strdup("fixed");
-    gsw->font = XLoadQueryFont(dpy, gsw->ucfg.xosd_font);
-    if(!gsw->font)
-      g_error("Failed to load the default font 'fixed'");
+    g_error("Failed to load the default font 'fixed'");
   }
 
   gsw->fd_x = ConnectionNumber(dpy); /* Set the event loop file descriptor */
@@ -792,8 +786,6 @@ gint main(gint argc, gchar **argv)
   g_free(xsrv_source->ucfg.unfocused_color.rgbi_str);
   g_free(xsrv_source->ucfg.focused_text_color.rgbi_str);
   g_free(xsrv_source->ucfg.unfocused_text_color.rgbi_str);
-  g_free(xsrv_source->ucfg.xosd_font);
-  g_free(xsrv_source->ucfg.xosd_color);
   g_free(xsrv_source->screen);
   g_free(xsrv_source->ucfg.osd_font);
   g_free(xsrv_source->ucfg.osd_bgc.rgbi_str);

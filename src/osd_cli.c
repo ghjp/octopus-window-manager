@@ -9,7 +9,7 @@
 #include <X11/extensions/shape.h>
 #include <cairo-xlib.h>
 
-osd_cli_t *osd_cli_create(gswm_t *gsw, gchar *font)
+osd_cli_t *osd_cli_create(gswm_t *gsw)
 {
   Window rootwin;
   gint swidth, sheight, depth;
@@ -232,4 +232,20 @@ void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...)
   va_end(ap);
   osd_cli_set_text(obj, buf);
   g_free(buf);
+}
+
+void osd_cli_set_horizontal_offset(osd_cli_t *obj, gint offset)
+{
+  if(obj->horiz_offset != offset) {
+    obj->horiz_offset = offset;
+    XMoveWindow(obj->gsw->display, obj->win, obj->horiz_offset, obj->vert_offset);
+  }
+}
+
+void osd_cli_set_vertical_offset(osd_cli_t *obj, gint offset)
+{
+  if(obj->vert_offset != offset) {
+    obj->vert_offset = offset;
+    XMoveWindow(obj->gsw->display, obj->win, obj->horiz_offset, obj->vert_offset);
+  }
 }

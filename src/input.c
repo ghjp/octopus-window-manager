@@ -12,7 +12,6 @@
 #ifdef HAVE_XF86VM
 #include <X11/extensions/xf86vmode.h>
 #endif
-#include <xosd.h>
 #include <cairo-xlib.h>
 
 #define OSD_HEIGHT 2
@@ -20,33 +19,16 @@
 
 void input_create(gswm_t *gsw)
 {
-  color_intensity_t *ci = &gsw->ucfg.focused_color;
-  xosd *osd = xosd_create(OSD_HEIGHT);
-
   /* Setup the OSD command line interface */
-  gsw->osdcli = osd_cli_create(gsw, "Droid Sans");
-  g_return_if_fail(gsw->osdcli);
-  gsw->xosd = osd;
-  g_return_if_fail(gsw->xosd);
-  xosd_set_font(osd, gsw->ucfg.xosd_font);
-  xosd_set_colour(osd, gsw->ucfg.xosd_color);
-  xosd_set_outline_offset(osd, 1);
-  /*xosd_set_shadow_offset (osd, 1);*/
-  xosd_set_outline_colour(osd, ci->rgbi_str);
-  /*xosd_set_shadow_colour(osd, gsw->ucfg.unfocused_color.rgbi_str);*/
-  xosd_set_pos(osd, XOSD_bottom);
-  xosd_set_align(osd, XOSD_left);
-  xosd_hide(osd);
+  gsw->osd_cmd = osd_cli_create(gsw);
+  g_return_if_fail(gsw->osd_cmd);
 }
 
 void input_destroy(gswm_t *gsw)
 {
-  g_return_if_fail(gsw->xosd);
-  xosd_destroy(gsw->xosd);
-  gsw->xosd = NULL;
-  g_return_if_fail(gsw->osdcli);
-  osd_cli_destroy(gsw->osdcli);
-  gsw->osdcli = NULL;
+  g_return_if_fail(gsw->osd_cmd);
+  osd_cli_destroy(gsw->osd_cmd);
+  gsw->osd_cmd = NULL;
 }
 
 void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
@@ -67,11 +49,8 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   gint off_cl = 0;
   GString *dest = ia->line;
   GCompletion *gcomp = ia->completion;
-  xosd *osd = gsw->xosd;
 
   g_string_set_size(dest, 0);
-
-  g_return_if_fail(osd);
 
   if(GrabSuccess != XGrabKeyboard(dpy, scr->rootwin,
         False, GrabModeSync, GrabModeAsync, CurrentTime))
@@ -142,13 +121,12 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   }
 #endif
   XSync(dpy, False);
-  xosd_set_horizontal_offset(osd, vd->warea.x);
-  xosd_set_vertical_offset(osd, scr->dpy_height - vd->warea.h - vd->warea.y + 2*scr->fr_info.border_width);
-  xosd_display(osd, OSD_HEIGHT-1, XOSD_string, "");
-  xosd_display(osd, 0, XOSD_string, prompt);
+  osd_cli_set_horizontal_offset(gsw->osd_cmd, scr->fr_info.border_width + vd->warea.x);
+  osd_cli_set_vertical_offset(gsw->osd_cmd, vd->warea.h + vd->warea.y
+      - scr->fr_info.border_width - gsw->ucfg.osd_height);
 
-  osd_cli_set_text(gsw->osdcli, (gchar*)prompt);
-  osd_cli_show(gsw->osdcli);
+  osd_cli_set_text(gsw->osd_cmd, (gchar*)prompt);
+  osd_cli_show(gsw->osd_cmd);
 
   cmpl_len = scr->dpy_width / (gsw->font->max_bounds.rbearing - gsw->font->min_bounds.lbearing);
   while(TRUE) {
@@ -209,16 +187,15 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
             g_string_append(dest, kstr_buf);
             break;
         }
-        xosd_display(osd, 0, XOSD_printf, "%s%s", prompt, dest->str);
+        //xosd_display(osd, 0, XOSD_printf, "%s%s", prompt, dest->str);
         off_cl = CLAMP(off_cl, 0, (gint)avail_actions->len);
-        xosd_display(osd, OSD_HEIGHT-1, XOSD_string, avail_actions->str + off_cl);
-        osd_cli_printf(gsw->osdcli, "%s%s", prompt, dest->str);
+        //xosd_display(osd, OSD_HEIGHT-1, XOSD_string, avail_actions->str + off_cl);
+        osd_cli_printf(gsw->osd_cmd, "%s%s", prompt, dest->str);
         break;
     }
   }
 leave_loop:
-  osd_cli_hide(gsw->osdcli);
-  xosd_hide(osd);
+  osd_cli_hide(gsw->osd_cmd);
 #ifdef HAVE_XF86VM
   if(gsw->xf86vm)
     XF86VidModeSetGamma(dpy, scr->id, &old_gamma);

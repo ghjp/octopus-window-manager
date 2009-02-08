@@ -76,24 +76,6 @@ static void _xml_config_start_elem(GMarkupParseContext *context,
       }
     }
   }
-  else if(g_str_equal(element_name, "osd")) {
-    for(i = 0; attribute_names[i]; i++) {
-      if(g_str_equal(attribute_names[i], "font")) {
-        g_free(gsw->ucfg.xosd_font);
-        gsw->ucfg.xosd_font = g_strdup(attribute_values[i]);
-      }
-      else if(g_str_equal(attribute_names[i], "color")) {
-        g_free(gsw->ucfg.xosd_color);
-        gsw->ucfg.xosd_color = g_strdup(attribute_values[i]);
-      }
-      else {
-        *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_UNKNOWN_ATTRIBUTE,
-            "%s Detected unknown attribute `%s' from element %s",
-            __func__, attribute_names[i], element_name);
-        break;
-      }
-    }
-  }
   else if(g_str_equal(element_name, "new_action")) {
     const gchar *name, *action;
 
@@ -371,8 +353,6 @@ void init_xml_config(gswm_t *gsw)
   gsw->ucfg.xterm_terminal_cmd = g_strdup("xterm -e");
   gsw->ucfg.modifier = Mod1Mask;
   /* denim theme is the default */
-  gsw->ucfg.xosd_font = g_strdup("*-fixed-*-12-*");
-  gsw->ucfg.xosd_color = g_strdup("rgbi:1.0/1.0/1.0");
   gsw->ucfg.alpha_east = 0.9;
   gsw->ucfg.alpha_west = 0.1;
   gsw->ucfg.focused_color.r = 0.12;

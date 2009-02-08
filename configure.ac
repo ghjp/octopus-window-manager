@@ -41,7 +41,6 @@ AM_PATH_GLIB_2_0([2.2.0],,,)
 PKG_CHECK_MODULES([GDK_PIXBUF_XLIB], [gdk-pixbuf-xlib-2.0])
 PKG_CHECK_MODULES([CAIRO], [cairo >= 1.0.0])
 AC_PATH_XTRA
-AM_PATH_LIBXOSD
 
 # Checks for header files.
 AC_HEADER_STDC

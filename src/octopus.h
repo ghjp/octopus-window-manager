@@ -73,7 +73,6 @@ typedef struct {
   gchar *titlebar_font_family, *xterm_cmd, *xterm_terminal_cmd;
   color_intensity_t focused_color, unfocused_color;
   color_intensity_t focused_text_color, unfocused_text_color;
-  gchar *xosd_font, *xosd_color;
   gdouble alpha_east, alpha_west;
   guint modifier;
   GPtrArray *vdesk_names;
@@ -292,7 +291,7 @@ typedef struct {
 
 typedef struct {
   gswm_t *gsw;
-  guint iw, ih;
+  guint iw, ih, horiz_offset, vert_offset;
   Window win;
 } osd_cli_t;
 
@@ -321,8 +320,7 @@ struct _gswm {
   gint shape, shape_event, xf86vm;
   user_config_t ucfg;
   interaction_t cmd, action;
-  gpointer xosd;
-  osd_cli_t *osdcli;
+  osd_cli_t *osd_cmd;
   Colormap installed_cmap;
 };
 
