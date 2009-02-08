@@ -123,12 +123,21 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   }
 #endif
   XSync(dpy, False);
-  osd_cli_set_horizontal_offset(gsw->osd_cmd, scr->fr_info.border_width + vd->warea.x);
-  osd_cli_set_vertical_offset(gsw->osd_cmd, vd->warea.h + vd->warea.y
-      - scr->fr_info.border_width - gsw->ucfg.osd_height);
+  {
+    gint x_cli = scr->fr_info.border_width + vd->warea.x;
+    gint y_cli = vd->warea.h + vd->warea.y - scr->fr_info.border_width - gsw->ucfg.osd_height;
+
+    osd_cli_set_horizontal_offset(gsw->osd_info, x_cli);
+    osd_cli_set_vertical_offset(gsw->osd_info, y_cli);
+    y_cli -= gsw->ucfg.osd_height;
+    osd_cli_set_horizontal_offset(gsw->osd_cmd, x_cli);
+    osd_cli_set_vertical_offset(gsw->osd_cmd, y_cli);
+  }
 
   osd_cli_set_text(gsw->osd_cmd, (gchar*)prompt);
+  osd_cli_set_text(gsw->osd_info, "   Hint: Press Tab for autocompletion!");
   osd_cli_show(gsw->osd_cmd);
+  osd_cli_show(gsw->osd_info);
 
   cmpl_len = scr->dpy_width / (gsw->font->max_bounds.rbearing - gsw->font->min_bounds.lbearing);
   while(TRUE) {
@@ -193,11 +202,13 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
         off_cl = CLAMP(off_cl, 0, (gint)avail_actions->len);
         //xosd_display(osd, OSD_HEIGHT-1, XOSD_string, avail_actions->str + off_cl);
         osd_cli_printf(gsw->osd_cmd, "%s%s", prompt, dest->str);
+        osd_cli_set_text(gsw->osd_info, avail_actions->str + off_cl);
         break;
     }
   }
 leave_loop:
   osd_cli_hide(gsw->osd_cmd);
+  osd_cli_hide(gsw->osd_info);
 #ifdef HAVE_XF86VM
   if(gsw->xf86vm)
     XF86VidModeSetGamma(dpy, scr->id, &old_gamma);
