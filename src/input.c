@@ -220,5 +220,3 @@ leave_loop:
 #endif
   g_string_free(avail_actions, TRUE);
 }
-
-

@@ -640,10 +640,6 @@ gint main(gint argc, gchar **argv)
   if(!setlocale(LC_ALL, ""))
     g_warning("setlocale call failed");
 
-  /* We need this because OSD library uses threads */
-  if(!XInitThreads())
-    g_critical("XInitThreads() failed");
-
   if(!XSetLocaleModifiers(""))
     g_warning("Cannot set locale modifiers for the X server");
 
