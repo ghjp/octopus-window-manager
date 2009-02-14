@@ -214,7 +214,7 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
          */
       //cairo_set_source_rgb(cr, .9, .9, .98);
       cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
-      cairo_set_line_width(cr, 2);
+      cairo_set_line_width(cr, ih/16.);
       cairo_stroke(cr);
 
       cairo_destroy(cr);
