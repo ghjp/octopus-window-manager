@@ -158,8 +158,10 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
             break;
           case XK_BackSpace:
             TRACE(("XK_BackSpace pressed"));
-            if(0 < dest->len)
-              g_string_truncate(dest, dest->len - 1);
+            if(0 < dest->len) {
+              gchar *prev_c = g_utf8_find_prev_char(dest->str, dest->str + dest->len);
+              g_string_set_size(dest, G_LIKELY(prev_c) ? prev_c - dest->str: 0);
+            }
             break;
           case XK_Escape:
             TRACE(("%s XK_Escape pressed", __func__));
