@@ -83,20 +83,20 @@ else
 	AC_MSG_RESULT([no])
 fi
 
-### Check for XRANDR support
-##AC_MSG_CHECKING([wheter to build support for the XRANDR extension])
-##AC_ARG_ENABLE(xrandr,
-##	      AC_HELP_STRING([--enable-xrandr],
-##			     [enable support for the XRANDR extension [default=yes]]), ,
-##			     [enable_xrandr=yes])
-##if test "x$enable_xrandr" = "xyes"; then
-##	AC_MSG_RESULT([yes])
-##	AC_CHECK_LIB(Xrandr, XRRQueryExtension,
-##		     AC_DEFINE(HAVE_XRANDR, [], [Define to 1 if you have an XRANDR capable server])
-##		     LIBS="$LIBS -lXrender -lXrandr", , $X_CFLAGS $X_PRE_LIBS $X_EXTRA_LIBS -lXrender $X_LIBS)
-##	else
-##		AC_MSG_RESULT([no])
-##		fi
+# Check for XRANDR support
+AC_MSG_CHECKING([wheter to build support for the XRANDR extension])
+AC_ARG_ENABLE(xrandr,
+	      AC_HELP_STRING([--enable-xrandr],
+			     [enable support for the XRANDR extension [default=yes]]), ,
+			     [enable_xrandr=yes])
+if test "x$enable_xrandr" = "xyes"; then
+	AC_MSG_RESULT([yes])
+	AC_CHECK_LIB(Xrandr, XRRQueryExtension,
+		     AC_DEFINE(HAVE_XRANDR, [], [Define to 1 if you have an XRANDR capable server])
+		     LIBS="$LIBS -lXrandr", , $X_CFLAGS $X_PRE_LIBS $X_EXTRA_LIBS -lXrender $X_LIBS)
+	else
+		AC_MSG_RESULT([no])
+		fi
 
 # Check for Xinerama extension
 AC_MSG_CHECKING([whether to build support for the Xinerama extension])

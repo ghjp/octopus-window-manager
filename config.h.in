@@ -60,6 +60,9 @@
 /* Define to 1 if you have an Xinerama capable server */
 #undef HAVE_XINERAMA
 
+/* Define to 1 if you have an XRANDR capable server */
+#undef HAVE_XRANDR
+
 /* Define to 1 if you have an XShape capable server */
 #undef HAVE_XSHAPE
 

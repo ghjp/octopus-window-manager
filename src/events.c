@@ -19,6 +19,9 @@
 #ifdef HAVE_XSHAPE
 #include <X11/extensions/shape.h> /* SHAPE */
 #endif
+#ifdef HAVE_XRANDR
+#include <X11/extensions/Xrandr.h>
+#endif
 
 #define _NET_WM_MOVERESIZE_SIZE_TOPLEFT      0
 #define _NET_WM_MOVERESIZE_SIZE_TOP          1
@@ -725,6 +728,17 @@ static void _handle_shape_event(gswm_t *gsw, XShapeEvent *e)
 }
 #endif
 
+#ifdef HAVE_XRANDR
+static void _handle_randr_event(gswm_t *gsw, XRRScreenChangeNotifyEvent *ev)
+{
+#if RANDR_MAJOR >= 1
+  XRRUpdateConfiguration((XEvent*)ev);
+#endif
+    // don't care about what it is, only update screen size
+  g_debug("%s: w=%d h=%d r=%d", __func__, ev->width, ev->height, ev->rotation);
+}
+#endif // HAVE_XRANDR
+
 static void _refresh_key_bindings(gpointer key, gpointer value, gpointer user_data)
 {
   client_t *c = (client_t*)value;
@@ -929,6 +943,10 @@ void process_xevent(gswm_t *gsw)
 #ifdef HAVE_XSHAPE
       if(gsw->shape && ev.type == gsw->shape_event) /* SHAPE */
         _handle_shape_event(gsw, (XShapeEvent *)&ev);
+#endif
+#ifdef HAVE_XRANDR
+      if(gsw->xrandr && ev.type == gsw->event_xrandr)  /* RandR */
+        _handle_randr_event(gsw, (XRRScreenChangeNotifyEvent*) &ev);
 #endif
       /* Everything else is ignored */
       break;
