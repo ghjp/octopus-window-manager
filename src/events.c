@@ -13,6 +13,7 @@
 #include "winframe.h"
 #include "main.h"
 #include "ewmh.h"
+#include "osd_cli.h"
 
 #include <X11/keysym.h> /* XK_x, ... */
 #include <X11/Xatom.h>  /* XA_WM_NAME */
@@ -731,11 +732,17 @@ static void _handle_shape_event(gswm_t *gsw, XShapeEvent *e)
 #ifdef HAVE_XRANDR
 static void _handle_randr_event(gswm_t *gsw, XRRScreenChangeNotifyEvent *ev)
 {
+  screen_t *scr = gsw->screen + gsw->i_curr_scr;
 #if RANDR_MAJOR >= 1
   XRRUpdateConfiguration((XEvent*)ev);
 #endif
-    // don't care about what it is, only update screen size
-  g_debug("%s: w=%d h=%d r=%d", __func__, ev->width, ev->height, ev->rotation);
+  // don't care about what it is, only update screen size
+  if(scr->dpy_width != ev->width || scr->dpy_height != ev->height) {
+    TRACE(("%s: w=%d h=%d r=%d", __func__, ev->width, ev->height, ev->rotation));
+    scr->dpy_width = ev->width;
+    scr->dpy_height = ev->height;
+    set_ewmh_workarea(gsw);
+  }
 }
 #endif // HAVE_XRANDR
 
