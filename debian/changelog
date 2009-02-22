@@ -1,3 +1,10 @@
+octopus (0.5.0-1) unstable; urgency=low
+
+  * Implemented a new CLI without the xosd library. The whole thing is now
+    based completely on cairo.
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun,  8 Feb 2009 18:34:03 +0100
+
 octopus (0.4.4-3) unstable; urgency=low
 
   * Bugfix for the "jump" action if a desktop switch is necessary

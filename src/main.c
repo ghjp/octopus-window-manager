@@ -374,16 +374,10 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   XSetErrorHandler(handle_init_xerror);
   XSetIOErrorHandler(handle_xioerror); /* Fatal error handler */
 
-  /* Check necessary fonts */
-  gsw->font = XLoadQueryFont(dpy, gsw->ucfg.osd_font);
+  /* Try to get the default font */
+  gsw->font = XLoadQueryFont(dpy, "fixed");
   if(!gsw->font) {
-    g_critical("Unable to load user OSD font `%s'", gsw->ucfg.osd_font);
-    /* Try to get the default font */
-    g_free(gsw->ucfg.osd_font);
-    gsw->ucfg.osd_font = g_strdup("fixed");
-    gsw->font = XLoadQueryFont(dpy, gsw->ucfg.osd_font);
-    if(!gsw->font)
-      g_error("Failed to load the default font 'fixed'");
+    g_error("Failed to load the default font 'fixed'");
   }
 
   gsw->fd_x = ConnectionNumber(dpy); /* Set the event loop file descriptor */
@@ -646,10 +640,6 @@ gint main(gint argc, gchar **argv)
   if(!setlocale(LC_ALL, ""))
     g_warning("setlocale call failed");
 
-  /* We need this because OSD library uses threads */
-  if(!XInitThreads())
-    g_critical("XInitThreads() failed");
-
   if(!XSetLocaleModifiers(""))
     g_warning("Cannot set locale modifiers for the X server");
 
@@ -792,9 +782,10 @@ gint main(gint argc, gchar **argv)
   g_free(xsrv_source->ucfg.unfocused_color.rgbi_str);
   g_free(xsrv_source->ucfg.focused_text_color.rgbi_str);
   g_free(xsrv_source->ucfg.unfocused_text_color.rgbi_str);
-  g_free(xsrv_source->ucfg.osd_font);
-  g_free(xsrv_source->ucfg.osd_color);
   g_free(xsrv_source->screen);
+  g_free(xsrv_source->ucfg.osd_font);
+  g_free(xsrv_source->ucfg.osd_bgc.rgbi_str);
+  g_free(xsrv_source->ucfg.osd_fgc.rgbi_str);
   g_array_free(xsrv_source->net_wm_states_array, TRUE);
   g_array_free(xsrv_source->auto_raise_frames, TRUE);
   g_hash_table_destroy(xsrv_source->win2clnt_hash);

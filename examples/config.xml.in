@@ -39,7 +39,11 @@
 			<unfocused_text_color red="0.6" green="0.6" blue="0.6"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
+		<osd_cli>
+			<layout osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.22" green="0.44" blue="0.67"/>
+			<osd_text_color red="1.0" green="1.0" blue="1.0"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="black">
@@ -51,7 +55,11 @@
 			<unfocused_text_color red="0.5" green="0.5" blue="0.5"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0.02/0.02/0.02"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.00" green="0.00" blue="0.00"/>
+			<osd_text_color red="1.0" green="1.0" blue="1.0"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="snow">
@@ -62,8 +70,9 @@
 			<focused_text_color red="0.0" green="0.0" blue="0.0"/>
 			<unfocused_text_color red="0.3" green="0.3" blue="0.3"/>
 			<alpha east="0.9" west="0.1"/>
+			<osd_border_color red="0.90" green="0.90" blue="0.90"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0.02/0.02/0.02"/>
 	</theme>
 
 	<theme name="fuchsia">
@@ -75,7 +84,6 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
 	</theme>
 
 	<theme name="graphite">
@@ -87,7 +95,11 @@
 			<unfocused_text_color red="0.4" green="0.4" blue="0.4"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.30" green="0.30" blue="0.30"/>
+			<osd_text_color red="1.0" green="1.0" blue="1.0"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="lime">
@@ -99,7 +111,11 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/0/0"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.64" green="1.0" blue="0.0"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="ginger">
@@ -111,7 +127,11 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0/0/0"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="1.0" green="0.89" blue="0.19"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="mofit">
@@ -123,7 +143,11 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.65" green="0.81" blue="0.35"/>
+			<osd_text_color red="0.90" green="0.90" blue="0.98"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="neon">
@@ -135,7 +159,11 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0/0/0"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.63" green="0.89" blue="0.98"/>
+			<osd_text_color red="0.0" green="0.0" blue="0.0"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="peppermint">
@@ -147,7 +175,11 @@
 			<unfocused_text_color red="0.3" green="0.3" blue="0.3"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:0/0/0"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.56" green="0.93" blue="0.56"/>
+			<osd_text_color red="0.95" green="0.95" blue="0.95"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="chili">
@@ -159,7 +191,11 @@
 			<unfocused_text_color red="0.4" green="0.4" blue="0.4"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.89" green="0" blue="0"/>
+			<osd_text_color red="0.90" green="0.90" blue="0.98"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="orange">
@@ -171,7 +207,12 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.3"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="1.00" green="0.647059" blue="0"/>
+			<osd_border_color red="0.12" green="0.39" blue="1.0"/>
+			<osd_text_color red="0.90" green="0.90" blue="1.00"/>
+		</osd_cli>
 	</theme>
 
 	<theme name="denim">
@@ -183,7 +224,11 @@
 			<unfocused_text_color red="0.2" green="0.2" blue="0.2"/>
 			<alpha east="0.9" west="0.1"/>
 		</window_frame>
-		<osd font="*-helvetica-bold-r-*-14-*" color="rgbi:1/1/1"/>
+		<osd_cli>
+			<layout  osd_font_family="Droid Sans" osd_height="24"/>
+			<osd_border_color red="0.12" green="0.39" blue="1.0"/>
+			<osd_text_color red="0.90" green="0.90" blue="0.98"/>
+		</osd_cli>
 	</theme>
 
 </octopus>

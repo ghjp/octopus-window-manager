@@ -2,13 +2,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([octopus], [0.4.4], [pfefferl@gmx.net])
+AC_INIT([octopus], [0.5.0], [pfefferl@gmx.net])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([auxdir])
 
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE([octopus], [0.4.4], no-define)
+AM_INIT_AUTOMAKE([octopus], [0.5.0], no-define)
 AM_DISABLE_STATIC
 
 # Allow application specific compile and library flags aka. "octopus_CFLAGS = ...."
@@ -41,7 +41,6 @@ AM_PATH_GLIB_2_0([2.2.0],,,)
 PKG_CHECK_MODULES([GDK_PIXBUF_XLIB], [gdk-pixbuf-xlib-2.0])
 PKG_CHECK_MODULES([CAIRO], [cairo >= 1.0.0])
 AC_PATH_XTRA
-AM_PATH_LIBXOSD
 
 # Checks for header files.
 AC_HEADER_STDC

@@ -62,24 +62,12 @@ static void _xml_config_start_elem(GMarkupParseContext *context,
         g_free(gsw->ucfg.titlebar_font_family);
         gsw->ucfg.titlebar_font_family = g_strdup(attribute_values[i]);
       }
-      else {
-        *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_UNKNOWN_ATTRIBUTE,
-            "%s Detected unknown attribute `%s' from element %s",
-            __func__, attribute_names[i], element_name);
-        break;
-      }
-    }
-  }
-  else if(g_str_equal(element_name, "osd")) {
-    for(i = 0; attribute_names[i]; i++) {
-      if(g_str_equal(attribute_names[i], "font")) {
+      else if(g_str_equal(attribute_names[i], "osd_font_family")) {
         g_free(gsw->ucfg.osd_font);
         gsw->ucfg.osd_font = g_strdup(attribute_values[i]);
       }
-      else if(g_str_equal(attribute_names[i], "color")) {
-        g_free(gsw->ucfg.osd_color);
-        gsw->ucfg.osd_color = g_strdup(attribute_values[i]);
-      }
+      else if(g_str_equal(attribute_names[i], "osd_height"))
+        gsw->ucfg.osd_height = strtol(attribute_values[i], NULL, 0);
       else {
         *error = g_error_new(G_MARKUP_ERROR, G_MARKUP_ERROR_UNKNOWN_ATTRIBUTE,
             "%s Detected unknown attribute `%s' from element %s",
@@ -111,6 +99,12 @@ static void _xml_config_start_elem(GMarkupParseContext *context,
           "%s Element %s must contain attributes `name' and `action'",
           __func__, element_name);
   }
+  else if(g_str_equal(element_name, "osd_border_color"))
+    _read_color_intensity(element_name, attribute_names, attribute_values,
+        &gsw->ucfg.osd_bgc, error);
+  else if(g_str_equal(element_name, "osd_text_color"))
+    _read_color_intensity(element_name, attribute_names, attribute_values,
+        &gsw->ucfg.osd_fgc, error);
   else if(g_str_equal(element_name, "focused_color"))
     _read_color_intensity(element_name, attribute_names, attribute_values,
         &gsw->ucfg.focused_color, error);
@@ -359,8 +353,6 @@ void init_xml_config(gswm_t *gsw)
   gsw->ucfg.xterm_terminal_cmd = g_strdup("xterm -e");
   gsw->ucfg.modifier = Mod1Mask;
   /* denim theme is the default */
-  gsw->ucfg.osd_font = g_strdup("*-fixed-*-12-*");
-  gsw->ucfg.osd_color = g_strdup("rgbi:1.0/1.0/1.0");
   gsw->ucfg.alpha_east = 0.9;
   gsw->ucfg.alpha_west = 0.1;
   gsw->ucfg.focused_color.r = 0.12;
@@ -376,4 +368,8 @@ void init_xml_config(gswm_t *gsw)
   gsw->ucfg.unfocused_text_color.g = 0.2;
   gsw->ucfg.unfocused_text_color.b = 0.2;
   gsw->ucfg.vdesk_names = g_ptr_array_new();
+  gsw->ucfg.osd_bgc = gsw->ucfg.focused_color;
+  gsw->ucfg.osd_fgc = gsw->ucfg.focused_text_color;
+  gsw->ucfg.osd_font = g_strdup(gsw->ucfg.titlebar_font_family);
+  gsw->ucfg.osd_height = (3*gsw->ucfg.titlebar_height) / 2;
 }
