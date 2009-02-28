@@ -1,8 +1,9 @@
 octopus (0.5.0-2) unstable; urgency=low
 
   * Added XRandR support to window manager
+  * OSD CLI bugfix: Only redraw the info window if something changed
 
- -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 22 Feb 2009 19:54:59 +0100
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sat, 28 Feb 2009 20:02:38 +0100
 
 octopus (0.5.0-1) unstable; urgency=low
 

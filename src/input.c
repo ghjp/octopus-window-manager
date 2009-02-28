@@ -51,6 +51,7 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   gint off_cl = 0;
   GString *dest = ia->line;
   GCompletion *gcomp = ia->completion;
+  gboolean redisplay_info = TRUE;
 
   g_string_set_size(dest, 0);
 
@@ -194,6 +195,7 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
                 g_free(new_prefix);
               }
               off_cl = 0;
+              redisplay_info = TRUE;
             }
             break;
           default:
@@ -204,7 +206,10 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
         off_cl = CLAMP(off_cl, 0, (gint)avail_actions->len);
         //xosd_display(osd, OSD_HEIGHT-1, XOSD_string, avail_actions->str + off_cl);
         osd_cli_printf(gsw->osd_cmd, "%s%s", prompt, dest->str);
-        osd_cli_set_text(gsw->osd_info, avail_actions->str + off_cl);
+        if(redisplay_info) {
+          osd_cli_set_text(gsw->osd_info, avail_actions->str + off_cl);
+          redisplay_info = FALSE;
+        }
         break;
     }
   }
