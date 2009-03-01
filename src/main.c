@@ -36,6 +36,9 @@
 #ifdef HAVE_XF86VM
 #include <X11/extensions/xf86vmode.h>
 #endif
+#ifdef HAVE_XRANDR
+#include <X11/extensions/Xrandr.h>
+#endif
 
 /* Defines {{{1 */
 #define MS_AUTORAISE 800
@@ -395,13 +398,20 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   gsw->shape = XShapeQueryExtension(dpy, &gsw->shape_event, &si); 
   TRACE(("%s shape=%d shape_event=%d", __func__, gsw->shape, gsw->shape_event));
 #endif
+#ifdef HAVE_XRANDR
+  {
+    gint dummy_ev;
+    gsw->xrandr = XRRQueryExtension(dpy, &gsw->event_xrandr, &dummy_ev);
+  }
+#endif
 #ifdef HAVE_XF86VM
   gsw->xf86vm = XF86VidModeQueryExtension(dpy, &si, &si); 
 #endif
   {
     gboolean xinerama_present = xinerama_init(dpy);
-    g_message("Detected X extensions:%s%s%s",
+    g_message("Detected X extensions:%s%s%s%s",
         gsw->shape ? " SHAPE": "",
+        gsw->xrandr ? " XRandR": "",
         xinerama_present ? " Xinerama": "",
         gsw->xf86vm ? " XFree86-VidModeExtension": "");
   }
@@ -467,6 +477,9 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
     wframe_button_init(gsw);
     _scan_clients_from_screen(gsw);
     set_ewmh_net_desktop_names(gsw);
+#ifdef HAVE_XRANDR
+    XRRSelectInput(dpy, srwin, RRScreenChangeNotifyMask);
+#endif
   } /* end screen loop */
   gsw->i_curr_scr = DefaultScreen(dpy);
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, gsw->screen[gsw->i_curr_scr].current_vdesk);

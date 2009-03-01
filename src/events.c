@@ -13,11 +13,15 @@
 #include "winframe.h"
 #include "main.h"
 #include "ewmh.h"
+#include "osd_cli.h"
 
 #include <X11/keysym.h> /* XK_x, ... */
 #include <X11/Xatom.h>  /* XA_WM_NAME */
 #ifdef HAVE_XSHAPE
 #include <X11/extensions/shape.h> /* SHAPE */
+#endif
+#ifdef HAVE_XRANDR
+#include <X11/extensions/Xrandr.h>
 #endif
 
 #define _NET_WM_MOVERESIZE_SIZE_TOPLEFT      0
@@ -725,6 +729,23 @@ static void _handle_shape_event(gswm_t *gsw, XShapeEvent *e)
 }
 #endif
 
+#ifdef HAVE_XRANDR
+static void _handle_randr_event(gswm_t *gsw, XRRScreenChangeNotifyEvent *ev)
+{
+  screen_t *scr = gsw->screen + gsw->i_curr_scr;
+#if RANDR_MAJOR >= 1
+  XRRUpdateConfiguration((XEvent*)ev);
+#endif
+  // don't care about what it is, only update screen size
+  if(scr->dpy_width != ev->width || scr->dpy_height != ev->height) {
+    TRACE(("%s: w=%d h=%d r=%d", __func__, ev->width, ev->height, ev->rotation));
+    scr->dpy_width = ev->width;
+    scr->dpy_height = ev->height;
+    set_ewmh_workarea(gsw);
+  }
+}
+#endif // HAVE_XRANDR
+
 static void _refresh_key_bindings(gpointer key, gpointer value, gpointer user_data)
 {
   client_t *c = (client_t*)value;
@@ -929,6 +950,10 @@ void process_xevent(gswm_t *gsw)
 #ifdef HAVE_XSHAPE
       if(gsw->shape && ev.type == gsw->shape_event) /* SHAPE */
         _handle_shape_event(gsw, (XShapeEvent *)&ev);
+#endif
+#ifdef HAVE_XRANDR
+      if(gsw->xrandr && ev.type == gsw->event_xrandr)  /* RandR */
+        _handle_randr_event(gsw, (XRRScreenChangeNotifyEvent*) &ev);
 #endif
       /* Everything else is ignored */
       break;

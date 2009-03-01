@@ -317,7 +317,10 @@ struct _gswm {
   XFontStruct *font;
   guint numlockmask;
   gint fd_x;
-  gint shape, shape_event, xf86vm;
+  gint shape_event, xf86vm;
+  guint shape:1;
+  guint xrandr:1;
+  gint event_xrandr;
   user_config_t ucfg;
   interaction_t cmd, action;
   osd_cli_t *osd_cmd, *osd_info;
