@@ -150,12 +150,16 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
         TRACE(("%s Key pressed: %s", __func__, kstr_buf));
         switch(ks) {
           case XK_Right:
-            if(cmpl_len < avail_actions->len)
+            if(cmpl_len < avail_actions->len) {
               off_cl += cmpl_len;
+              redisplay_info = TRUE;
+            }
             break;
           case XK_Left:
-            if(cmpl_len < avail_actions->len)
+            if(cmpl_len < avail_actions->len) {
               off_cl -= cmpl_len;
+              redisplay_info = TRUE;
+            }
             break;
           case XK_BackSpace:
             TRACE(("XK_BackSpace pressed"));
