@@ -1,3 +1,9 @@
+octopus (0.5.0-3) unstable; urgency=low
+
+  * Some utilities do not depend on the pixbuf libraries
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 01 Mar 2009 13:33:31 +0100
+
 octopus (0.5.0-2) unstable; urgency=low
 
   * Added XRandR support to window manager
