@@ -271,6 +271,9 @@ alternative on Unix machines is the \fIWindows\fR key. The following shortcuts i
 are defined:
 .TP
 .BI Mod\-Tab
+.I frame\-next
+.TP
+.BI Shift\-Mod\-Tab
 .I frame\-client\-next
 .TP
 .BI Mod\-a
@@ -371,16 +374,16 @@ are performed. Which one depends on thr gravity setting of the window.
 .BI Mod\-Up
 .I move\-north
 .TP
-.BI Mod\-Shift\-Right
+.BI Shift\-Mod\-Right
 .I grow\-east
 .TP
-.BI Mod\-Shift\-Left
+.BI Shift\-Mod\-Left
 .I grow\-west
 .TP
-.BI Mod\-Shift\-Down
+.BI Shift\-Mod\-Down
 .I grow\-south
 .TP
-.BI Mod\-Shift\-Up
+.BI Shift\-Mod\-Up
 .I grow\-north
 .TP
 .BI Mod\-Ctrl\-Right
