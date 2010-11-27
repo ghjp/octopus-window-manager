@@ -164,45 +164,56 @@ gboolean xinerama_maximize(client_t *client)
 void xinerama_correctloc(client_t *client)
 {
   rect_t cl_rect, *xir;
-  gint carea, i, cnt;
+  gint carea, i;
+  gint *isect, isect_max_idx, isect_max;
 
   /* dont do anything if no xinerama */
   if (G_LIKELY(!xinerama_active))
     return;
+
+  isect = g_alloca(xinerama_count * sizeof(*isect));
 
   /* get client area and rectangle */
   FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
   carea = RECTWIDTH(&cl_rect) * RECTHEIGHT(&cl_rect);
 
   /*
-   * determine if the client is stretched across more
-   * than one xinerama screen.
+   * determine the intersection of the client for each screen
+   * and remember where the best one is.
    */
-  for (i = 0, cnt = 0; i < xinerama_count; i++) {
-    gint isect = rect_intersection(&cl_rect, &xinerama_screens[i]);
-    if (isect) {
-      if (isect == carea)
-        return;
-      if (++cnt >= 2)
-        goto correct;
-    }
+  for (i = isect_max_idx = 0; i < xinerama_count; i++) {
+    isect[i] = rect_intersection(&cl_rect, &xinerama_screens[i]);
+    if(isect[i] == carea) /* Client lies already completely on one screen */
+      return;
+    if (isect[i] > isect[isect_max_idx])
+      isect_max_idx = i;
   }
-  return;
+  if(!isect[isect_max_idx]) /* Client is completely outside all screens */
+    return;
 
   /*
    * we've found that the client lies across more than one
    * monitor, so try to push it into the one it is mostly
    * on.
    */
-correct:
   TRACE("found a window \"%s\" that needs correction", client->utf8_name);
-  xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
-
-  /* make sure it is small enough to fit */
-  if (RECTWIDTH(&cl_rect) >= RECTWIDTH(xir))
-    return;
-  if (RECTHEIGHT(&cl_rect) >= RECTHEIGHT(xir))
-    return;
+  xir = NULL;
+  isect_max = 0;
+  /* Search  for a screen where it lies at least partly and where it would fit completely */
+  for (i = 0; i < xinerama_count; i++) {
+    /* There is an intersection and the dimensions match */
+    if(isect[i] && RECTWIDTH(&cl_rect) < RECTWIDTH(&xinerama_screens[i])
+        && RECTHEIGHT(&cl_rect) < RECTHEIGHT(&xinerama_screens[i])) {
+      if(isect[i] > isect_max) {
+        xir = &xinerama_screens[i];
+        isect_max = isect[i];
+      }
+    }
+  }
+  /* We have not found a screen where the client can be fully placed.
+   * Last ressort is to try the screen where the biggest area is located */
+  if(!xir)
+    xir = &xinerama_screens[isect_max_idx];
 
   /* push it into the screen */
   if (client->x < xir->x1)

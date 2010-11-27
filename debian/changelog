@@ -1,3 +1,9 @@
+octopus (0.5.0-4) unstable; urgency=low
+
+  * Window placement in "fit-to-workarea" for xinerama modes improved
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sat, 27 Nov 2010 20:35:17 +0100
+
 octopus (0.5.0-3) unstable; urgency=low
 
   * Some utilities do not depend on the pixbuf libraries
