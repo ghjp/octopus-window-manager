@@ -9,9 +9,9 @@
 
 #ifdef FULL_DEBUG
 #include "glib_log_ext.h"
-#define TRACE(args) g_debug args
+#define TRACE(args...) g_debug(args)
 #else
-#define TRACE(args) G_STMT_START{}G_STMT_END
+#define TRACE(args...) G_STMT_START{}G_STMT_END
 #endif
 
 #define ChildMask (SubstructureRedirectMask|SubstructureNotifyMask)

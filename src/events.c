@@ -52,7 +52,7 @@ static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
   client_t *clnt;
   KeySym ks = XLookupKeysym(e, 0);
 
-  TRACE((__func__));
+  TRACE(__func__);
   switch(ks) {
     case XK_Tab:
       if(ShiftMask & e->state)
@@ -228,8 +228,8 @@ static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
   if(clnt) {
     gint wf_btn_pressed = e->subwindow == clnt->wframe->btnwin;
     gint stat_btn_pressed = e->subwindow == clnt->wframe->statwin;
-    TRACE(("%s subwin==titlewin=%d subwin==btnwin=%d", __func__,
-          e->subwindow == clnt->wframe->titlewin, e->subwindow == clnt->wframe->btnwin));
+    TRACE("%s subwin==titlewin=%d subwin==btnwin=%d", __func__,
+          e->subwindow == clnt->wframe->titlewin, e->subwindow == clnt->wframe->btnwin);
     switch (e->button) {
       case Button1:
         if(wf_btn_pressed)
@@ -270,7 +270,7 @@ static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
     }
   }
   else if((clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window)))) {
-    TRACE(("%s: Button click inside client '%s' detected", __func__, clnt->utf8_name));
+    TRACE("%s: Button click inside client '%s' detected", __func__, clnt->utf8_name);
     /* forward grabbed events */
     XAllowEvents(gsw->display, ReplayPointer, CurrentTime);
   }
@@ -304,7 +304,7 @@ static void _handle_buttonrelease_event(gswm_t *gsw, XButtonReleasedEvent *e)
       wframe_tbar_button_set_normal(gsw, oldframe);
   }
   else if(gsw->screen[gsw->i_curr_scr].rootwin == e->window) {
-    TRACE(("%s root button event", __func__));
+    TRACE("%s root button event", __func__);
     switch(e->button) {
       case Button4:
         switch_vdesk_down(gsw);
@@ -342,8 +342,8 @@ static void _handle_unmap_event(gswm_t *gsw, XUnmapEvent *e)
      */
     gint synthetic_unmap = e->send_event && e->event == clnt->curr_screen->rootwin;
 
-    TRACE(("%s synthetic_unmap=%d event=%ld window=%ld from_configure=%d (%s)",
-        __func__, synthetic_unmap, e->event, e->window, e->from_configure, clnt->utf8_name));
+    TRACE("%s synthetic_unmap=%d event=%ld window=%ld from_configure=%d (%s)",
+        __func__, synthetic_unmap, e->event, e->window, e->from_configure, clnt->utf8_name);
     if(clnt->ignore_unmap && !synthetic_unmap)
       clnt->ignore_unmap--;
     else
@@ -364,8 +364,8 @@ static void _handle_maprequest_event(gswm_t *gsw, XMapRequestEvent *e)
   if(!clnt)
     create_new_client(gsw, e->window);
   else {
-    TRACE(("%s parent=%ld window=%ld c->win=%ld c->wframe->win=%ld",
-        __func__, e->parent, e->window, clnt->win, clnt->wframe->win));
+    TRACE("%s parent=%ld window=%ld c->win=%ld c->wframe->win=%ld",
+        __func__, e->parent, e->window, clnt->win, clnt->wframe->win);
     /* If client is already framed we ignore this request
        TODO Check if this is really correct */
     if(e->parent != clnt->wframe->win)
@@ -383,7 +383,7 @@ static void _handle_configurerequest_event(gswm_t *gsw, XConfigureRequestEvent *
   while(XCheckTypedWindowEvent(gsw->display, e->window, ConfigureRequest,
         &next_ev)) {
     if(next_ev.xconfigurerequest.value_mask == e->value_mask) {
-      TRACE(("%s compressed event", __func__));
+      TRACE("%s compressed event", __func__);
       e = &next_ev.xconfigurerequest;
     }
     else {
@@ -392,10 +392,10 @@ static void _handle_configurerequest_event(gswm_t *gsw, XConfigureRequestEvent *
     }
   }
 
-  TRACE(("ConfigureRequest ser=%lu send_event=%d parent=%lu window=%lu "
+  TRACE("ConfigureRequest ser=%lu send_event=%d parent=%lu window=%lu "
       "x=%d y=%d width=%d height=%d border_width=%d above=%lu detail=%d value_mask=%lu",
       e->serial, e->send_event, e->parent, e->window, e->x, e->y,
-      e->width, e->height, e->border_width, e->above, e->detail, e->value_mask));
+      e->width, e->height, e->border_width, e->above, e->detail, e->value_mask);
 
   clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window));
   if(clnt) {
@@ -432,22 +432,22 @@ static void _handle_configurerequest_event(gswm_t *gsw, XConfigureRequestEvent *
 
       client_t *sibling = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->above));
 
-      TRACE(("%s value_mask & (CWSibling|CWStackMode) sibling is %s (%li vs %li)\n",
-          __func__, sibling ? sibling->utf8_name : "unkown", sibling ? sibling->win: 0, clnt->win));
+      TRACE("%s value_mask & (CWSibling|CWStackMode) sibling is %s (%li vs %li)\n",
+          __func__, sibling ? sibling->utf8_name : "unkown", sibling ? sibling->win: 0, clnt->win);
 
       if(sibling) {
         switch(e->detail) {
           case Above:
-            TRACE(("%s (CWSibling|CWStackMode) above %s\n",
-                __func__, sibling->utf8_name));
+            TRACE("%s (CWSibling|CWStackMode) above %s\n",
+                __func__, sibling->utf8_name);
 
             /* Dialog 'above its self, call activate to raise it */
             if(sibling == clnt && clnt->w_type.dialog)
               wframe_set_client_active(gsw, clnt);
             break;
           case Below:
-            TRACE(("%s (CWSibling|CWStackMode) below %s\n",
-                __func__, sibling->utf8_name));
+            TRACE("%s (CWSibling|CWStackMode) below %s\n",
+                __func__, sibling->utf8_name);
             /* TODO: Unsupported currently clear flags */
             e->value_mask &= ~(CWSibling|CWStackMode);
             break;
@@ -455,8 +455,8 @@ static void _handle_configurerequest_event(gswm_t *gsw, XConfigureRequestEvent *
           case BottomIf:
           case Opposite:
           default:
-            TRACE(("%s (CWSibling|CWStackMode) uh? %s\n",
-                __func__, sibling->utf8_name));
+            TRACE("%s (CWSibling|CWStackMode) uh? %s\n",
+                __func__, sibling->utf8_name);
             /* Unsupported currently clear flags */
             e->value_mask &= ~(CWSibling|CWStackMode);
             break;
@@ -493,7 +493,7 @@ static void _handle_configurerequest_event(gswm_t *gsw, XConfigureRequestEvent *
 
 static void _rebuild_wframe(gpointer key, gpointer value, gpointer user_data)
 {
-  TRACE(("%s fid=%d", __func__, GPOINTER_TO_INT(key)));
+  TRACE("%s fid=%d", __func__, GPOINTER_TO_INT(key));
   wframe_tbar_pmap_recreate(user_data, value);
 }
 
@@ -565,7 +565,7 @@ static void _process_remote_command(gswm_t *gsw)
       &n, &extra, &value);
   g_return_if_fail(Success == status);
   if(value) {
-    TRACE(("%s: %s", __func__, value));
+    TRACE("%s: %s", __func__, value);
     action_system_interpret(gsw, (gpointer)value);
     X_FREE(value);
   }
@@ -576,7 +576,7 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
   client_t *clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window));
   if(clnt && 32 == e->format) {
     if(e->message_type == gsw->xa.wm_change_state) {
-      TRACE(("%s wm_change_state w=%ld", __func__, clnt->win));
+      TRACE("%s wm_change_state w=%ld", __func__, clnt->win);
       if(IconicState == e->data.l[0] && !clnt->wstate.hidden)
         detach(gsw, clnt);
     }
@@ -585,7 +585,7 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
     else if(e->message_type == gsw->xa.wm_net_active_window) {
       switch(e->data.l[0]) { /* Source indication */
         case 2: /* Request from pager */
-          TRACE(("%s _NET_ACTIVE_WINDOW request from pager", __func__));
+          TRACE("%s _NET_ACTIVE_WINDOW request from pager", __func__);
           if(!clnt->wstate.sticky)
             switch_vdesk(gsw, clnt->i_vdesk);
           if(clnt->wstate.hidden)
@@ -594,10 +594,10 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
           wa_raise(gsw, clnt);
           break;
         case 1: /* Request from application */
-          TRACE(("%s _NET_ACTIVE_WINDOW request from application", __func__));
+          TRACE("%s _NET_ACTIVE_WINDOW request from application", __func__);
           /* Fall through */
         default: /* Old style applications */
-          TRACE(("%s _NET_ACTIVE_WINDOW Old style applications", __func__));
+          TRACE("%s _NET_ACTIVE_WINDOW Old style applications", __func__);
           if(!clnt->wstate.sticky)
             switch_vdesk(gsw, clnt->i_vdesk);
           if(clnt->wstate.hidden)
@@ -608,7 +608,7 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
     }
     else if(e->message_type == gsw->xa.wm_net_wm_desktop) {
       glong new_desktop = e->data.l[0];
-      TRACE(("%s valid desktop number: new_desktop=%ld", __func__, new_desktop));
+      TRACE("%s valid desktop number: new_desktop=%ld", __func__, new_desktop);
       if(0 <= new_desktop && new_desktop < clnt->curr_screen->num_vdesk) {
         detach(gsw, clnt);
         clnt->i_vdesk = new_desktop;
@@ -639,8 +639,8 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
       G_GNUC_UNUSED glong gravity_to_use = mr_info & 0xff; /* Low Byte */
       gint xywh_present = (0xfL<<8) == (mr_info & (0xfL<<8));
 
-      TRACE(("%s wm_net_moveresize_window: gravity_to_use=%ld xywh_present=%d",
-            __func__, gravity_to_use, xywh_present));
+      TRACE("%s wm_net_moveresize_window: gravity_to_use=%ld xywh_present=%d",
+            __func__, gravity_to_use, xywh_present);
       if(xywh_present) {
         /* TODO Use gravity_to_use information too */
         gravitate(gsw, clnt, GRAV_UNDO);
@@ -658,8 +658,8 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
       gint direction = (gint)e->data.l[2];
       G_GNUC_UNUSED gint button = (gint)e->data.l[3];
 
-      TRACE(("%s _NET_WM_MOVERESIZE x_r=%d y_r=%d dir=%d button=%d",
-            __func__, x_root, y_root, direction, button));
+      TRACE("%s _NET_WM_MOVERESIZE x_r=%d y_r=%d dir=%d button=%d",
+            __func__, x_root, y_root, direction, button);
       /* TODO Check if for all situations wa_resize_interactive is the correct op */
       switch(direction) {
         case _NET_WM_MOVERESIZE_SIZE_TOPLEFT:
@@ -738,7 +738,7 @@ static void _handle_randr_event(gswm_t *gsw, XRRScreenChangeNotifyEvent *ev)
 #endif
   // don't care about what it is, only update screen size
   if(scr->dpy_width != ev->width || scr->dpy_height != ev->height) {
-    TRACE(("%s: w=%d h=%d r=%d", __func__, ev->width, ev->height, ev->rotation));
+    TRACE("%s: w=%d h=%d r=%d", __func__, ev->width, ev->height, ev->rotation);
     scr->dpy_width = ev->width;
     scr->dpy_height = ev->height;
     set_ewmh_workarea(gsw);
@@ -751,7 +751,7 @@ static void _refresh_key_bindings(gpointer key, gpointer value, gpointer user_da
   client_t *c = (client_t*)value;
   gswm_t *gsw = (gswm_t*)user_data;
 
-  TRACE(("%s w=%ld %s", __func__, c->win, c->utf8_name));
+  TRACE("%s w=%ld %s", __func__, c->win, c->utf8_name);
   wframe_install_kb_shortcuts(gsw, c->wframe);
 }
 
@@ -787,8 +787,8 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
   ev.xcrossing = *e;
   while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
     /* DO NOTHING */;
-  TRACE(("%s window=%ld mode=%d detail=%d focus=%d",
-        __func__, e->window, e->mode, e->detail, e->focus));
+  TRACE("%s window=%ld mode=%d detail=%d focus=%d",
+        __func__, e->window, e->mode, e->detail, e->focus);
   /* Ignore internal application events */
   if(NotifyInferior == e->detail && ev.xcrossing.focus)
     return;
@@ -800,7 +800,7 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
   if(!clnt)
     clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(ev.xcrossing.window));
   if(clnt) {
-    TRACE(("EnterNotify frame=%ld w=%ld (%s)", clnt->wframe->win, clnt->win, clnt->utf8_name));
+    TRACE("EnterNotify frame=%ld w=%ld (%s)", clnt->wframe->win, clnt->win, clnt->utf8_name);
     if(clnt != get_focused_client(gsw))
       focus_client(gsw, clnt, TRUE);
   }
@@ -810,7 +810,7 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
 static void _handle_leave_event(gswm_t *gsw, XCrossingEvent *e)
 {
   gint i;
-  TRACE(("%s: w=0x%lx rwin=0x%lx same_screen=%d", __func__, e->window, e->root, e->same_screen));
+  TRACE("%s: w=0x%lx rwin=0x%lx same_screen=%d", __func__, e->window, e->root, e->same_screen);
   if(!e->same_screen) {
     for(i = 0; i < gsw->num_screens; i++) {
       if(e->root == gsw->screen[i].rootwin) {
@@ -827,12 +827,12 @@ static void _handle_focusin_event(gswm_t *gsw, XFocusInEvent *e)
 {
   client_t *clnt;
 
-  TRACE(("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail));
+  TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
   if(NotifyGrab == e->mode)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
-  TRACE(("%s window=%ld mode=%d detail=%d (%s)",
-        __func__, e->window, e->mode, e->detail, clnt?clnt->utf8_name:""));
+  TRACE("%s window=%ld mode=%d detail=%d (%s)",
+        __func__, e->window, e->mode, e->detail, clnt?clnt->utf8_name:"");
   if(clnt) { /*  (NotifyPointer != e->detail && NotifyAncestor != e->detail) */
     install_colormaps(gsw, clnt);
     clnt->wframe->focus_expose_hint = TRUE;
@@ -844,15 +844,15 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
 {
   client_t *clnt;
 
-  TRACE(("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail));
+  TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
   /* Get the last focus in event, no need to go through them all. */
   while(XCheckTypedEvent(gsw->display, FocusOut, (XEvent*)e))
     ;
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
-  TRACE(("%s window=%ld mode=%d detail=%d (%s)",
-        __func__, e->window, e->mode, e->detail, clnt?clnt->utf8_name:""));
+  TRACE("%s window=%ld mode=%d detail=%d (%s)",
+        __func__, e->window, e->mode, e->detail, clnt?clnt->utf8_name:"");
   if(clnt) {
     clnt->wframe->focus_expose_hint = FALSE;
     wframe_expose(gsw, clnt->wframe);
@@ -863,11 +863,11 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
      */
     if(XCheckTypedEvent(gsw->display, FocusIn, (XEvent*)e)) {
       /* We found a Event, put it back and handle it later on. */
-      TRACE(("%s found a FocusIn event", __func__));
+      TRACE("%s found a FocusIn event", __func__);
       XPutBackEvent(gsw->display, (XEvent *)e);
     }
     else {
-      TRACE(("%s giving focus to root window", __func__));
+      TRACE("%s giving focus to root window", __func__);
       XSetInputFocus(gsw->display, gsw->screen[gsw->i_curr_scr].rootwin, RevertToPointerRoot, CurrentTime);
     }
   }
@@ -879,7 +879,7 @@ static void _handle_colormapchange_event(gswm_t *gsw, XColormapEvent *e)
   
   if(clnt) {
     clnt->cmap.dflt = e->colormap;
-    TRACE(("%s w=%ld cmap=0x%x", __func__, clnt->win, (guint)clnt->cmap.dflt));
+    TRACE("%s w=%ld cmap=0x%x", __func__, clnt->win, (guint)clnt->cmap.dflt);
     if(get_focused_client(gsw) == clnt)
       install_colormaps(gsw, clnt);
   }

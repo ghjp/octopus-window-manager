@@ -35,7 +35,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
     v = 0;
   else if(0 > v)
     v = scr->num_vdesk - 1;
-  TRACE(("%s current_vdesk=%d new_vdesk=%d", __func__, scr->current_vdesk, v));
+  TRACE("%s current_vdesk=%d new_vdesk=%d", __func__, scr->current_vdesk, v);
 	if(v == scr->current_vdesk)
     return;
 
@@ -44,7 +44,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
   scr->vdesk[scr->current_vdesk].focused = get_focused_client(gsw);
   /* Hide all windows on the actual workspace */
   clist = scr->vdesk[scr->current_vdesk].clnt_list;
-  TRACE(("%s hide_clist=%d", __func__, g_list_length(clist)));
+  TRACE("%s hide_clist=%d", __func__, g_list_length(clist));
   //XGrabServer(gsw->display);
   g_list_foreach(clist, _hide_vdesk_client, gsw);
 
@@ -52,7 +52,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
   old_focused_client = scr->vdesk[scr->current_vdesk].focused;
   /* Show all windows on the new workspace */
   clist = scr->vdesk[v].clnt_list;
-  TRACE(("%s unhide_clist=%d", __func__, g_list_length(clist)));
+  TRACE("%s unhide_clist=%d", __func__, g_list_length(clist));
   g_list_foreach(clist, _unhide_vdesk_client, gsw);
   /*g_list_foreach(scr->sticky_list, _unhide_vdesk_client, gsw);*/
   //XUngrabServer(gsw->display);
@@ -61,7 +61,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
     XEvent xev;
     XSync(gsw->display, False); /* Perform all outstanding events */
     while(XCheckMaskEvent(gsw->display, EnterWindowMask, &xev))
-      TRACE(("%s: EnterWindowMask found", __func__));
+      TRACE("%s: EnterWindowMask found", __func__);
     /*
     while(XCheckMaskEvent(gsw->display, FocusChangeMask, &xev))
       g_debug("%s: FocusChangeMask found", __func__);

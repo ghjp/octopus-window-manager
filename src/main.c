@@ -108,7 +108,7 @@ static gint handle_xioerror(Display *dsply)
 static gboolean _xsrv_prepare_fd_src(GSource *source, gint *timeout_)
 {
   gswm_t *gsw = (gswm_t *)source;
-  /*TRACE(("%s fd=%d", __func__, gsw->fd_x)); */
+  /*TRACE("%s fd=%d", __func__, gsw->fd_x); */
   *timeout_ = -1; /* Wait an infinite amount of time */
   /* For file descriptor sources, this function typically returns FALSE */
   return G_LIKELY(XPending(gsw->display)) ? TRUE: FALSE;
@@ -120,7 +120,7 @@ static gboolean _xsrv_check_fd_src(GSource *source)
   struct pollfd ufds;
   gint pr;
 
-  /* TRACE(("%s fd=%d", __func__, gsw->fd_x)); */
+  /* TRACE("%s fd=%d", __func__, gsw->fd_x); */
   ufds.fd = gsw->fd_x;
   ufds.events = POLLIN;
   if(0 > (pr = poll(&ufds, 1, 0)))
@@ -134,7 +134,7 @@ static gboolean _xsrv_dispatch_accept_src(GSource *source, GSourceFunc callback,
 {
   gswm_t *gsw = (gswm_t *)source;
   (void)gsw; /* Keep compiler quiet */
-  /* TRACE(("%s fd=%d", __func__, gsw->fd_x)); */
+  /* TRACE("%s fd=%d", __func__, gsw->fd_x); */
   return G_LIKELY(callback) ? callback(user_data) : TRUE;
 }
 
@@ -170,7 +170,7 @@ static void assign_new_frame_id(gswm_t *gsw, Window child,
         new_fid = ++fr_id;
         g_hash_table_insert(frame_id_map, GINT_TO_POINTER(fid), GINT_TO_POINTER(new_fid));
       }
-      TRACE(("%s replace frame: %d -> %d", __func__, fid, new_fid));
+      TRACE("%s replace frame: %d -> %d", __func__, fid, new_fid);
       set_frame_id_xprop(gsw, child, new_fid);
     }
     else
@@ -197,7 +197,7 @@ static void _scan_clients_from_screen(gswm_t *gsw)
   if(XQueryTree(dpy, scr->rootwin, &rw, &pw, &childlist, &nchilds)) {
     Window *childlist_wo_frame_id, *trans_subwindows, *main_windows;
     gint i, trans_count, main_count;
-    TRACE(("%d child windows found", nchilds));
+    TRACE("%d child windows found", nchilds);
     /* Split windows in two groups */
     trans_subwindows = g_newa(Window, nchilds);
     main_windows = g_newa(Window, nchilds);
@@ -223,7 +223,7 @@ static void _scan_clients_from_screen(gswm_t *gsw)
     /* Clients which haven't a frame id yet get one now */
     for(i = 0; i < nchilds_wo_frame_id; i++) {
       set_frame_id_xprop(gsw, childlist_wo_frame_id[i], ++fr_id);
-      TRACE(("%s assign new frame id: %d", __func__, fr_id));
+      TRACE("%s assign new frame id: %d", __func__, fr_id);
     }
     /* Now we are ready to integrate the main application clients */
     for(i = 0; i < main_count; i++) {
@@ -373,7 +373,7 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   if(!dpy)
     g_error("Unable to connect to X server. Check DISPLAY environment variable");
   else
-    TRACE(("Running on display `%s'", DisplayString(dpy)));
+    TRACE("Running on display `%s'", DisplayString(dpy));
   XSetErrorHandler(handle_init_xerror);
   XSetIOErrorHandler(handle_xioerror); /* Fatal error handler */
 
@@ -396,7 +396,7 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   /* SHAPE */
 #ifdef HAVE_XSHAPE
   gsw->shape = XShapeQueryExtension(dpy, &gsw->shape_event, &si); 
-  TRACE(("%s shape=%d shape_event=%d", __func__, gsw->shape, gsw->shape_event));
+  TRACE("%s shape=%d shape_event=%d", __func__, gsw->shape, gsw->shape_event);
 #endif
 #ifdef HAVE_XRANDR
   {
@@ -525,7 +525,7 @@ static gboolean _autoraise_cb(gpointer data)
 
       if(((gdouble)MS_AUTORAISE/1000.) < te &&
           (clnt = wframe_lookup_client_for_window(gsw, frame_win))) {
-        TRACE(("%s '%s'", __func__, clnt->utf8_name));
+        TRACE("%s '%s'", __func__, clnt->utf8_name);
         wa_raise(gsw, clnt);
         raise_done = TRUE;
       }
@@ -595,7 +595,7 @@ static gboolean _exec_scan_cb(gpointer data)
         gchar *fname = g_build_filename(dirpath, dent, NULL);
         if(!g_file_test(fname, G_FILE_TEST_IS_DIR) &&
             g_file_test(fname, G_FILE_TEST_IS_EXECUTABLE)) {
-          TRACE(("+x %s", fname));
+          TRACE("+x %s", fname);
           sed->cmd_list = g_list_prepend(sed->cmd_list,
               g_string_chunk_insert(sed->gsw->cmd.str_chunk, dent));
         }
@@ -716,7 +716,7 @@ gint main(gint argc, gchar **argv)
 
   xsrv_pfd.fd = xsrv_source->fd_x;
   xsrv_pfd.events = G_IO_IN | G_IO_HUP | G_IO_ERR;
-  TRACE(("xsrv_pfd.fd=%d", xsrv_pfd.fd));
+  TRACE("xsrv_pfd.fd=%d", xsrv_pfd.fd);
   g_source_add_poll((GSource *)xsrv_source, &xsrv_pfd);
 
   /* Setup the autoraise function */

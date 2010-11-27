@@ -94,7 +94,7 @@ static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
       mosti = i;
     }
   }
-  TRACE(("%s: mosti=%d", __func__, mosti));
+  TRACE("%s: mosti=%d", __func__, mosti);
   return xinerama_screens + mosti;
 }
 
@@ -195,7 +195,7 @@ void xinerama_correctloc(client_t *client)
    * on.
    */
 correct:
-  TRACE(("found a window \"%s\" that needs correction", client->utf8_name));
+  TRACE("found a window \"%s\" that needs correction", client->utf8_name);
   xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
 
   /* make sure it is small enough to fit */

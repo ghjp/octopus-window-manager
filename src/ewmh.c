@@ -149,7 +149,7 @@ void init_ewmh_support(gswm_t *gsw)
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_state_below,          "_NET_WM_STATE_BELOW");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_strut,                "_NET_WM_STRUT");
 
-  TRACE(("%s len=%d", __func__, net_supported_list->len));
+  TRACE("%s len=%d", __func__, net_supported_list->len);
 
   /* This window is does nothing more than store properties which let
      other apps know we are supporting the extended wm hints */
@@ -256,7 +256,7 @@ void update_ewmh_net_client_list(gswm_t *gsw)
   vd = scr->vdesk + scr->current_vdesk;
   _append_clients_from_framelist(scr->extended_client_list, vd->frame_list);
 
-  TRACE(("%s len=%d", __func__, scr->extended_client_list->len));
+  TRACE("%s len=%d", __func__, scr->extended_client_list->len);
   XChangeProperty(gsw->display, scr->rootwin, gsw->xa.wm_net_client_list,
       XA_WINDOW, 32, PropModeReplace, (guint8*)scr->extended_client_list->data, scr->extended_client_list->len);
   XChangeProperty(gsw->display, scr->rootwin, gsw->xa.wm_net_client_list_stacking,
@@ -311,9 +311,9 @@ static void _del_strut_from_desktop(client_t *c, screen_t *scr, gint desknum)
   cslist = g_slist_remove(cslist, c);
   g_slist_foreach(cslist, _correct_master_strut, GINT_TO_POINTER(desknum));
   scr->vdesk[desknum].cstrut_list = cslist;
-  TRACE(("%s vdesk=%d master_strut.east=%u master_strut.west=%u master_strut.north=%u master_strut.south=%u",
+  TRACE("%s vdesk=%d master_strut.east=%u master_strut.west=%u master_strut.north=%u master_strut.south=%u",
       __func__, desknum, (guint)ms->east, (guint)ms->west,
-      (guint)ms->north, (guint)ms->south));
+      (guint)ms->north, (guint)ms->south);
 }
 
 void remove_ewmh_strut(gswm_t *gsw, client_t *c, gboolean add_strut_follows)
@@ -342,8 +342,8 @@ static void _add_strut_to_desktop(client_t *c, screen_t *scr, gint desknum)
   g_slist_foreach(cslist, _correct_master_strut, GINT_TO_POINTER(desknum));
   scr->vdesk[desknum].cstrut_list = cslist;
   ms = &scr->vdesk[desknum].master_strut;
-  TRACE(("%s vdesk=%d master_strut.east=%u master_strut.west=%u master_strut.north=%u master_strut.south=%u",
-      __func__, desknum, (guint)ms->east, (guint)ms->west, (guint)ms->north, (guint)ms->south));
+  TRACE("%s vdesk=%d master_strut.east=%u master_strut.west=%u master_strut.north=%u master_strut.south=%u",
+      __func__, desknum, (guint)ms->east, (guint)ms->west, (guint)ms->north, (guint)ms->south);
 }
 
 void add_ewmh_strut(gswm_t *gsw, client_t *c)
@@ -355,7 +355,7 @@ void add_ewmh_strut(gswm_t *gsw, client_t *c)
   if(tmp_strut) {
     screen_t *scr = c->curr_screen;
 
-    TRACE(("%s is given w=%ld", __func__, c->win));
+    TRACE("%s is given w=%ld", __func__, c->win);
     c->wstate.strut_valid = TRUE;
     c->cstrut.west = tmp_strut[0];
     c->cstrut.east = tmp_strut[1];
@@ -411,7 +411,7 @@ void fix_ewmh_position_based_on_struts(gswm_t *gsw, client_t *c)
     size_changed = TRUE;
 	}
 	
-  TRACE(("%s x=%d y=%d width=%d height=%d", __func__, c->x, c->y, c->width, c->height));
+  TRACE("%s x=%d y=%d width=%d height=%d", __func__, c->x, c->y, c->width, c->height);
 	if(size_changed)
     send_config(gsw, c);
 }
@@ -500,7 +500,7 @@ void do_ewmh_net_wm_state_client_message(gswm_t *gsw, client_t *c, XClientMessag
 {
   if(e->message_type == gsw->xa.wm_net_wm_state) {
     Atom a = e->data.l[1];
-    TRACE(("%s wm_net_wm_state", __func__));
+    TRACE("%s wm_net_wm_state", __func__);
 redo_switch:
     switch(e->data.l[0]) {
       case _NET_WM_STATE_REMOVE:
@@ -652,46 +652,46 @@ void get_ewmh_net_wm_window_type(gswm_t *gsw, client_t *c)
     for(i = 0; i < num; i++) {
       Atom wta = w_type_atoms[i];
       if(gsw->xa.wm_net_wm_window_type_desktop == wta) {
-        TRACE(("%s wm_net_wm_window_type_desktop", __func__));
+        TRACE("%s wm_net_wm_window_type_desktop", __func__);
         c->w_type.desktop = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_dock == wta) {
-        TRACE(("%s wm_net_wm_window_type_dock", __func__));
+        TRACE("%s wm_net_wm_window_type_dock", __func__);
         c->w_type.dock = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_toolbar == wta) {
-        TRACE(("%s wm_net_wm_window_type_toolbar", __func__));
+        TRACE("%s wm_net_wm_window_type_toolbar", __func__);
         c->w_type.toolbar = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_menu == wta) {
-        TRACE(("%s wm_net_wm_window_type_menu", __func__));
+        TRACE("%s wm_net_wm_window_type_menu", __func__);
         c->w_type.menu = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_utility == wta) {
-        TRACE(("%s wm_net_wm_window_type_utility", __func__));
+        TRACE("%s wm_net_wm_window_type_utility", __func__);
         c->w_type.utility = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_splash == wta) {
-        TRACE(("%s wm_net_wm_window_type_splash", __func__));
+        TRACE("%s wm_net_wm_window_type_splash", __func__);
         c->w_type.splash = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_dialog == wta) {
-        TRACE(("%s wm_net_wm_window_type_dialog", __func__));
+        TRACE("%s wm_net_wm_window_type_dialog", __func__);
         c->w_type.dialog = TRUE;
       }
       if(gsw->xa.wm_net_wm_window_type_normal == wta) {
-        TRACE(("%s wm_net_wm_window_type_normal", __func__));
+        TRACE("%s wm_net_wm_window_type_normal", __func__);
         c->w_type.normal = TRUE;
       }
       if(gsw->xa.wm_kde_net_wm_window_type_override == wta) {
-        TRACE(("%s wm_kde_net_wm_window_type_override", __func__));
+        TRACE("%s wm_kde_net_wm_window_type_override", __func__);
         c->w_type.kde_override = TRUE;
       }
     }
     XFree(w_type_atoms);
   }
   else {
-    TRACE(("%s no _NET_WM_WINDOW_TYPE defined for client %s", __func__, c->utf8_name));
+    TRACE("%s no _NET_WM_WINDOW_TYPE defined for client %s", __func__, c->utf8_name);
     c->w_type.normal = TRUE;
   }
 }

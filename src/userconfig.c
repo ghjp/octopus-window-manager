@@ -190,7 +190,7 @@ static void _xml_config_start_elem(GMarkupParseContext *context,
     if(!lastname)
       lastname = g_strdup_printf("vdesk%02d", gsw->ucfg.vdesk_names->len);
     g_ptr_array_add(gsw->ucfg.vdesk_names, lastname);
-    TRACE(("%s Found vdeskname=%s", __func__, lastname));
+    TRACE("%s Found vdeskname=%s", __func__, lastname);
   }
   else if(g_str_equal(element_name, PACKAGE_NAME)) {
     for(i = 0; attribute_names[i]; i++) {
@@ -317,7 +317,7 @@ out1:
   if(!gsw->ucfg.vdesk_names->len) {
     gint i;
 
-    TRACE(("%s constructing default %d vdesks", __func__, DEFAULT_VDESK_NUM));
+    TRACE("%s constructing default %d vdesks", __func__, DEFAULT_VDESK_NUM);
     for(i = 0; i < DEFAULT_VDESK_NUM; i++) {
       gchar *lastname = g_strdup_printf("vdesk%02d", i);
       g_ptr_array_add(gsw->ucfg.vdesk_names, lastname);
@@ -341,7 +341,7 @@ out1:
 
 void init_xml_config(gswm_t *gsw)
 {
-  TRACE((__func__));
+  TRACE(__func__);
   gsw->ucfg.border_width = 2;
   gsw->ucfg.titlebar_height = 16;
   gsw->ucfg.titlebar_font_family = g_strdup("Sans");

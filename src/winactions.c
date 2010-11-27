@@ -236,7 +236,7 @@ void wa_snap_to_borders(gswm_t *gsw, client_t *c, gboolean skip_client_snapping)
     {
       rect_t mon_rect;
       gint mon = xinerama_current_mon(gsw);
-      TRACE(("%s: mon=%d", __func__, mon));
+      TRACE("%s: mon=%d", __func__, mon);
       if(xinerama_scrdims(scr, mon, &mon_rect)) {
         if(!x_snapped) {
           x1 = c->x - mon_rect.x1;
@@ -648,7 +648,7 @@ static void _apply_new_pos_client(gswm_t *gsw, client_t *cl, gpointer udata)
 
 static void _x_moveresize_client(gswm_t *gsw, client_t *cl, gpointer udata)
 {
-  TRACE(("%s (%s)", __func__, cl->utf8_name));
+  TRACE("%s (%s)", __func__, cl->utf8_name);
   XMoveResizeWindow(gsw->display, cl->win, 0, cl->wframe->theight, cl->width, cl->height);
   send_config(gsw, cl);
 }
@@ -679,7 +679,7 @@ static void _x_move_resize(gswm_t *gsw, client_t *c)
 
 void wa_hide(gswm_t *gsw, client_t *c)
 {
-  TRACE(("%s w=%ld (%s)", __func__, c->win, c->utf8_name));
+  TRACE("%s w=%ld (%s)", __func__, c->win, c->utf8_name);
   c->ignore_unmap++;
   /*XUnmapWindow(gsw->display, c->win);*/
   XUnmapSubwindows(gsw->display, c->wframe->win);
@@ -688,7 +688,7 @@ void wa_hide(gswm_t *gsw, client_t *c)
 
 void wa_iconify(gswm_t *gsw, client_t *c)
 {
-  TRACE(("%s w=%ld (%s)", __func__, c->win, c->utf8_name));
+  TRACE("%s w=%ld (%s)", __func__, c->win, c->utf8_name);
   wa_hide(gsw, c);
   c->wstate.hidden = TRUE;
   set_ewmh_net_wm_states(gsw, c);
@@ -697,7 +697,7 @@ void wa_iconify(gswm_t *gsw, client_t *c)
 
 void wa_unhide(gswm_t *gsw, client_t *c, gboolean raise)
 {
-  TRACE(("%s w=%ld (%s)", __func__, c->win, c->utf8_name));
+  TRACE("%s w=%ld (%s)", __func__, c->win, c->utf8_name);
   if(c->wstate.sticky || c->i_vdesk == c->curr_screen->current_vdesk) {
     XMapSubwindows(gsw->display, c->wframe->win);
     raise ? XMapRaised(gsw->display, c->wframe->win): XMapWindow(gsw->display, c->wframe->win);
@@ -1180,7 +1180,7 @@ void _apply_maxi_vert(gswm_t *gsw, client_t *c, gboolean on)
 
 void wa_maximize_hv(gswm_t *gsw, client_t *c, gboolean horz, gboolean vert)
 {
-  TRACE(("%s horz=%d vert=%d", __func__, horz, vert));
+  TRACE("%s horz=%d vert=%d", __func__, horz, vert);
   if(c->w_type.dock || c->wstate.fullscreen || c->w_type.kde_override)
     return;
   if(horz)
@@ -1196,7 +1196,7 @@ void wa_maximize_hv(gswm_t *gsw, client_t *c, gboolean horz, gboolean vert)
 
 void wa_unmaximize_hv(gswm_t *gsw, client_t *c, gboolean horz, gboolean vert)
 {
-  TRACE(("%s horz=%d vert=%d", __func__, horz, vert));
+  TRACE("%s horz=%d vert=%d", __func__, horz, vert);
   if(horz)
     _apply_maxi_horz(gsw, c, FALSE);
   if(vert)
@@ -1307,7 +1307,7 @@ void wa_sticky(gswm_t *gsw, client_t *c, gboolean on)
 {
   if(on) {
     if(!c->wstate.sticky) {
-      TRACE(("%s wm_net_wm_state sticky add", __func__));
+      TRACE("%s wm_net_wm_state sticky add", __func__);
       detach(gsw, c);
       c->i_vdesk = STICKY;
       c->wstate.sticky = TRUE;
@@ -1316,7 +1316,7 @@ void wa_sticky(gswm_t *gsw, client_t *c, gboolean on)
   }
   else {
     if(c->wstate.sticky) {
-      TRACE(("%s wm_net_wm_state sticky remove", __func__));
+      TRACE("%s wm_net_wm_state sticky remove", __func__);
       detach(gsw, c);
       c->wstate.sticky = FALSE;
       c->i_vdesk = c->curr_screen->current_vdesk;

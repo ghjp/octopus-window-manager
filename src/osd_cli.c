@@ -26,7 +26,7 @@ osd_cli_t *osd_cli_create(gswm_t *gsw)
   depth = DefaultDepth(dpy, scr);
   obj->iw = swidth;
   obj->ih = gsw->ucfg.osd_height;
-  TRACE(("scr=%d swidth=%d sheight=%d", scr, swidth, sheight));
+  TRACE("scr=%d swidth=%d sheight=%d", scr, swidth, sheight);
 
   if(TRUE) {
     XSetWindowAttributes xwinattr = {
@@ -103,16 +103,16 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
     tw = iw;
     th = ih;
     cairo_text_extents(cr_mask, text, &extents);
-    TRACE(("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
+    TRACE("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
           extents.width + extents.x_bearing, extents.height,
           extents.x_bearing, extents.y_bearing,
-          extents.x_advance, extents.y_advance));
+          extents.x_advance, extents.y_advance);
 
     tw = extents.x_advance;
     th = extents.height;
     tx = -extents.x_bearing;
     ty = -extents.y_bearing;
-    TRACE(("tw=%lf th=%lf", tw, th));
+    TRACE("tw=%lf th=%lf", tw, th);
     //XResizeWindow(dpy, obj->win, tw, th); iw = tw; ih = th;
     /*
        cairo_arc(cr_mask, iw / 2., ih / 2., iw * 0.25, 0, 2 * G_PI);
@@ -152,7 +152,7 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
           DefaultVisual(dpy, scr), iw, ih);
       cairo_t *cr = cairo_create(cr_xlib_surf);
 
-      TRACE(("Pixmap creation successful: pixmap = 0x%lx", pmap));
+      TRACE("Pixmap creation successful: pixmap = 0x%lx", pmap);
       cairo_surface_destroy(cr_xlib_surf); /* A reference is hold by cr */
       /**
         cairo_save(cr);

@@ -147,7 +147,7 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
     switch(ev.type) {
       case KeyPress:
         XLookupString(&ev.xkey, kstr_buf, sizeof(kstr_buf), &ks, 0);
-        TRACE(("%s Key pressed: %s", __func__, kstr_buf));
+        TRACE("%s Key pressed: %s", __func__, kstr_buf);
         switch(ks) {
           case XK_Right:
             if(cmpl_len < avail_actions->len) {
@@ -162,19 +162,19 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
             }
             break;
           case XK_BackSpace:
-            TRACE(("XK_BackSpace pressed"));
+            TRACE("XK_BackSpace pressed");
             if(0 < dest->len) {
               gchar *prev_c = g_utf8_find_prev_char(dest->str, dest->str + dest->len);
               g_string_set_size(dest, G_LIKELY(prev_c) ? prev_c - dest->str: 0);
             }
             break;
           case XK_Escape:
-            TRACE(("%s XK_Escape pressed", __func__));
+            TRACE("%s XK_Escape pressed", __func__);
             g_string_set_size(dest, 0);
             goto leave_loop;
             break;
           case XK_Return:
-            TRACE(("%s XK_Return pressed", __func__));
+            TRACE("%s XK_Return pressed", __func__);
             goto leave_loop;
             break;
           case XK_u:

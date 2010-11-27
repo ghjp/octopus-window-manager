@@ -49,7 +49,7 @@ gboolean client_win_is_alive(gswm_t *gsw, client_t *c)
 
   XSync(gsw->display, False);
   test = XQueryTree(gsw->display, c->win, &dummy_root, &parent, &wins, &count);
-  TRACE(("%s count=%u", __func__, count));
+  TRACE("%s count=%u", __func__, count);
   X_FREE(wins);
   return test && dummy_root == parent;
 }
@@ -105,7 +105,7 @@ static gchar *_get_ewmh_win_name(gswm_t *gsw, client_t *c)
   if(Success != XGetWindowProperty(gsw->display, c->win, gsw->xa.wm_net_wm_name,
         0L, (long)BUFSIZ, False, gsw->xa.wm_utf8_string, &actual_type, &actual_format,
         &nitems, &leftover, &name)) {
-    TRACE(("%s _NET_WM_NAME not found", __func__));
+    TRACE("%s _NET_WM_NAME not found", __func__);
     c->wstate.has_net_wm_name = FALSE;
     return NULL;
   }
@@ -115,7 +115,7 @@ static gchar *_get_ewmh_win_name(gswm_t *gsw, client_t *c)
        to contain one extra byte that is null terminated to
        make retrieving string properties easy  */
     utf8_name = g_strdup((gchar*)name);
-    TRACE(("%s _NET_WM_NAME ut8 name found and valid", __func__));
+    TRACE("%s _NET_WM_NAME ut8 name found and valid", __func__);
     c->wstate.has_net_wm_name = TRUE;
   }
   else {
@@ -236,7 +236,7 @@ void create_new_client(gswm_t *gsw, Window w)
     }
   }
   g_return_if_fail(NULL != scr);
-  TRACE(("%s: screen #%d", __func__, state));
+  TRACE("%s: screen #%d", __func__, state);
 
   c = g_chunk_new0(client_t, gsw->memcache_client);
   XGetTransientForHint(dpy, w, &c->trans);
@@ -267,8 +267,8 @@ void create_new_client(gswm_t *gsw, Window w)
     }
     XFree(mhints);
   }
-  TRACE(("%s: window=%ld (%s) from screen %d: wstate.mwm_title=%d wstate.mwm_border=%d",
-      __func__, c->win, c->utf8_name, scr->id, c->wstate.mwm_title, c->wstate.mwm_border));
+  TRACE("%s: window=%ld (%s) from screen %d: wstate.mwm_title=%d wstate.mwm_border=%d",
+      __func__, c->win, c->utf8_name, scr->id, c->wstate.mwm_title, c->wstate.mwm_border);
 
   c->wstate.shaped = FALSE;
 #ifdef HAVE_XSHAPE
@@ -281,7 +281,7 @@ void create_new_client(gswm_t *gsw, Window w)
         &idummy, &udummy, &udummy, &clip_shaped, &idummy, &idummy, &udummy, &udummy);
     /* A bound shaped client doesn't want to be decored by a visible frame */
     if(bounding_shaped) {
-      TRACE(("%s bounding_shaped client (%s)", __func__, c->utf8_name));
+      TRACE("%s bounding_shaped client (%s)", __func__, c->utf8_name);
       c->wstate.shaped = TRUE;
     }
   }
@@ -321,8 +321,8 @@ void create_new_client(gswm_t *gsw, Window w)
   win_group_list = g_hash_table_lookup(scr->win_group_hash, GUINT_TO_POINTER(c->window_group));
   win_group_list = g_slist_prepend(win_group_list, c);
   g_hash_table_replace(scr->win_group_hash, GUINT_TO_POINTER(c->window_group), win_group_list);
-  TRACE(("%s: client '%s' has a WindowGroupHint=0x%lx slist_len=%d",
-        __FUNCTION__, c->utf8_name, c->window_group, g_slist_length(win_group_list)));
+  TRACE("%s: client '%s' has a WindowGroupHint=0x%lx slist_len=%d",
+        __FUNCTION__, c->utf8_name, c->window_group, g_slist_length(win_group_list));
 
   if(c->trans) {
     client_t *parent_c = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(c->trans));
@@ -337,7 +337,7 @@ void create_new_client(gswm_t *gsw, Window w)
         c->wstate.sticky = TRUE;
     }
     else
-      TRACE(("%s transparent client (%s) doesn't possess a parent", __func__, c->utf8_name));
+      TRACE("%s transparent client (%s) doesn't possess a parent", __func__, c->utf8_name);
     /* Transient window should stay on top. So disable pending autoraise clients */
     signal_raise_window(gsw, FALSE);
   }
@@ -353,25 +353,25 @@ void create_new_client(gswm_t *gsw, Window w)
   state = get_wm_state(gsw, c);
   if(IsViewable == winattr.map_state) {
     if(IconicState == state) {
-      TRACE(("%s IsViewable && IconicState: detach w=%ld vdesk=%d",
-          __func__, c->win, c->i_vdesk));
+      TRACE("%s IsViewable && IconicState: detach w=%ld vdesk=%d",
+          __func__, c->win, c->i_vdesk);
       detach(gsw, c);
     }
     else {
-      TRACE(("%s IsViewable && !IconicState: w=%ld, vdesk=%d",
-          __func__, c->win, c->i_vdesk));
+      TRACE("%s IsViewable && !IconicState: w=%ld, vdesk=%d",
+          __func__, c->win, c->i_vdesk);
       attach(gsw, c);
     }
   }
   else {
     if(NormalState == state) {
-      TRACE(("%s !IsViewable && NormalState w=%ld vdesk=%d",
-          __func__, c->win, c->i_vdesk));
+      TRACE("%s !IsViewable && NormalState w=%ld vdesk=%d",
+          __func__, c->win, c->i_vdesk);
       attach(gsw, c);
     }
     else {
-      TRACE(("%s !IsViewable && !NormalState detach w=%ld vdesk=%d",
-          __func__, c->win, c->i_vdesk));
+      TRACE("%s !IsViewable && !NormalState detach w=%ld vdesk=%d",
+          __func__, c->win, c->i_vdesk);
       detach(gsw, c);
     }
   }
@@ -397,7 +397,7 @@ void create_new_client(gswm_t *gsw, Window w)
 
     /* If the parent window has the focus then the dialog window inherits it */
     if(focused_clnt && focused_clnt->window_group == c->window_group) {
-      TRACE(("%s Dialog window appeared: parent=%p", __func__, focused_clnt));
+      TRACE("%s Dialog window appeared: parent=%p", __func__, focused_clnt);
       focus_client(gsw, c, FALSE);
     }
   }
@@ -415,8 +415,8 @@ static void _disintegrate_client(gswm_t *gsw, client_t *c)
     GSList *win_group_list = g_hash_table_lookup(scr->win_group_hash, GUINT_TO_POINTER(c->window_group));
     win_group_list = g_slist_remove(win_group_list, c);
     g_hash_table_replace(scr->win_group_hash, GUINT_TO_POINTER(c->window_group), win_group_list);
-    TRACE(("%s: client '%s' has a WindowGroupHint=0x%lx slist_len=%d",
-        __FUNCTION__, c->utf8_name, c->window_group, g_slist_length(win_group_list)));
+    TRACE("%s: client '%s' has a WindowGroupHint=0x%lx slist_len=%d",
+        __FUNCTION__, c->utf8_name, c->window_group, g_slist_length(win_group_list));
   }
   scr->sticky_list = g_list_remove(scr->sticky_list, c);
   scr->detached_list = g_list_remove(scr->detached_list, c);
@@ -477,7 +477,7 @@ void unmap_client(gswm_t *gsw, client_t *c)
 {
   gint (*original_xerror)(Display *, XErrorEvent *);
 
-  TRACE(("%s (%s)", __func__, c->utf8_name));
+  TRACE("%s (%s)", __func__, c->utf8_name);
   /* After pulling my hair out trying to find some way to tell if a
    * window is still valid, I've decided to instead carefully ignore any
    * errors raised by this function. We know that the X calls are, and
@@ -512,7 +512,7 @@ void remap_client(gswm_t *gsw, client_t *c)
 
 void destroy_client(gswm_t *gsw, client_t *c)
 {
-  TRACE(("%s (%s)", __func__, c->utf8_name));
+  TRACE("%s (%s)", __func__, c->utf8_name);
   _focus_another_client(gsw, c);
   wframe_remove_client(gsw, c);
   _disintegrate_client(gsw, c);
@@ -613,8 +613,8 @@ client_t *get_next_focusable_client(gswm_t *gsw)
         return NULL;
       sel_c = cle->data;
     }
-    TRACE(("%s sel=(%s) first=(%s)", __func__,
-        sel_c->utf8_name, wframe_get_active_client(gsw, sel_c->wframe)->utf8_name));
+    TRACE("%s sel=(%s) first=(%s)", __func__,
+        sel_c->utf8_name, wframe_get_active_client(gsw, sel_c->wframe)->utf8_name);
   }
   else
     sel_c = NULL;
@@ -631,10 +631,10 @@ static void _check_trans(gpointer data, gpointer user_data)
   client_t *c = (client_t*)data;
   _check_trans_info_t *cti = (_check_trans_info_t*)user_data;
 
-  TRACE(("%s: Inspecting '%s': trans=0x%lx", __FUNCTION__, c->utf8_name, c->trans));
+  TRACE("%s: Inspecting '%s': trans=0x%lx", __FUNCTION__, c->utf8_name, c->trans);
   if(!c->wstate.below && 
       (c == cti->focus_c || c->trans == cti->focus_c->win || c->trans == cti->focus_c->window_group)) {
-    TRACE(("%s found trans (w=%ld) for client w=%ld", __func__, c->win, cti->focus_c->win));
+    TRACE("%s found trans (w=%ld) for client w=%ld", __func__, c->win, cti->focus_c->win);
     g_array_append_val(cti->gsw->auto_raise_frames, c->wframe->win);
   }
 }
@@ -646,7 +646,7 @@ void focus_client(gswm_t *gsw, client_t *c, gboolean raise)
   _check_trans_info_t cti;
   GSList *win_grp_list = g_hash_table_lookup(scr->win_group_hash, GUINT_TO_POINTER(c->window_group));
 
-  TRACE(("%s w=%ld (%s)", __func__, c->win, c->utf8_name));
+  TRACE("%s w=%ld (%s)", __func__, c->win, c->utf8_name);
   /* First we try to find a transient window */
   g_array_set_size(gsw->auto_raise_frames, 0);
   cti.gsw = gsw;
@@ -707,12 +707,12 @@ void attach(gswm_t *gsw, client_t *c)
   client_t *cwh = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(c->win));
 
   if(!cwh) { /* Complete new client */
-    TRACE(("%s Complete new client", __func__));
+    TRACE("%s Complete new client", __func__);
     _insert_client_into_list(scr, c);
     g_hash_table_insert(gsw->win2clnt_hash, GUINT_TO_POINTER(c->win), c);
   }
   else if(cwh == c) { /* Client already exists (detached mode) */
-    TRACE(("%s Detached client", __func__));
+    TRACE("%s Detached client", __func__);
     scr->detached_list = g_list_remove(scr->detached_list, c);
     scr->detached_frlist = g_list_remove(scr->detached_frlist, c->wframe);
     _insert_client_into_list(scr, c);
@@ -820,8 +820,8 @@ void attach_first2frame(gswm_t *gsw, wframe_t *target_fr)
 
     if(CHECK_MULTIFRAME_CAP(fc) && CHECK_MULTIFRAME_CAP(c) && _check_frame_sizehints(target_fr, c)) {
 
-      TRACE(("%s x=%d fx=%d y=%d fy=%d w=%d fw=%d h=%d fh=%d",
-            __func__, c->x, fc->x, c->y, fc->y,c->width, fc->width, c->height, fc->height));
+      TRACE("%s x=%d fx=%d y=%d fy=%d w=%d fw=%d h=%d fh=%d",
+            __func__, c->x, fc->x, c->y, fc->y,c->width, fc->width, c->height, fc->height);
       c->i_vdesk = scr->current_vdesk;
       c->x = fc->x;
       c->y = fc->y;
@@ -852,7 +852,7 @@ void install_colormaps(gswm_t *gsw, client_t *c)
   Display *dpy = gsw->display;
   gboolean installed = FALSE;
 
-  TRACE(("%s w=%ld", __func__, c->win));
+  TRACE("%s w=%ld", __func__, c->win);
   if(c->cmap.num) {
     gint i;
     for(i = c->cmap.num - 1; i >= 0; i--) {
@@ -869,7 +869,7 @@ void install_colormaps(gswm_t *gsw, client_t *c)
   if(!installed && c->cmap.dflt && c->cmap.dflt != gsw->installed_cmap) {
     XInstallColormap(dpy, c->cmap.dflt);
     gsw->installed_cmap =  c->cmap.dflt;
-    TRACE(("%s w=%ld cmap=0x%x", __func__, c->win, (guint)c->cmap.dflt));
+    TRACE("%s w=%ld cmap=0x%x", __func__, c->win, (guint)c->cmap.dflt);
   }
 }
 
