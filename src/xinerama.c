@@ -201,7 +201,7 @@ correct:
   /* make sure it is small enough to fit */
   if (RECTWIDTH(&cl_rect) >= RECTWIDTH(xir))
     return;
-  if (RECTHEIGHT(&cl_rect) >= RECTWIDTH(xir))
+  if (RECTHEIGHT(&cl_rect) >= RECTHEIGHT(xir))
     return;
 
   /* push it into the screen */
