@@ -1,3 +1,9 @@
+octopus (0.5.0-5) unstable; urgency=low
+
+  * Deprecated memory chunks replaced by memory slices
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 28 Nov 2010 18:39:20 +0100
+
 octopus (0.5.0-4) unstable; urgency=low
 
   * Window placement in "fit-to-workarea" for xinerama modes improved

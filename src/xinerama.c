@@ -211,7 +211,7 @@ void xinerama_correctloc(client_t *client)
     }
   }
   /* We have not found a screen where the client can be fully placed.
-   * Last ressort is to try the screen where the biggest area is located */
+   * Last resort is to try the screen where the biggest area is located */
   if(!xir)
     xir = &xinerama_screens[isect_max_idx];
 

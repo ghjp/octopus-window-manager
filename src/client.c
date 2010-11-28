@@ -168,7 +168,7 @@ static void _free_client(gswm_t *gsw, client_t *c)
 {
   g_free(c->utf8_name);
   X_FREE(c->cmap.windows);
-  g_chunk_free(c, gsw->memcache_client);
+  g_slice_free(client_t, c);
 }
 
 /* This one does -not- free the data coming back from Xlib; it just
@@ -238,7 +238,7 @@ void create_new_client(gswm_t *gsw, Window w)
   g_return_if_fail(NULL != scr);
   TRACE("%s: screen #%d", __func__, state);
 
-  c = g_chunk_new0(client_t, gsw->memcache_client);
+  c = g_slice_new0(client_t);
   XGetTransientForHint(dpy, w, &c->trans);
   XGetWMNormalHints(dpy, w, &c->xsize, &dummy);
   c->win = w;

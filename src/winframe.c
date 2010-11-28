@@ -39,7 +39,7 @@ wframe_t *_wframe_new(gswm_t *gsw)
   XSetWindowAttributes pattr;
   screen_t *scr = gsw->screen + gsw->i_curr_scr;
 
-  wframe_t *fr = g_chunk_new0(wframe_t, gsw->memcache_frame);
+  wframe_t *fr = g_slice_new0(wframe_t);
   fr->title_str = g_string_new("");
   fr->id = _find_new_frame_id(gsw);
 #ifdef SLOW_TITLE_TRANSPARENCY
@@ -90,7 +90,7 @@ static void _wframe_destroy(gswm_t *gsw, wframe_t *frame)
     g_critical("%s client frame 0x%lx not found in win2frame_hash", __func__, frame->win);
   XDestroySubwindows(gsw->display, frame->win);
   XDestroyWindow(gsw->display, frame->win);
-  g_chunk_free(frame, gsw->memcache_frame);
+  g_slice_free(wframe_t, frame);
 }
 
 void wframe_nullify_pending_focus_events(gswm_t *gsw, wframe_t *frame)

@@ -302,8 +302,6 @@ struct _gswm {
   GArray *auto_raise_frames;
   GHashTable  *win2clnt_hash;
   GHashTable  *win2frame_hash;
-  GMemChunk   *memcache_client;
-  GMemChunk   *memcache_frame;
   gboolean alpha_processing;
   GTimer *autoraise_timer;
   GSList *unused_frame_id_list;

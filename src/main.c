@@ -388,8 +388,6 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   gsw->win2clnt_hash = g_hash_table_new(NULL, NULL);
   gsw->win2frame_hash = g_hash_table_new(NULL, NULL);
   gsw->fid2frame_hash = g_hash_table_new(NULL, NULL);
-  gsw->memcache_client = g_mem_chunk_create(client_t, 32, G_ALLOC_AND_FREE);
-  gsw->memcache_frame = g_mem_chunk_create(wframe_t, 32, G_ALLOC_AND_FREE);
   gsw->autoraise_timer = g_timer_new();
   gsw->net_wm_states_array = g_array_new(FALSE, FALSE, sizeof(gsw->xa.wm_net_wm_state_sticky));
 
@@ -804,8 +802,6 @@ gint main(gint argc, gchar **argv)
   g_hash_table_destroy(xsrv_source->win2clnt_hash);
   g_hash_table_destroy(xsrv_source->win2frame_hash);
   g_hash_table_destroy(xsrv_source->fid2frame_hash);
-  g_mem_chunk_destroy(xsrv_source->memcache_client);
-  g_mem_chunk_destroy(xsrv_source->memcache_frame);
   g_slist_free(xsrv_source->unused_frame_id_list);
   g_timer_destroy(xsrv_source->autoraise_timer);
   g_string_free(xsrv_source->cmd.line, TRUE);
