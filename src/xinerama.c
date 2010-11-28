@@ -171,7 +171,7 @@ void xinerama_correctloc(client_t *client)
   if (G_LIKELY(!xinerama_active))
     return;
 
-  isect = g_alloca(xinerama_count * sizeof(*isect));
+  isect = g_newa(gint, xinerama_count);
 
   /* get client area and rectangle */
   FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
