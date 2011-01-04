@@ -1,3 +1,10 @@
+octopus (0.5.0-6) unstable; urgency=low
+
+  * Improved cli on xinerama setups: When the whole screen consists of a
+    multitude of monitors with different resolutions the cli is unvisible
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Tue, 04 Jan 2011 12:48:22 +0100
+
 octopus (0.5.0-5) unstable; urgency=low
 
   * Deprecated memory chunks replaced by memory slices

@@ -9,5 +9,7 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text);
 void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...);
 void osd_cli_set_horizontal_offset(osd_cli_t *obj, gint offset);
 void osd_cli_set_vertical_offset(osd_cli_t *obj, gint offset);
+void osd_cli_get_bottom_location(osd_cli_t *obj, gint *x_offset, gint *y_offset, gint *len);
+void osd_cli_set_width(osd_cli_t *obj, gint w);
 
 #endif

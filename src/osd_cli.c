@@ -5,6 +5,8 @@
 
 #include "octopus.h"
 #include "osd_cli.h"
+#include "client.h"
+#include "xinerama.h"
 
 #include <X11/extensions/shape.h>
 #include <cairo-xlib.h>
@@ -257,4 +259,23 @@ void osd_cli_set_vertical_offset(osd_cli_t *obj, gint offset)
     obj->vert_offset = offset;
     XMoveWindow(obj->gsw->display, obj->win, obj->horiz_offset, obj->vert_offset);
   }
+}
+
+void osd_cli_get_bottom_location(osd_cli_t *obj, gint *x_offset, gint *y_offset, gint *len)
+{
+  rect_t rec;
+  client_t *c = get_focused_client(obj->gsw);
+
+  if(c)
+    xinerama_get_scrdims_on_which_client_resides(c, &rec);
+  else
+    xinerama_scrdims(obj->gsw->screen, xinerama_current_mon(obj->gsw), &rec);
+  *x_offset = rec.x1;
+  *y_offset = rec.y2;
+  obj->iw = *len = rec.x2 - rec.x1;
+}
+
+void osd_cli_set_width(osd_cli_t *obj, gint w)
+{
+  obj->iw = w;
 }

@@ -74,7 +74,7 @@ void xinerama_shutdown(void)
   g_free(xinerama_screens);
 }
 
-static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
+static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect, gint *mon)
 {
   gint i, area, most, mosti;
 
@@ -95,6 +95,8 @@ static rect_t *_get_screen_rect_occupied_most_by_client_rect(rect_t *c_rect)
     }
   }
   TRACE("%s: mosti=%d", __func__, mosti);
+  if(mon)
+    *mon = mosti;
   return xinerama_screens + mosti;
 }
 
@@ -113,7 +115,7 @@ void xinerama_get_screensize_on_which_client_resides(client_t *client, gint *wid
     /* get a rect of client dimensions */
     FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
 
-    xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
+    xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect, NULL);
     *width = xir->x2 - xir->x1;
     *height = xir->y2 - xir->y1;
   }
@@ -136,7 +138,7 @@ gboolean xinerama_maximize(client_t *client)
     /* get a rect of client dimensions */
     FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
 
-    xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect);
+    xir = _get_screen_rect_occupied_most_by_client_rect(&cl_rect, NULL);
 
     /* zoom it on the screen it's mostly on */
     if(client->wstate.maxi_horz) {
@@ -239,10 +241,7 @@ gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect)
 {
   if (G_UNLIKELY(xinerama_active)) {
     g_return_val_if_fail(mon < xinerama_count, FALSE);
-    rect->x1 = xinerama_screens[mon].x1;
-    rect->y1 = xinerama_screens[mon].y1;
-    rect->x2 = xinerama_screens[mon].x2;
-    rect->y2 = xinerama_screens[mon].y2;
+    *rect = xinerama_screens[mon];
   } else {
     g_return_val_if_fail(0 == mon, FALSE);
     rect->x1 = 0;
@@ -274,5 +273,20 @@ gint xinerama_current_mon(gswm_t *gsw)
   }
 
   return 0;
+}
+
+void xinerama_get_scrdims_on_which_client_resides(client_t *client, rect_t *rect)
+{
+  gint mon;
+  if(G_UNLIKELY(xinerama_active)) {
+    rect_t cl_rect;
+    /* get a rect of client dimensions */
+    FILL_RECT_STRUCT_FROM_CLIENT(cl_rect, client);
+
+    _get_screen_rect_occupied_most_by_client_rect(&cl_rect, &mon);
+  }
+  else
+    mon = 0;
+  xinerama_scrdims(client->curr_screen, mon, rect);
 }
 #endif

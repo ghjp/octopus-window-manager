@@ -16,6 +16,7 @@ void xinerama_correctloc(client_t *client);
 gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect);
 gint xinerama_current_mon(gswm_t *gsw);
 void xinerama_get_screensize_on_which_client_resides(client_t *client, gint *width, gint *height);
+void xinerama_get_scrdims_on_which_client_resides(client_t *client, rect_t *rect);
 
 #else
 
@@ -49,6 +50,10 @@ static inline void xinerama_get_screensize_on_which_client_resides(client_t *cli
   *height = client->curr_screen->dpy_height;
 }
 
+static inline void xinerama_get_scrdims_on_which_client_resides(client_t *client, rect_t *rect)
+{
+  xinerama_scrdims(client->curr_screen, 0, rect);
+}
 #endif
 
 #endif

@@ -125,12 +125,20 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
 #endif
   XSync(dpy, False);
   {
+    gint x_bottom, y_bottom;
     gint x_cli = scr->fr_info.border_width + vd->warea.x;
     gint y_cli = vd->warea.h + vd->warea.y - scr->fr_info.border_width - gsw->ucfg.osd_height;
 
+    osd_cli_get_bottom_location(gsw->osd_info, &x_bottom,&y_bottom, &cmpl_len);
+    osd_cli_set_width(gsw->osd_info, cmpl_len);
+    if(x_bottom > x_cli)
+      x_cli = x_bottom + scr->fr_info.border_width;
+    if(y_bottom < y_cli)
+      y_cli = y_bottom - scr->fr_info.border_width - gsw->ucfg.osd_height;
     osd_cli_set_horizontal_offset(gsw->osd_info, x_cli);
     osd_cli_set_vertical_offset(gsw->osd_info, y_cli);
     y_cli -= gsw->ucfg.osd_height;
+    osd_cli_set_width(gsw->osd_cmd, cmpl_len);
     osd_cli_set_horizontal_offset(gsw->osd_cmd, x_cli);
     osd_cli_set_vertical_offset(gsw->osd_cmd, y_cli);
   }
@@ -140,7 +148,8 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
   osd_cli_show(gsw->osd_cmd);
   osd_cli_show(gsw->osd_info);
 
-  cmpl_len = scr->dpy_width / (gsw->font->max_bounds.rbearing - gsw->font->min_bounds.lbearing);
+  cmpl_len /= (gsw->font->max_bounds.rbearing - gsw->font->min_bounds.lbearing);
+
   while(TRUE) {
     XEvent ev;
     XMaskEvent(dpy, KeyPressMask, &ev);
