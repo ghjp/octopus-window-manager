@@ -126,7 +126,7 @@ static gchar *_get_ewmh_win_name(gswm_t *gsw, client_t *c)
   return utf8_name;
 }
 
-G_INLINE_FUNC gchar *_read_property_xa_string(gswm_t *gsw, client_t *c, const XTextProperty *text_prop)
+static inline gchar *_read_property_xa_string(gswm_t *gsw, client_t *c, const XTextProperty *text_prop)
 {
   gchar *xa_string = NULL;
 
@@ -684,7 +684,7 @@ void focus_client(gswm_t *gsw, client_t *c, gboolean raise)
     wa_set_input_focus(gsw, c);
 }
 
-G_INLINE_FUNC void _insert_client_into_list(screen_t *scr, client_t *c)
+static inline void _insert_client_into_list(screen_t *scr, client_t *c)
 {
   if(G_UNLIKELY(c->w_type.desktop)) {
     scr->desktop_list = g_list_prepend(scr->desktop_list, c);

@@ -608,7 +608,7 @@ void wa_do_all_size_constraints(gswm_t *gsw, client_t *c)
 }
 
 #if 0
-G_INLINE_FUNC void _x_warp_pointer_to_client(gswm_t *gsw, client_t *c)
+static inline void _x_warp_pointer_to_client(gswm_t *gsw, client_t *c)
 {
   gint xm, ym, dmx, dmy;
 
@@ -653,7 +653,7 @@ static void _x_moveresize_client(gswm_t *gsw, client_t *cl, gpointer udata)
   send_config(gsw, cl);
 }
 
-G_INLINE_FUNC void _remove_all_enter_x_events(gswm_t *gsw)
+static inline void _remove_all_enter_x_events(gswm_t *gsw)
 {
   XEvent ev;
 
@@ -960,7 +960,7 @@ void wa_resize_interactive(gswm_t *gsw, client_t *c)
   wframe_foreach(gsw, c->wframe, _apply_maxi_states, c);
 }
 
-G_INLINE_FUNC void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
+static inline void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
 {
   gint east_inc, new_width, sw;
 
@@ -974,7 +974,7 @@ G_INLINE_FUNC void _modify_size_east(gswm_t *gsw, client_t *c, gboolean grow)
   c->width = new_width;
 }
 
-G_INLINE_FUNC void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
+static inline void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
 {
   gint south_inc, sh, new_height;
 
@@ -988,7 +988,7 @@ G_INLINE_FUNC void _modify_size_south(gswm_t *gsw, client_t *c, gboolean grow)
   c->height = new_height;
 }
 
-G_INLINE_FUNC void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
+static inline void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
 {
   gint north_inc, sh, new_height;
 
@@ -1003,7 +1003,7 @@ G_INLINE_FUNC void _modify_size_north(gswm_t *gsw, client_t *c, gboolean grow)
   c->y -= north_inc;
 }
 
-G_INLINE_FUNC void _modify_size_west(gswm_t *gsw, client_t *c, gboolean grow)
+static inline void _modify_size_west(gswm_t *gsw, client_t *c, gboolean grow)
 {
   gint west_inc, sw, new_width;
 

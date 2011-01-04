@@ -11,7 +11,7 @@
 } G_STMT_END
 
 /* find intersection length of two lines */
-G_INLINE_FUNC gint lineisect(gint p1, gint l1, gint p2, gint l2)
+static inline gint lineisect(gint p1, gint l1, gint p2, gint l2)
 {
 	/* make sure p1 <= p2 */
 	if (p1 > p2) {
