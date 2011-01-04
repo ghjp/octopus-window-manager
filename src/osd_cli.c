@@ -272,7 +272,7 @@ void osd_cli_get_bottom_location(osd_cli_t *obj, gint *x_offset, gint *y_offset,
     xinerama_scrdims(obj->gsw->screen, xinerama_current_mon(obj->gsw), &rec);
   *x_offset = rec.x1;
   *y_offset = rec.y2;
-  obj->iw = *len = rec.x2 - rec.x1;
+  *len = rec.x2 - rec.x1;
 }
 
 void osd_cli_set_width(osd_cli_t *obj, gint w)
