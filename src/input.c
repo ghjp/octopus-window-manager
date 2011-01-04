@@ -69,7 +69,7 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
     color_intensity_t *ciu = &gsw->ucfg.unfocused_color;
     color_intensity_t *ci = &gsw->ucfg.focused_color;
 
-    if((cr = cairo_create()) {
+    if((cr = cairo_create())) {
       /* Create background window */
       bgw_h = OSD_HEIGHT * (gsw->font->max_bounds.ascent + gsw->font->max_bounds.descent);
       bgw_w = vd->warea.w - 2*scr->fr_info.border_width;
