@@ -1,3 +1,9 @@
+octopus (0.5.0-7) unstable; urgency=low
+
+  * Fixed layout issues for the onscreen cli interface
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Thu, 06 Jan 2011 12:04:45 +0100
+
 octopus (0.5.0-6) unstable; urgency=low
 
   * Improved cli on xinerama setups: When the whole screen consists of a

@@ -125,16 +125,24 @@ void input_loop(gswm_t *gsw, const gchar *prompt, interaction_t *ia)
 #endif
   XSync(dpy, False);
   {
+    gint max_w;
     gint x_bottom, y_bottom;
     gint x_cli = scr->fr_info.border_width + vd->warea.x;
     gint y_cli = vd->warea.h + vd->warea.y - scr->fr_info.border_width - gsw->ucfg.osd_height;
 
     osd_cli_get_bottom_location(gsw->osd_info, &x_bottom,&y_bottom, &cmpl_len);
-    osd_cli_set_width(gsw->osd_info, cmpl_len);
     if(x_bottom > x_cli)
       x_cli = x_bottom + scr->fr_info.border_width;
+    else
+      cmpl_len -= vd->warea.x;
     if(y_bottom < y_cli)
       y_cli = y_bottom - scr->fr_info.border_width - gsw->ucfg.osd_height;
+    /* Struts on the right side might limit the width */
+    max_w = vd->warea.x + vd->warea.w - x_cli;
+    if(cmpl_len > max_w)
+      cmpl_len = max_w;
+    cmpl_len -= 2 * scr->fr_info.border_width;
+    osd_cli_set_width(gsw->osd_info, cmpl_len);
     osd_cli_set_horizontal_offset(gsw->osd_info, x_cli);
     osd_cli_set_vertical_offset(gsw->osd_info, y_cli);
     y_cli -= gsw->ucfg.osd_height;
