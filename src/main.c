@@ -45,7 +45,7 @@
 
 /* Typedefs {{{1 */
 typedef struct {
-  GHashTable *path_hash;
+  GHashTable *path_hash, *apps_hash;
   GList *cmd_list;
   gswm_t *gsw;
   gint pidx;
@@ -549,6 +549,7 @@ static void _exec_scan_prepare(gswm_t *gsw, _scan_exec_data_t *sed)
     g_string_chunk_free(gsw->cmd.str_chunk);
   gsw->cmd.str_chunk = g_string_chunk_new(32<<10);
   sed->path_hash = g_hash_table_new(g_str_hash, g_str_equal);
+  sed->apps_hash = g_hash_table_new(g_str_hash, g_str_equal);
   sed->cmd_list = NULL;
   sed->gsw = gsw;
 
@@ -564,6 +565,7 @@ static void _exec_scan_finalize(gpointer data)
   _scan_exec_data_t *sed = (_scan_exec_data_t*)data;
 
   g_hash_table_destroy(sed->path_hash);
+  g_hash_table_destroy(sed->apps_hash);
   g_list_free(sed->cmd_list);
   g_strfreev(sed->path_elems);
   sed->running = FALSE;
@@ -594,8 +596,14 @@ static gboolean _exec_scan_cb(gpointer data)
         if(!g_file_test(fname, G_FILE_TEST_IS_DIR) &&
             g_file_test(fname, G_FILE_TEST_IS_EXECUTABLE)) {
           TRACE("+x %s", fname);
-          sed->cmd_list = g_list_prepend(sed->cmd_list,
-              g_string_chunk_insert(sed->gsw->cmd.str_chunk, dent));
+          /* Check for duplicate application names */
+          if(!g_hash_table_lookup(sed->apps_hash, dent)) {
+            gchar *apps_name = g_string_chunk_insert(sed->gsw->cmd.str_chunk, dent);
+            sed->cmd_list = g_list_prepend(sed->cmd_list, apps_name);
+            g_hash_table_insert(sed->apps_hash, apps_name, GINT_TO_POINTER(1));
+          }
+          else
+            TRACE("Duplicate entry: %s", dent);
         }
         g_free(fname);
       }
