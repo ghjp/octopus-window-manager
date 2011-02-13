@@ -1,3 +1,9 @@
+octopus (0.5.0-8) unstable; urgency=low
+
+  * Make the package ready for squeeze
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 13 Feb 2011 14:11:54 +0100
+
 octopus (0.5.0-7) unstable; urgency=low
 
   * Fixed layout issues for the onscreen cli interface
