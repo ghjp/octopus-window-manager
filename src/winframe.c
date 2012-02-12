@@ -72,7 +72,7 @@ wframe_t *_wframe_new(gswm_t *gsw)
 
   g_hash_table_insert(gsw->fid2frame_hash, GINT_TO_POINTER(fr->id), fr);
   g_hash_table_insert(gsw->win2frame_hash, GUINT_TO_POINTER(fr->win), fr);
-  TRACE("%s fr=%p fr_win=0x%lx fr_id=%d", __func__, fr, fr->win, fr->id);
+  TRACE("%s fr=%p fr_win=0x%lx fr_id=%d", G_STRFUNC, fr, fr->win, fr->id);
   return fr;
 }
 
@@ -85,9 +85,9 @@ static void _wframe_destroy(gswm_t *gsw, wframe_t *frame)
   g_string_free(frame->title_str, TRUE);
   gsw->unused_frame_id_list = g_slist_prepend(gsw->unused_frame_id_list, GINT_TO_POINTER(frame->id));
   if(!g_hash_table_remove(gsw->fid2frame_hash, GINT_TO_POINTER(frame->id)))
-    g_critical("%s frame id %d not found in fid2frame_hash", __func__, frame->id);
+    g_critical("%s frame id %d not found in fid2frame_hash", G_STRFUNC, frame->id);
   if(!g_hash_table_remove(gsw->win2frame_hash, GUINT_TO_POINTER(frame->win)))
-    g_critical("%s client frame 0x%lx not found in win2frame_hash", __func__, frame->win);
+    g_critical("%s client frame 0x%lx not found in win2frame_hash", G_STRFUNC, frame->win);
   XDestroySubwindows(gsw->display, frame->win);
   XDestroyWindow(gsw->display, frame->win);
   g_slice_free(wframe_t, frame);
@@ -345,7 +345,7 @@ static void _init_position(gswm_t *gsw, client_t *c)
     c->x = c->xsize.x;
     c->y = c->xsize.y;
     fix_ewmh_position_based_on_struts(gsw, c);
-    TRACE("%s USPosition: uspx=%d uspy=%d x=%d y=%d", __func__, c->xsize.x, c->xsize.y, c->x, c->y);
+    TRACE("%s USPosition: uspx=%d uspy=%d x=%d y=%d", G_STRFUNC, c->xsize.x, c->xsize.y, c->x, c->y);
     if(!c->w_type.normal)
       return;
   }
@@ -442,7 +442,7 @@ G_GNUC_UNUSED static void _calc_size_limits(gswm_t *gsw, client_t *c, gpointer u
     sl->flags |= PAspect;
   }
   TRACE("%s (%s): min_w=%d min_h=%d max_w=%d max_h=%d w_inc=%d h_inc=%d",
-      __func__, c->utf8_name,
+      G_STRFUNC, c->utf8_name,
       sl->min_width, sl->min_height, sl->max_width,
       sl->max_height, sl->width_inc, sl->height_inc);
 }
@@ -462,24 +462,24 @@ void wframe_rebuild_xsizehints(gswm_t *gsw, wframe_t *frame, const gchar *contex
   /* FIXME The handling of the PBaseSize values isn't correct at the moment */
   if(PResizeInc & frame->xsize.flags) {
     if(PMinSize & frame->xsize.flags) {
-      TRACE("%s 1. min_width=%d min_height=%d", __func__,
+      TRACE("%s 1. min_width=%d min_height=%d", G_STRFUNC,
             frame->xsize.min_width, frame->xsize.min_height);
       ROUND_UP(frame->xsize.min_width, frame->xsize.base_width, frame->xsize.width_inc);
       ROUND_UP(frame->xsize.min_height, frame->xsize.base_width, frame->xsize.height_inc);
-      TRACE("%s 2. min_width=%d min_height=%d", __func__,
+      TRACE("%s 2. min_width=%d min_height=%d", G_STRFUNC,
             frame->xsize.min_width, frame->xsize.min_height);
     }
     if(PMaxSize & frame->xsize.flags) {
-      TRACE("%s 1. max_width=%d max_height=%d", __func__,
+      TRACE("%s 1. max_width=%d max_height=%d", G_STRFUNC,
             frame->xsize.max_width, frame->xsize.max_height);
       ROUND_UP(frame->xsize.max_width, frame->xsize.base_width, frame->xsize.width_inc);
       ROUND_UP(frame->xsize.max_height, frame->xsize.base_width, frame->xsize.height_inc);
-      TRACE("%s 2. max_width=%d max_height=%d", __func__,
+      TRACE("%s 2. max_width=%d max_height=%d", G_STRFUNC,
             frame->xsize.max_width, frame->xsize.max_height);
     }
   }
   TRACE("%s.%s: min_w=%d min_h=%d max_w=%d max_h=%d w_inc=%d h_inc=%d",
-      __func__, context,
+      G_STRFUNC, context,
       frame->xsize.min_width, frame->xsize.min_height, frame->xsize.max_width,
       frame->xsize.max_height, frame->xsize.width_inc, frame->xsize.height_inc);
 }
@@ -504,7 +504,7 @@ static void _adjust_client_stuff(gswm_t *gsw, client_t *cl, gpointer udata)
 {
   client_t *ref_c = (client_t*)udata;
 
-  TRACE("%s ref_c=%p (%s)", __func__, ref_c, cl->utf8_name);
+  TRACE("%s ref_c=%p (%s)", G_STRFUNC, ref_c, cl->utf8_name);
   cl->width = ref_c->width;
   cl->height = ref_c->height;
   XResizeWindow(gsw->display, cl->win, cl->width, cl->height);
@@ -541,17 +541,17 @@ void wframe_bind_client(gswm_t *gsw, wframe_t *frame, client_t *c)
   c->wframe->client_list = g_list_prepend(c->wframe->client_list, c);
 
   if(!frame && IsViewable != winattr.map_state) {
-    TRACE("%s IsViewable != winattr.map_state (%s)", __func__, c->utf8_name);
+    TRACE("%s IsViewable != winattr.map_state (%s)", G_STRFUNC, c->utf8_name);
     _init_position(gsw, c);
     set_wm_state(gsw, c, NormalState);
   }
-  wframe_rebuild_xsizehints(gsw, c->wframe, __func__);
+  wframe_rebuild_xsizehints(gsw, c->wframe, G_STRFUNC);
   if(G_UNLIKELY(frame))
     wa_do_all_size_constraints(gsw, c);
   gravitate(gsw, c, GRAV_APPLY);
   wframe_x_move_resize(gsw, c->wframe);
 
-  TRACE("%s frame=%ld w=%ld", __func__, c->wframe->win, c->win);
+  TRACE("%s frame=%ld w=%ld", G_STRFUNC, c->wframe->win, c->win);
 
   /* We don't want these masks to be propagated down to the frame */
   pattr.do_not_propagate_mask = ButtonMask | ButtonMotionMask;
@@ -617,7 +617,7 @@ void wframe_remove_client(gswm_t *gsw, client_t *c)
     return;
   frame->client_list = g_list_remove(frame->client_list, c);
   TRACE("%s listlen=%d after g_list_remove",
-        __func__, g_list_length(frame->client_list));
+        G_STRFUNC, g_list_length(frame->client_list));
   /* Last client has gone */
   if(G_LIKELY(!frame->client_list)) {
     /* Live of frame is over */
@@ -625,7 +625,7 @@ void wframe_remove_client(gswm_t *gsw, client_t *c)
     _wframe_destroy(gsw, frame);
   }
   else {
-    wframe_rebuild_xsizehints(gsw, frame, __func__);
+    wframe_rebuild_xsizehints(gsw, frame, G_STRFUNC);
     /* Frame was focused and another client is still present */
     if(get_focused_client(gsw) == c)
       scr->vdesk[scr->current_vdesk].focused = wframe_get_active_client(gsw, frame);
@@ -788,7 +788,7 @@ static void _redraw_tbar_pixmap(gswm_t *gsw, client_t *c,
           fast_fill = FALSE;
         }
         XFree(prop_data);
-        TRACE("%s wm_xsetroot_id image=%p", __func__, image);
+        TRACE("%s wm_xsetroot_id image=%p", G_STRFUNC, image);
       }
 #endif
 #ifdef SLOW_TITLE_TRANSPARENCY
@@ -966,7 +966,7 @@ void wframe_tbar_pmap_recreate(gswm_t *gsw, wframe_t *frame)
       G_MININT == frame->bwidth) /* MWM */
     return;
 
-  TRACE("%s w=%ld cairo needed %d != %d", __func__, c->win, c->width, frame->pm_w);
+  TRACE("%s w=%ld cairo needed %d != %d", G_STRFUNC, c->win, c->width, frame->pm_w);
 
   _redraw_tbar_pixmap(gsw, c, &frame->unfocused_tbar_pmap,
       &gsw->ucfg.unfocused_color, &gsw->ucfg.unfocused_text_color, TRUE);
@@ -1228,7 +1228,7 @@ void wframe_set_shape(gswm_t *gsw, client_t *c)
   gint n = 0, order = 0;
   gint bw = GET_BORDER_WIDTH(c);
 
-  TRACE("%s w=%ld", __func__, c->win);
+  TRACE("%s w=%ld", G_STRFUNC, c->win);
   rect = XShapeGetRectangles(gsw->display, c->win, ShapeBounding, &n, &order);
   if(n > 1) {
     XShapeCombineShape(gsw->display, c->wframe->win, ShapeBounding,
@@ -1256,7 +1256,7 @@ client_t *wframe_lookup_client_for_window(gswm_t *gsw, Window frame_win)
 {
   wframe_t *frame = g_hash_table_lookup(gsw->win2frame_hash, GUINT_TO_POINTER(frame_win));
 
-  TRACE("%s called for frame=%p", __func__, frame);
+  TRACE("%s called for frame=%p", G_STRFUNC, frame);
   return frame ? wframe_get_active_client(gsw, frame): NULL;
 }
 

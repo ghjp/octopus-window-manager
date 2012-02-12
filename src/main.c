@@ -73,7 +73,7 @@ static gint handle_init_xerror(Display *dsply, XErrorEvent *e)
   if(0 == request[0])
     g_snprintf(request, sizeof(request), "<request-code-%d>", e->request_code);
   g_critical("%s: %s (n=%d, XID=0x%lx): %s",
-      __func__, request, e->request_code, e->resourceid, errstr);
+      G_STRFUNC, request, e->request_code, e->resourceid, errstr);
   return 0;
 }
 
@@ -108,7 +108,7 @@ static gint handle_xioerror(Display *dsply)
 static gboolean _xsrv_prepare_fd_src(GSource *source, gint *timeout_)
 {
   gswm_t *gsw = (gswm_t *)source;
-  /*TRACE("%s fd=%d", __func__, gsw->fd_x); */
+  /*TRACE("%s fd=%d", G_STRFUNC, gsw->fd_x); */
   *timeout_ = -1; /* Wait an infinite amount of time */
   /* For file descriptor sources, this function typically returns FALSE */
   return G_LIKELY(XPending(gsw->display)) ? TRUE: FALSE;
@@ -120,11 +120,11 @@ static gboolean _xsrv_check_fd_src(GSource *source)
   struct pollfd ufds;
   gint pr;
 
-  /* TRACE("%s fd=%d", __func__, gsw->fd_x); */
+  /* TRACE("%s fd=%d", G_STRFUNC, gsw->fd_x); */
   ufds.fd = gsw->fd_x;
   ufds.events = POLLIN;
   if(0 > (pr = poll(&ufds, 1, 0)))
-    g_error("%s poll failed: %s", __func__, g_strerror(errno));
+    g_error("%s poll failed: %s", G_STRFUNC, g_strerror(errno));
 
   return (G_LIKELY(pr)) ? TRUE: FALSE;
 }
@@ -134,14 +134,14 @@ static gboolean _xsrv_dispatch_accept_src(GSource *source, GSourceFunc callback,
 {
   gswm_t *gsw = (gswm_t *)source;
   (void)gsw; /* Keep compiler quiet */
-  /* TRACE("%s fd=%d", __func__, gsw->fd_x); */
+  /* TRACE("%s fd=%d", G_STRFUNC, gsw->fd_x); */
   return G_LIKELY(callback) ? callback(user_data) : TRUE;
 }
 
 static void _xsrv_finalize_fd_src(GSource *source)
 {
   gswm_t *gsw = (gswm_t *)source;
-  g_message("%s fd=%d", __func__, gsw->fd_x);
+  g_message("%s fd=%d", G_STRFUNC, gsw->fd_x);
 }
 
 static gboolean _xsrv_event_cb(gpointer data)
@@ -170,7 +170,7 @@ static void assign_new_frame_id(gswm_t *gsw, Window child,
         new_fid = ++fr_id;
         g_hash_table_insert(frame_id_map, GINT_TO_POINTER(fid), GINT_TO_POINTER(new_fid));
       }
-      TRACE("%s replace frame: %d -> %d", __func__, fid, new_fid);
+      TRACE("%s replace frame: %d -> %d", G_STRFUNC, fid, new_fid);
       set_frame_id_xprop(gsw, child, new_fid);
     }
     else
@@ -223,7 +223,7 @@ static void _scan_clients_from_screen(gswm_t *gsw)
     /* Clients which haven't a frame id yet get one now */
     for(i = 0; i < nchilds_wo_frame_id; i++) {
       set_frame_id_xprop(gsw, childlist_wo_frame_id[i], ++fr_id);
-      TRACE("%s assign new frame id: %d", __func__, fr_id);
+      TRACE("%s assign new frame id: %d", G_STRFUNC, fr_id);
     }
     /* Now we are ready to integrate the main application clients */
     for(i = 0; i < main_count; i++) {
@@ -394,7 +394,7 @@ static void _init_display(const gchar *dpyname, gswm_t *gsw)
   /* SHAPE */
 #ifdef HAVE_XSHAPE
   gsw->shape = XShapeQueryExtension(dpy, &gsw->shape_event, &si); 
-  TRACE("%s shape=%d shape_event=%d", __func__, gsw->shape, gsw->shape_event);
+  TRACE("%s shape=%d shape_event=%d", G_STRFUNC, gsw->shape, gsw->shape_event);
 #endif
 #ifdef HAVE_XRANDR
   {
@@ -493,7 +493,7 @@ static gboolean restart_flag = FALSE;
 void sig_main_loop_quit(int sig)
 {
   if(gml) {
-    g_warning("%s: signal (%s: %d) caught", __func__, g_strsignal(sig), sig);
+    g_warning("%s: signal (%s: %d) caught", G_STRFUNC, g_strsignal(sig), sig);
     if(SIGUSR1 == sig)
       restart_flag = TRUE;
     g_main_loop_quit(gml);
@@ -523,7 +523,7 @@ static gboolean _autoraise_cb(gpointer data)
 
       if(((gdouble)MS_AUTORAISE/1000.) < te &&
           (clnt = wframe_lookup_client_for_window(gsw, frame_win))) {
-        TRACE("%s '%s'", __func__, clnt->utf8_name);
+        TRACE("%s '%s'", G_STRFUNC, clnt->utf8_name);
         wa_raise(gsw, clnt);
         raise_done = TRUE;
       }
@@ -581,7 +581,7 @@ static gboolean _exec_scan_cb(gpointer data)
   if(!dirpath) {
     sed->cmd_list = g_list_sort(sed->cmd_list, (gint(*)(gconstpointer, gconstpointer))strcmp);
     g_completion_add_items(sed->gsw->cmd.completion, sed->cmd_list);
-    g_message("%s found %d executables", __func__, g_list_length(sed->cmd_list));
+    g_message("%s found %d executables", G_STRFUNC, g_list_length(sed->cmd_list));
     return FALSE;
   }
 
@@ -634,7 +634,7 @@ void rehash_executables(gswm_t *gsw)
     _exec_scan_add_to_event_loop(sed);
   }
   else
-    g_warning("%s already running one instance", __func__);
+    g_warning("%s already running one instance", G_STRFUNC);
 }
 
 static void _sig_child_handler(int sig)
@@ -736,9 +736,9 @@ gint main(gint argc, gchar **argv)
   /*
    * Now we are ready to enter the main event loop
    */
-  g_message("%s event loop start", __func__);
+  g_message("%s event loop start", G_STRFUNC);
   g_main_loop_run(gml);
-  g_message("%s event loop stops", __func__);
+  g_message("%s event loop stops", G_STRFUNC);
 
   /* Must be the first */
   input_destroy(xsrv_source);

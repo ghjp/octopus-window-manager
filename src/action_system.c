@@ -40,7 +40,7 @@ static void _exec_command_line(gchar *cmdline)
 {
   GError *error = NULL;
   if(!g_spawn_command_line_async(cmdline, &error)) {
-    g_warning("%s %s", __func__, error->message);
+    g_warning("%s %s", G_STRFUNC, error->message);
     g_error_free(error);
   }
 }
@@ -186,7 +186,7 @@ static void _action_frame_client_next(gswm_t *gsw)
     client_t *nextc = wframe_get_next_active_client(gsw, fframe);
 
     if(wframe_get_active_client(gsw, fframe) != nextc) {
-      TRACE("%s new nextc=%p (%s)", __func__, nextc, nextc->utf8_name);
+      TRACE("%s new nextc=%p (%s)", G_STRFUNC, nextc, nextc->utf8_name);
       wa_raise(gsw, nextc);
       focus_client(gsw, nextc, FALSE);
     }
@@ -544,7 +544,7 @@ static void _action_jump_to(gswm_t *gsw, gchar *name_pattern)
   if(js_info.c_found) {
     /* Simulate a _NET_ACTIVE_WINDOW request from pager */
     wa_send_xclimsg(gsw, js_info.c_found, gsw->xa.wm_net_active_window, 2, 0, 0, 0, 0);
-    TRACE("%s: %s", __func__, js_info.c_found->utf8_name);
+    TRACE("%s: %s", G_STRFUNC, js_info.c_found->utf8_name);
   }
 }
 
@@ -624,7 +624,7 @@ static void _action_system_perform(gswm_t *gsw)
   _as_user_data_t *asud = gsw->action.user_data;
   GString *as = gsw->action.line;
 
-  TRACE("%s cmd=%s", __func__, as->str);
+  TRACE("%s cmd=%s", G_STRFUNC, as->str);
   actions = g_strsplit(as->str, ";", -1);
 
   for(i = 0; actions[i]; i++) {
@@ -633,7 +633,7 @@ static void _action_system_perform(gswm_t *gsw)
     if(!as->len)
       continue;
 
-    TRACE("%s %s", __func__, as->str);
+    TRACE("%s %s", G_STRFUNC, as->str);
     act_func = g_hash_table_lookup(asud->action_hash, as->str);
     if(act_func) /* Call action routine */
       act_func(gsw);
@@ -647,7 +647,7 @@ static void _action_system_perform(gswm_t *gsw)
       }
       else
         g_critical("%s Detected recursive call of user action `%s'",
-            __func__, as->str);
+            G_STRFUNC, as->str);
     }
     else if(g_str_equal(as->str, "exec")) { /* without arguments */
       GString *gs = gsw->cmd.line;
@@ -689,11 +689,11 @@ static void _action_system_perform(gswm_t *gsw)
         g_warning("Command jump has no argument");
     }
     else
-      g_warning("%s: Command `%s' not found", __func__, as->str);
+      g_warning("%s: Command `%s' not found", G_STRFUNC, as->str);
   }
   g_strfreev(actions);
   TRACE("%s detect_recursion_hash=%d",
-      __func__, g_hash_table_size(asud->detect_recursion_hash));
+      G_STRFUNC, g_hash_table_size(asud->detect_recursion_hash));
 }
 
 void action_system_create(gswm_t *gsw, GMainLoop *gml)
@@ -703,7 +703,7 @@ void action_system_create(gswm_t *gsw, GMainLoop *gml)
   GList *aclist = NULL;
   interaction_t *ia = &gsw->action;
 
-  TRACE(__func__);
+  TRACE(G_STRFUNC);
   ia->line = g_string_new("");
   ia->completion = g_completion_new(NULL);
   ia->str_chunk = g_string_chunk_new(32<<10);
@@ -715,7 +715,7 @@ void action_system_create(gswm_t *gsw, GMainLoop *gml)
   ia->user_data = asud;
 
   for(atp = act_table; atp->name; atp++) {
-    TRACE("%s n=%s f=%p", __func__, atp->name, atp->func);
+    TRACE("%s n=%s f=%p", G_STRFUNC, atp->name, atp->func);
     g_hash_table_insert(asud->action_hash, atp->name, atp->func);
     aclist = g_list_prepend(aclist, atp->name);
   }
@@ -759,7 +759,7 @@ void action_system_add(gswm_t *gsw, const gchar *name, const gchar *action_strin
 
   g_return_if_fail(ia->line && ia->completion && ia->str_chunk && asu->user_action_hash);
 
-  TRACE("%s name=%s action=`%s'", __func__, name, action_string);
+  TRACE("%s name=%s action=`%s'", G_STRFUNC, name, action_string);
   s_name = g_string_chunk_insert(ia->str_chunk, name);
   s_action = g_string_chunk_insert(ia->str_chunk, action_string);
   g_hash_table_insert(asu->user_action_hash, s_name, s_action);
