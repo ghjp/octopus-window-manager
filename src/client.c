@@ -58,7 +58,7 @@ gboolean client_win_is_alive(gswm_t *gsw, client_t *c)
     * this property. Does this goof up on 64 bit systems? */
 void set_wm_state(gswm_t *gsw, client_t *c, gint state)
 {
-  CARD32 data[2];
+  glong data[2];
 
   data[0] = state;
   data[1] = None; /* Icon? We don't need no steenking icon. */

@@ -585,7 +585,7 @@ redo_switch:
 gint get_ewmh_net_current_desktop(gswm_t *gsw)
 {
   gint num;
-  CARD32 *ncd = get_ewmh_net_property_data(gsw, NULL, gsw->xa.wm_net_current_desktop, XA_CARDINAL, &num);
+  glong *ncd = get_ewmh_net_property_data(gsw, NULL, gsw->xa.wm_net_current_desktop, XA_CARDINAL, &num);
   
   if(ncd) {
     num = *ncd;
@@ -620,7 +620,7 @@ void set_ewmh_net_wm_allowed_actions(gswm_t *gsw, client_t *c)
 
 void set_ewmh_net_frame_extents(gswm_t *gsw, client_t *c)
 {
-  CARD32 frame_extents[4];
+  glong frame_extents[4];
 
   if(TEST_BORDERLESS(c)) /* Borderless client */
     frame_extents[0] = frame_extents[1] = frame_extents[2] = frame_extents[3] = 0;

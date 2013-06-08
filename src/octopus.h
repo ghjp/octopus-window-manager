@@ -36,10 +36,10 @@ typedef struct _client client_t;
 
 typedef struct {
   /* Size of strut per border */
-  CARD32 east;
-  CARD32 west;
-  CARD32 north;
-  CARD32 south;
+  glong east;
+  glong west;
+  glong north;
+  glong south;
 } strut_t;
 
 /* simple rectangle structure; defined by two x,y pairs */
