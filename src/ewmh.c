@@ -212,7 +212,7 @@ void init_ewmh_support(gswm_t *gsw)
   }
   { /* Viewport */
     gint nelem = 2 * scr->num_vdesk;
-    glong *viewport = g_newa(gulong, nelem);
+    glong *viewport = g_newa(glong, nelem);
     memset(viewport, 0, nelem * sizeof(*viewport));
     XChangeProperty(dpy, scr->rootwin, gsw->xa.wm_net_desktop_viewport, XA_CARDINAL, 32,
         PropModeReplace, (guint8 *)viewport, nelem);
@@ -336,7 +336,7 @@ void remove_ewmh_strut(gswm_t *gsw, client_t *c, gboolean add_strut_follows)
 
 static void _add_strut_to_desktop(client_t *c, screen_t *scr, gint desknum)
 {
-  strut_t *ms;
+  G_GNUC_UNUSED strut_t *ms;
   GSList *cslist = scr->vdesk[desknum].cstrut_list;
 
   cslist = g_slist_append(cslist, c);

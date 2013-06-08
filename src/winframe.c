@@ -893,7 +893,8 @@ static void _redraw_tbar_pixmap(gswm_t *gsw, client_t *c,
 
 void _redraw_tbar_button(gswm_t *gsw, wframe_t *frame)
 {
-  gint xb, yb, wb, hb;
+  G_GNUC_UNUSED gint xb, yb;
+  gint wb, hb;
   Display *dpy = gsw->display;
   screen_t *scr = gsw->screen + gsw->i_curr_scr;
 

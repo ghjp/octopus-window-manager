@@ -14,7 +14,7 @@
 osd_cli_t *osd_cli_create(gswm_t *gsw)
 {
   Window rootwin;
-  gint swidth, sheight, depth;
+  gint swidth, sheight;
   Display *dpy = gsw->display;
   screen_t *screen = gsw->screen + gsw->i_curr_scr;
   gint scr = screen->id;
@@ -25,7 +25,6 @@ osd_cli_t *osd_cli_create(gswm_t *gsw)
   rootwin = screen->rootwin;
   swidth = screen->dpy_width;
   sheight = screen->dpy_height;
-  depth = DefaultDepth(dpy, scr);
   obj->iw = swidth;
   obj->ih = gsw->ucfg.osd_height;
   TRACE("scr=%d swidth=%d sheight=%d", scr, swidth, sheight);
@@ -84,7 +83,8 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
 
   /* Construct window shape */
   if(G_LIKELY((mask_bitmap = XCreatePixmap(dpy, obj->win, iw, ih, 1)))) {
-    gdouble tw, th, tx, ty;
+    G_GNUC_UNUSED gdouble tw, th;
+    gdouble tx, ty;
     cairo_text_extents_t extents;
     gchar *mask_font = obj->gsw->ucfg.osd_font;
     cairo_surface_t *mask_surface = cairo_xlib_surface_create_for_bitmap(
