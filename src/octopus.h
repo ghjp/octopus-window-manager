@@ -49,7 +49,7 @@ typedef struct {
 } rect_t;
 
 typedef struct {
-  gint x, y, w, h;
+  glong x, y, w, h;
 } warea_t;
 
 typedef struct {

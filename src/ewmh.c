@@ -10,16 +10,16 @@
 #include <string.h> /* memset */
 #include <signal.h>
 
+#include <X11/cursorfont.h>
+#include <X11/keysym.h> /* XK_Num_Lock */
+#include <X11/Xatom.h> /* XA_CARDINAL, ... */
+
 #include "octopus.h"
 #include "ewmh.h"
 #include "winactions.h"
 #include "main.h"
 #include "winactions.h"
 #include "client.h"
-
-#include <X11/cursorfont.h>
-#include <X11/keysym.h> /* XK_Num_Lock */
-#include <X11/Xatom.h> /* XA_CARDINAL, ... */
 
 /* Defines {{{1 */
 #define _NET_WM_STATE_REMOVE        0    /* remove/unset property */
@@ -166,7 +166,7 @@ void init_ewmh_support(gswm_t *gsw)
   {
 #define HNAME_MAXLEN 256
     gchar hname[HNAME_MAXLEN];
-    CARD32 pid = getpid();
+    glong pid = getpid();
     Atom wm_client_machine = XInternAtom(dpy, "WM_CLIENT_MACHINE", False);
 
     XChangeProperty(dpy, scr->extended_hints_win, gsw->xa.wm_net_wm_pid, XA_CARDINAL, 32,
@@ -204,17 +204,18 @@ void init_ewmh_support(gswm_t *gsw)
   set_root_prop_window(gsw, gsw->xa.wm_net_active_window, None);
 
   { /* Desktop geometry */
-    CARD32 geometry[2];
+    glong geometry[2];
     geometry[0] = scr->dpy_width;
     geometry[1] = scr->dpy_height;
     XChangeProperty(dpy, scr->rootwin, gsw->xa.wm_net_desktop_geometry, XA_CARDINAL, 32,
-        PropModeReplace, (guint8 *)geometry, 2);
+        PropModeReplace, (guint8 *)geometry, G_N_ELEMENTS(geometry));
   }
   { /* Viewport */
-    CARD32 *viewport = g_newa(CARD32, 2 * scr->num_vdesk);
-    memset(viewport, 0, 2 * scr->num_vdesk * sizeof(*viewport));
+    gint nelem = 2 * scr->num_vdesk;
+    glong *viewport = g_newa(gulong, nelem);
+    memset(viewport, 0, nelem * sizeof(*viewport));
     XChangeProperty(dpy, scr->rootwin, gsw->xa.wm_net_desktop_viewport, XA_CARDINAL, 32,
-        PropModeReplace, (guint8 *)viewport, 2 * scr->num_vdesk);
+        PropModeReplace, (guint8 *)viewport, nelem);
   }
   set_ewmh_workarea(gsw);
 
@@ -349,7 +350,7 @@ static void _add_strut_to_desktop(client_t *c, screen_t *scr, gint desknum)
 void add_ewmh_strut(gswm_t *gsw, client_t *c)
 {
   gint num = 0;
-  CARD32 *tmp_strut = get_ewmh_net_property_data(gsw, c,
+  glong *tmp_strut = get_ewmh_net_property_data(gsw, c,
       gsw->xa.wm_net_wm_strut, XA_CARDINAL, &num);
 
   if(tmp_strut) {
