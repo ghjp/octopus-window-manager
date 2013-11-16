@@ -47,7 +47,7 @@ static void _handle_exec_key_event(gswm_t *gsw)
   }
 }
 
-static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
+static void _handle_keypress_event(gswm_t *gsw, XKeyEvent *e)
 {
   client_t *clnt;
   KeySym ks = XLookupKeysym(e, 0);
@@ -219,10 +219,19 @@ static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
     default:
       break;
   }
+  /* Release pending events */
+  XAllowEvents(gsw->display, SyncKeyboard, CurrentTime);
+}
+
+static void _handle_keyrelease_event(gswm_t *gsw, XKeyEvent *e)
+{
+  /* Release pending events */
+  XAllowEvents(gsw->display, SyncKeyboard, CurrentTime);
 }
 
 static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
 {
+  gboolean replay = FALSE;
   client_t *clnt = wframe_lookup_client_for_window(gsw, e->window);
 
   if(clnt) {
@@ -271,9 +280,15 @@ static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
   }
   else if((clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window)))) {
     TRACE("%s: Button click inside client '%s' detected", __func__, clnt->utf8_name);
+    if(clnt != get_focused_client(gsw)) {
+      wa_raise(gsw, clnt);
+      focus_client(gsw, clnt, FALSE);
+    }
     /* forward grabbed events */
-    XAllowEvents(gsw->display, ReplayPointer, CurrentTime);
+    replay = TRUE;
   }
+  /* Release pending events */
+  XAllowEvents(gsw->display, replay ? ReplayPointer : SyncPointer, CurrentTime);
 }
 
 static void _handle_buttonrelease_event(gswm_t *gsw, XButtonReleasedEvent *e)
@@ -314,6 +329,8 @@ static void _handle_buttonrelease_event(gswm_t *gsw, XButtonReleasedEvent *e)
         break;
     }
   }
+  /* Release pending events */
+  XAllowEvents(gsw->display, SyncPointer, CurrentTime);
 }
 
 /* This happens when a window is iconified and destroys itself. An
@@ -849,7 +866,7 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
 {
   client_t *clnt;
 
-  g_message("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
+  TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
     return;
   /* If the desktop is switching (grabbed mode) and we get a pointer triggered event ignore it */
@@ -898,7 +915,10 @@ void process_xevent(gswm_t *gsw)
   XNextEvent(dpy, &ev);
   switch(ev.type) {
     case KeyPress:
-      _handle_key_event(gsw, &ev.xkey);
+      _handle_keypress_event(gsw, &ev.xkey);
+      break;
+    case KeyRelease:
+      _handle_keyrelease_event(gsw, &ev.xkey);
       break;
     case ButtonPress:
       _handle_buttonpress_event(gsw, &ev.xbutton);
