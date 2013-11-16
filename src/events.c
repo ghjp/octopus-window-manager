@@ -781,28 +781,30 @@ static void _handle_mapping_event(gswm_t *gsw, XMappingEvent *e)
 static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
 {
   client_t *clnt;
-  XEvent ev;
 
-  /* Compress Enter events to avoid "focus flicker during desktop switching */
-  ev.xcrossing = *e;
-  while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
-    /* DO NOTHING */;
   TRACE("%s window=%ld mode=%d detail=%d focus=%d",
         __func__, e->window, e->mode, e->detail, e->focus);
-  /* Ignore internal application events */
-  if(NotifyInferior == e->detail && ev.xcrossing.focus)
+  /* We get a NotifyGrab mode and a NotifyInferior detail when a window is cliecked */
+  if((NotifyGrab == e->mode && NotifyInferior != e->detail) || NotifyUngrab == e->mode)
     return;
-#if 0
-  if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
+  if(NotifyNonlinearVirtual < e->detail) {
+    g_message("%s: detail > NotifyNonlinearVirtual", G_STRFUNC);
     return;
-#endif
-  clnt = wframe_lookup_client_for_window(gsw, ev.xcrossing.window);
-  if(!clnt)
-    clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(ev.xcrossing.window));
+  }
+  if(gsw->screen[gsw->i_curr_scr].rootwin == e->window)
+    return;
+
+  clnt = wframe_lookup_client_for_window(gsw, e->window);
+  if(!clnt) {
+    TRACE("%s: wframe_lookup_client_for_window failed", G_STRFUNC);
+    clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window));
+  }
   if(clnt) {
     TRACE("EnterNotify frame=%ld w=%ld (%s)", clnt->wframe->win, clnt->win, clnt->utf8_name);
-    if(clnt != get_focused_client(gsw))
+    if(clnt != get_focused_client(gsw)) {
+      TRACE("%s: new focused client", G_STRFUNC);
       focus_client(gsw, clnt, TRUE);
+    }
   }
 }
 
@@ -828,7 +830,10 @@ static void _handle_focusin_event(gswm_t *gsw, XFocusInEvent *e)
   client_t *clnt;
 
   TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
-  if(NotifyGrab == e->mode)
+  if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
+    return;
+  /* If the desktop is switching (grabbed mode) and we get a pointer triggered event ignore it */
+  if(NotifyWhileGrabbed == e->mode && NotifyNonlinearVirtual < e->detail)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
   TRACE("%s window=%ld mode=%d detail=%d (%s)",
@@ -844,11 +849,11 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
 {
   client_t *clnt;
 
-  TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
-  /* Get the last focus in event, no need to go through them all. */
-  while(XCheckTypedEvent(gsw->display, FocusOut, (XEvent*)e))
-    ;
+  g_message("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
+    return;
+  /* If the desktop is switching (grabbed mode) and we get a pointer triggered event ignore it */
+  if(NotifyWhileGrabbed == e->mode && NotifyNonlinearVirtual < e->detail)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
   TRACE("%s window=%ld mode=%d detail=%d (%s)",
