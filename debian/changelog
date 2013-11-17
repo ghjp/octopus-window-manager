@@ -1,3 +1,9 @@
+octopus (0.5.0-10) unstable; urgency=low
+
+  * Fixed some "focus follows mouse" issues
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 17 Nov 2013 11:34:04 +0100
+
 octopus (0.5.0-9) unstable; urgency=low
 
   * Dropdown menu problem fixed on 64 bit machines
