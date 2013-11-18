@@ -34,7 +34,7 @@ void send_config(gswm_t *gsw, client_t *c)
   ce.width = c->width;
   ce.height = c->height;
   ce.border_width = 0;
-  ce.above = None;
+  ce.above = c->wframe->win;
   ce.override_redirect = 0;
 
   XSendEvent(gsw->display, c->win, False, StructureNotifyMask, (XEvent *)&ce);
