@@ -34,7 +34,7 @@ void send_config(gswm_t *gsw, client_t *c)
   ce.width = c->width;
   ce.height = c->height;
   ce.border_width = 0;
-  ce.above = None;
+  ce.above = c->wframe->win;
   ce.override_redirect = 0;
 
   XSendEvent(gsw->display, c->win, False, StructureNotifyMask, (XEvent *)&ce);
@@ -890,9 +890,26 @@ client_t *get_focused_client(gswm_t *gsw)
 {
   Window focus_ret;
   gint revert_to_ret;
+  client_t *c = NULL;
 
   XGetInputFocus(gsw->display, &focus_ret, &revert_to_ret);
-  return g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(focus_ret));
+  if(G_LIKELY(PointerRoot != focus_ret && None != focus_ret)) {
+    c = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(focus_ret));
+    if(G_UNLIKELY(!c)) {
+      // Some applications use a so called FocusProxy pseudo window to handle the input
+      // focus. Java applications use this technique. The FocusProxy window is a child of
+      // the real application window. So try to figure out the parent window.
+      Window rw, pw, *childlist;
+      guint nchilds;
+      if(XQueryTree(gsw->display, focus_ret, &rw, &pw, &childlist, &nchilds)) {
+        c = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(pw));
+        X_FREE(childlist);
+      }
+      else
+        g_critical("%s: XQueryTree failed", G_STRFUNC);
+    }
+  }
+  return c;
 }
 
 void set_frame_id_xprop(gswm_t *gsw, Window w, glong frame_id)
