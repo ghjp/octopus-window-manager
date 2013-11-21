@@ -849,9 +849,6 @@ static void _handle_focusin_event(gswm_t *gsw, XFocusInEvent *e)
   TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
     return;
-  /* If the desktop is switching (grabbed mode) and we get a pointer triggered event ignore it */
-  if(NotifyWhileGrabbed == e->mode && NotifyNonlinearVirtual < e->detail)
-    return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
   TRACE("%s window=%ld mode=%d detail=%d (%s)",
         __func__, e->window, e->mode, e->detail, clnt?clnt->utf8_name:"");
@@ -868,9 +865,6 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
 
   TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
-    return;
-  /* If the desktop is switching (grabbed mode) and we get a pointer triggered event ignore it */
-  if(NotifyWhileGrabbed == e->mode && NotifyNonlinearVirtual < e->detail)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
   TRACE("%s window=%ld mode=%d detail=%d (%s)",

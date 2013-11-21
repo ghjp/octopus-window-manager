@@ -15,7 +15,7 @@ static void _hide_vdesk_client(gpointer data, gpointer user_data)
   client_t *c = (client_t*)data;
   gswm_t *gsw = (gswm_t *)user_data;
   wa_hide(gsw, c);
-  wframe_set_type(gsw, c->wframe, FALSE);
+  //wframe_set_type(gsw, c->wframe, FALSE);
 }
 
 static void _unhide_vdesk_client(gpointer data, gpointer user_data)
@@ -46,6 +46,8 @@ void switch_vdesk(gswm_t *gsw, gint v)
   clist = scr->vdesk[scr->current_vdesk].clnt_list;
   TRACE("%s hide_clist=%d", __func__, g_list_length(clist));
   //XGrabServer(gsw->display);
+  // Move the input focus away from any window client
+  XSetInputFocus(gsw->display, None, RevertToNone, CurrentTime);
   g_list_foreach(clist, _hide_vdesk_client, gsw);
 
 	scr->current_vdesk = v;
@@ -57,20 +59,12 @@ void switch_vdesk(gswm_t *gsw, gint v)
   /*g_list_foreach(scr->sticky_list, _unhide_vdesk_client, gsw);*/
   //XUngrabServer(gsw->display);
 
-  {
-    XEvent xev;
-    XSync(gsw->display, False); /* Perform all outstanding events */
-    while(XCheckMaskEvent(gsw->display, EnterWindowMask, &xev))
-      TRACE("%s: EnterWindowMask found", __func__);
-    /*
-    while(XCheckMaskEvent(gsw->display, FocusChangeMask, &xev))
-      g_debug("%s: FocusChangeMask found", __func__);
-      */
-  }
+  XSync(gsw->display, True); // Discard all events on the event queue
   if(old_focused_client)
     focus_client(gsw, old_focused_client, TRUE);
+  else
+    XSetInputFocus(gsw->display, PointerRoot, RevertToPointerRoot, CurrentTime);
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, v);
-  XSync(gsw->display, False);
 }
 
 void switch_vdesk_up(gswm_t *gsw)
