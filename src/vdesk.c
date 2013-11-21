@@ -45,10 +45,9 @@ void switch_vdesk(gswm_t *gsw, gint v)
   /* Hide all windows on the actual workspace */
   clist = scr->vdesk[scr->current_vdesk].clnt_list;
   TRACE("%s hide_clist=%d", __func__, g_list_length(clist));
-  // Move the input focus away from any window client
-  //XSetInputFocus(gsw->display, None, RevertToPointerRoot, CurrentTime);
-  //XSync(gsw->display, False);
   //XGrabServer(gsw->display);
+  // Move the input focus away from any window client
+  XSetInputFocus(gsw->display, None, RevertToNone, CurrentTime);
   g_list_foreach(clist, _hide_vdesk_client, gsw);
 
 	scr->current_vdesk = v;
@@ -58,22 +57,24 @@ void switch_vdesk(gswm_t *gsw, gint v)
   TRACE("%s unhide_clist=%d", __func__, g_list_length(clist));
   g_list_foreach(clist, _unhide_vdesk_client, gsw);
   /*g_list_foreach(scr->sticky_list, _unhide_vdesk_client, gsw);*/
-  {
-    XEvent ev;
-    gint ev_cnt = 0;
-    XSync(gsw->display, False);
-    while(XCheckMaskEvent(gsw->display, FocusChangeMask | EnterWindowMask | LeaveWindowMask, &ev))
-      ++ev_cnt;
-    TRACE("%s: ev_cnt=%d pending=%d", G_STRFUNC, ev_cnt, XPending(gsw->display));
-  }
-  //XSync(gsw->display, True); // Discard all events on the event queue
   //XUngrabServer(gsw->display);
 
+  if(1){
+    XEvent xev;
+    XSync(gsw->display, False); /* Perform all outstanding events */
+    while(XCheckMaskEvent(gsw->display, EnterWindowMask, &xev))
+      TRACE("%s: EnterWindowMask found", __func__);
+    /*
+    while(XCheckMaskEvent(gsw->display, FocusChangeMask, &xev))
+      g_debug("%s: FocusChangeMask found", __func__);
+      */
+  }
   if(old_focused_client)
     focus_client(gsw, old_focused_client, TRUE);
-  //else
-    //XSetInputFocus(gsw->display, PointerRoot, RevertToPointerRoot, CurrentTime);
+  else
+    XSetInputFocus(gsw->display, PointerRoot, RevertToPointerRoot, CurrentTime);
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, v);
+  XSync(gsw->display, False);
 }
 
 void switch_vdesk_up(gswm_t *gsw)
@@ -100,3 +101,4 @@ void clear_vdesk_focused_client(gswm_t *gsw, client_t *c)
     if(c == scr->vdesk[i].focused)
       scr->vdesk[i].focused = NULL;
 }
+

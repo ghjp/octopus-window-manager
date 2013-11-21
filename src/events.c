@@ -47,7 +47,7 @@ static void _handle_exec_key_event(gswm_t *gsw)
   }
 }
 
-static void _handle_keypress_event(gswm_t *gsw, XKeyEvent *e)
+static void _handle_key_event(gswm_t *gsw, XKeyEvent *e)
 {
   client_t *clnt;
   KeySym ks = XLookupKeysym(e, 0);
@@ -219,19 +219,10 @@ static void _handle_keypress_event(gswm_t *gsw, XKeyEvent *e)
     default:
       break;
   }
-  /* Release pending events */
-  XAllowEvents(gsw->display, SyncKeyboard, CurrentTime);
-}
-
-static void _handle_keyrelease_event(gswm_t *gsw, XKeyEvent *e)
-{
-  /* Release pending events */
-  XAllowEvents(gsw->display, SyncKeyboard, CurrentTime);
 }
 
 static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
 {
-  gboolean replay = FALSE;
   client_t *clnt = wframe_lookup_client_for_window(gsw, e->window);
 
   if(clnt) {
@@ -280,15 +271,9 @@ static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
   }
   else if((clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window)))) {
     TRACE("%s: Button click inside client '%s' detected", __func__, clnt->utf8_name);
-    if(clnt != get_focused_client(gsw)) {
-      wa_raise(gsw, clnt);
-      focus_client(gsw, clnt, FALSE);
-    }
     /* forward grabbed events */
-    replay = TRUE;
+    XAllowEvents(gsw->display, ReplayPointer, CurrentTime);
   }
-  /* Release pending events */
-  XAllowEvents(gsw->display, replay ? ReplayPointer : SyncPointer, CurrentTime);
 }
 
 static void _handle_buttonrelease_event(gswm_t *gsw, XButtonReleasedEvent *e)
@@ -329,8 +314,6 @@ static void _handle_buttonrelease_event(gswm_t *gsw, XButtonReleasedEvent *e)
         break;
     }
   }
-  /* Release pending events */
-  XAllowEvents(gsw->display, SyncPointer, CurrentTime);
 }
 
 /* This happens when a window is iconified and destroys itself. An
@@ -798,30 +781,28 @@ static void _handle_mapping_event(gswm_t *gsw, XMappingEvent *e)
 static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
 {
   client_t *clnt;
+  XEvent ev;
 
+  /* Compress Enter events to avoid "focus flicker during desktop switching */
+  ev.xcrossing = *e;
+  //while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
+  //  /* DO NOTHING */;
   TRACE("%s window=%ld mode=%d detail=%d focus=%d",
         __func__, e->window, e->mode, e->detail, e->focus);
-  /* We get a NotifyGrab mode and a NotifyInferior detail when a window is cliecked */
-  if((NotifyGrab == e->mode && NotifyInferior != e->detail) || NotifyUngrab == e->mode)
+  /* Ignore internal application events */
+  if(NotifyInferior == e->detail && ev.xcrossing.focus)
     return;
-  if(NotifyNonlinearVirtual < e->detail) {
-    g_message("%s: detail > NotifyNonlinearVirtual", G_STRFUNC);
+#if 0
+  if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
     return;
-  }
-  if(gsw->screen[gsw->i_curr_scr].rootwin == e->window)
-    return;
-
-  clnt = wframe_lookup_client_for_window(gsw, e->window);
-  if(!clnt) {
-    TRACE("%s: wframe_lookup_client_for_window failed", G_STRFUNC);
-    clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window));
-  }
+#endif
+  clnt = wframe_lookup_client_for_window(gsw, ev.xcrossing.window);
+  if(!clnt)
+    clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(ev.xcrossing.window));
   if(clnt) {
     TRACE("EnterNotify frame=%ld w=%ld (%s)", clnt->wframe->win, clnt->win, clnt->utf8_name);
-    if(clnt != get_focused_client(gsw)) {
-      TRACE("%s: new focused client", G_STRFUNC);
+    if(clnt != get_focused_client(gsw))
       focus_client(gsw, clnt, TRUE);
-    }
   }
 }
 
@@ -864,6 +845,9 @@ static void _handle_focusout_event(gswm_t *gsw, XFocusOutEvent *e)
   client_t *clnt;
 
   TRACE("%s window=%ld mode=%d detail=%d", __func__, e->window, e->mode, e->detail);
+  /* Get the last focus in event, no need to go through them all. */
+  //while(XCheckTypedEvent(gsw->display, FocusOut, (XEvent*)e))
+  //  ;
   if(NotifyGrab == e->mode || NotifyUngrab == e->mode)
     return;
   clnt = wframe_lookup_client_for_window(gsw, e->window);
@@ -909,10 +893,7 @@ void process_xevent(gswm_t *gsw)
   XNextEvent(dpy, &ev);
   switch(ev.type) {
     case KeyPress:
-      _handle_keypress_event(gsw, &ev.xkey);
-      break;
-    case KeyRelease:
-      _handle_keyrelease_event(gsw, &ev.xkey);
+      _handle_key_event(gsw, &ev.xkey);
       break;
     case ButtonPress:
       _handle_buttonpress_event(gsw, &ev.xbutton);
