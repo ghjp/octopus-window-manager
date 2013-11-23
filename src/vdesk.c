@@ -46,7 +46,7 @@ void switch_vdesk(gswm_t *gsw, gint v)
   clist = scr->vdesk[scr->current_vdesk].clnt_list;
   TRACE("%s hide_clist=%d", __func__, g_list_length(clist));
   // Move the input focus away from any window client
-  XSetInputFocus(gsw->display, None, RevertToPointerRoot, CurrentTime);
+  //XSetInputFocus(gsw->display, None, RevertToPointerRoot, CurrentTime);
   //XSync(gsw->display, False);
   //XGrabServer(gsw->display);
   g_list_foreach(clist, _hide_vdesk_client, gsw);
@@ -71,8 +71,8 @@ void switch_vdesk(gswm_t *gsw, gint v)
 
   if(old_focused_client)
     focus_client(gsw, old_focused_client, TRUE);
-  else
-    XSetInputFocus(gsw->display, PointerRoot, RevertToPointerRoot, CurrentTime);
+  //else
+    //XSetInputFocus(gsw->display, PointerRoot, RevertToPointerRoot, CurrentTime);
   set_root_prop_cardinal(gsw, gsw->xa.wm_net_current_desktop, v);
 }
 
