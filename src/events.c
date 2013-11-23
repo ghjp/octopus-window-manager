@@ -272,6 +272,10 @@ static void _handle_buttonpress_event(gswm_t *gsw, XButtonPressedEvent *e)
   else if((clnt = g_hash_table_lookup(gsw->win2clnt_hash, GUINT_TO_POINTER(e->window)))) {
     TRACE("%s: Button click inside client '%s' detected", __func__, clnt->utf8_name);
     /* forward grabbed events */
+    if(clnt != get_focused_client(gsw)) {
+      wa_raise(gsw, clnt);
+      focus_client(gsw, clnt, FALSE);
+    }
     XAllowEvents(gsw->display, ReplayPointer, CurrentTime);
   }
 }
