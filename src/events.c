@@ -789,8 +789,9 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
 
   /* Compress Enter events to avoid "focus flicker during desktop switching */
   ev.xcrossing = *e;
-  //while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
-  //  /* DO NOTHING */;
+  while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
+    /* DO NOTHING */;
+  e = &ev;
   TRACE("%s window=%ld mode=%d detail=%d focus=%d",
         __func__, e->window, e->mode, e->detail, e->focus);
   /* Ignore internal application events */
