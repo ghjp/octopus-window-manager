@@ -39,6 +39,7 @@ AC_DEFINE(FULL_DEBUG, 0, Turn on full debugging output)
 
 # Checks for libraries.
 AM_PATH_GLIB_2_0([2.2.0],,,)
+PKG_CHECK_MODULES([X11], [x11])
 PKG_CHECK_MODULES([GDK_PIXBUF_XLIB], [gdk-pixbuf-xlib-2.0])
 PKG_CHECK_MODULES([CAIRO], [cairo >= 1.0.0])
 AC_PATH_XTRA
