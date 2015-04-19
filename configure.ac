@@ -6,9 +6,10 @@ AC_INIT([octopus], [0.5.0], [pfefferl@gmx.net])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([auxdir])
 
+AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE([octopus], [0.5.0], no-define)
+AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 AM_DISABLE_STATIC
 
 # Allow application specific compile and library flags aka. "octopus_CFLAGS = ...."
