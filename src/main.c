@@ -653,7 +653,7 @@ gint main(gint argc, gchar **argv)
   _scan_exec_data_t sed;
 
   g_message("!     Welcome to " PACKAGE_STRING);
-  g_message("! (c) 2005-2011 Dr. Johann Pfefferl");
+  g_message("! (c) 2005-2015 Dr. Johann Pfefferl");
   g_message("! (c) Distributed under the terms and conditions of the GPL");
 
   if(!setlocale(LC_ALL, ""))
