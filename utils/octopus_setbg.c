@@ -106,7 +106,7 @@ gint main(gint argc, gchar **argv)
   g_message("%s: scr=%d swidth=%d sheight=%d", img_fname, scr, swidth, sheight);
   imgpb = gdk_pixbuf_new_from_file(img_fname, &error);
   if(error) {
-    g_critical(error->message);
+    g_critical("%s", error->message);
     return EXIT_FAILURE;
   }
   iw = gdk_pixbuf_get_width(imgpb);

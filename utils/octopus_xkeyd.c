@@ -96,7 +96,7 @@ static gboolean _xsrv_event_cb(gpointer data)
     action = g_hash_table_lookup(gse->keycode_action_hash, GUINT_TO_POINTER(ev.xkey.keycode));
     if(action) {
       if(!g_spawn_command_line_async(action, &error)) {
-        g_warning(error->message);
+        g_warning("%s", error->message);
         g_error_free(error);
       }
     }
