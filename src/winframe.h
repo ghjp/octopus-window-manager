@@ -29,5 +29,7 @@ wframe_t *wframe_get_focused(gswm_t *gsw);
 gboolean wframe_houses_multiple_clients(gswm_t *gsw, wframe_t *frame);
 void wframe_set_client_active(gswm_t *gsw, client_t *c);
 void wframe_update_stat_indicator(gswm_t *gsw);
+void wframe_events_disable(gswm_t *gsw, wframe_t *frame);
+void wframe_events_enable(gswm_t *gsw, wframe_t *frame);
 
 #endif

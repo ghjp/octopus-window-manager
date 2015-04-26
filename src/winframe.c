@@ -19,7 +19,7 @@
 #include <string.h> /* memset */
 
 #define DIM_FACTOR 3.333
-
+#define WFRAME_EVENT_MASK (FocusChangeMask | ChildMask | ButtonMask | EnterWindowMask)
 static gint _find_new_frame_id(gswm_t *gsw)
 {
   gint ret_id;
@@ -50,7 +50,7 @@ wframe_t *_wframe_new(gswm_t *gsw)
   pattr.override_redirect = True;
   pattr.border_pixel = scr->color.unfocus.pixel;
   pattr.do_not_propagate_mask = ButtonMask | ButtonMotionMask;
-  pattr.event_mask = FocusChangeMask | ChildMask | ButtonMask | EnterWindowMask;
+  pattr.event_mask = WFRAME_EVENT_MASK;
   fr->win = XCreateWindow(gsw->display, scr->rootwin,
       -100, -100, 4, 4, 0, /* Size is initially irrelevant */
       CopyFromParent, InputOutput, CopyFromParent,
@@ -1368,4 +1368,14 @@ void wframe_update_stat_indicator(gswm_t *gsw)
   sti.size = g_hash_table_size(gsw->fid2frame_hash);
   sti.dsize = g_list_length(sti.scr->detached_frlist);
   g_hash_table_foreach(gsw->fid2frame_hash, _refresh_status_indicator, &sti);
+}
+
+void wframe_events_disable(gswm_t *gsw, wframe_t *frame)
+{
+  XSelectInput(gsw->display, frame->win, NoEventMask);
+}
+
+void wframe_events_enable(gswm_t *gsw, wframe_t *frame)
+{
+  XSelectInput(gsw->display, frame->win, WFRAME_EVENT_MASK);
 }

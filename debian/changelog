@@ -1,3 +1,9 @@
+octopus (0.5.0-14) unstable; urgency=medium
+
+  * Bugfix when detaching a client and moving it to a different desktop
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 26 Apr 2015 19:53:17 +0200
+
 octopus (0.5.0-13) unstable; urgency=medium
 
   * Fixed the build under Debian jessie
