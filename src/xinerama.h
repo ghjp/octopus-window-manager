@@ -17,6 +17,7 @@ gboolean xinerama_scrdims(screen_t *screen, gint mon, rect_t *rect);
 gint xinerama_current_mon(gswm_t *gsw);
 void xinerama_get_screensize_on_which_client_resides(client_t *client, gint *width, gint *height);
 void xinerama_get_scrdims_on_which_client_resides(client_t *client, rect_t *rect);
+gint xinerama_monitor_count(void);
 
 #else
 
@@ -29,6 +30,7 @@ void xinerama_get_scrdims_on_which_client_resides(client_t *client, rect_t *rect
 #define xinerama_maximize(c)	(FALSE)
 #define xinerama_correctloc(c)	G_STMT_START{}G_STMT_END
 #define xinerama_current_mon(c)	(0)
+#define xinerama_monitor_count()	(0)
 
 /*
  * just give the rect for the full screen, and on

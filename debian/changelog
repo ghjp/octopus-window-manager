@@ -1,3 +1,10 @@
+octopus (0.5.0-15) unstable; urgency=medium
+
+  * On multiscreen setups snapping to screen boundaries was not completely
+    accurate.
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Wed, 10 Jun 2015 20:24:44 +0200
+
 octopus (0.5.0-14) unstable; urgency=medium
 
   * Bugfix when detaching a client and moving it to a different desktop

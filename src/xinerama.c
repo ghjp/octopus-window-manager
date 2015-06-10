@@ -289,4 +289,9 @@ void xinerama_get_scrdims_on_which_client_resides(client_t *client, rect_t *rect
     mon = 0;
   xinerama_scrdims(client->curr_screen, mon, rect);
 }
+
+gint xinerama_monitor_count(void)
+{
+  return xinerama_count;
+}
 #endif
