@@ -94,9 +94,9 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
     cairo_surface_destroy(mask_surface);
     /* fill window bitmap with black */
     cairo_save(cr_mask);
-    cairo_rectangle(cr_mask, 0, 0, iw, ih);
-    cairo_set_operator(cr_mask, CAIRO_OPERATOR_CLEAR);
-    cairo_fill(cr_mask);
+    cairo_set_source_rgb(cr_mask, 0, 0, 0);
+    //cairo_set_operator(cr_mask, CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr_mask);
     cairo_restore(cr_mask);
 
     cairo_select_font_face(cr_mask, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
@@ -196,8 +196,7 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
       /* Background color */
       //cairo_set_source_rgb(cr, .12, .39, 1.);
       cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_fgc.r, obj->gsw->ucfg.osd_fgc.g, obj->gsw->ucfg.osd_fgc.b);
-      cairo_rectangle(cr, 0, 0, iw, ih);
-      cairo_fill(cr);
+      cairo_paint(cr);
       /* Try some text path tricks */
       cairo_move_to(cr, tx, ty);
       cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
@@ -218,16 +217,15 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
       cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
       cairo_set_line_width(cr, ih/16.);
       cairo_stroke(cr);
-
       cairo_destroy(cr);
-    }
-  }
 
-  XShapeCombineMask(dpy, obj->win, ShapeBounding, 0, 0, mask_bitmap, ShapeSet);
-  XFreePixmap(dpy, mask_bitmap);
-  XSetWindowBackgroundPixmap(dpy, obj->win, pmap);
-  XFreePixmap(dpy, pmap);
-  XClearWindow(dpy, obj->win);
+      XShapeCombineMask(dpy, obj->win, ShapeBounding, 0, 0, mask_bitmap, ShapeSet);
+      XSetWindowBackgroundPixmap(dpy, obj->win, pmap);
+      XFreePixmap(dpy, pmap);
+      XClearWindow(dpy, obj->win);
+    }
+    XFreePixmap(dpy, mask_bitmap);
+  }
 }
 
 void osd_cli_printf(osd_cli_t *obj, const gchar *fmt, ...)

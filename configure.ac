@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([octopus], [1.0.0], [pfefferl@gmx.net])
+AC_INIT([octopus], [1.0.1], [pfefferl@gmx.net])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([auxdir])
 

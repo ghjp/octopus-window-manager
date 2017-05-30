@@ -167,8 +167,8 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/auxdir/missing \
 	$(top_srcdir)/auxdir/mkinstalldirs AUTHORS COPYING ChangeLog \
 	INSTALL NEWS README auxdir/compile auxdir/config.guess \
-	auxdir/config.sub auxdir/install-sh auxdir/ltmain.sh \
-	auxdir/missing auxdir/mkinstalldirs
+	auxdir/config.sub auxdir/depcomp auxdir/install-sh \
+	auxdir/ltmain.sh auxdir/missing auxdir/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
