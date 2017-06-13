@@ -17,6 +17,7 @@
 #endif
 #include <cairo-xlib.h>
 #include <string.h> /* memset */
+#include <pango/pangocairo.h>
 
 #define DIM_FACTOR 3.333
 #define WFRAME_EVENT_MASK (FocusChangeMask | ChildMask | ButtonMask | EnterWindowMask)
@@ -723,6 +724,28 @@ static void _truncate_title_string(gswm_t *gsw, client_t *c, cairo_t *cr, gboole
     set_ewmh_net_wm_visible_name(gsw, c, s);
 }
 
+static void render_text(cairo_t *cr, gchar *text, gswm_t *gsw, gint x, gint h)
+{
+  if(1) {
+    PangoLayout *layout = pango_cairo_create_layout (cr);
+    PangoFontDescription *font_description = pango_font_description_new();
+    pango_font_description_set_family(font_description, gsw->ucfg.titlebar_font_family);
+    pango_font_description_set_weight(font_description, PANGO_WEIGHT_NORMAL);
+    pango_font_description_set_absolute_size(font_description, 8 * h * PANGO_SCALE / 10);
+    pango_layout_set_font_description(layout, font_description);
+    pango_layout_set_text(layout, text, -1);
+    cairo_move_to(cr, x, 0.05*h);
+    pango_cairo_show_layout (cr, layout);
+    //pango_cairo_show_layout_line(cr, pango_layout_get_line (layout, 0));
+    g_object_unref(layout);
+    pango_font_description_free(font_description);
+  }
+  else {
+    cairo_move_to(cr, x, 0.8*h);
+    cairo_show_text(cr, text);
+  }
+}
+
 static void _redraw_tbar_pixmap(gswm_t *gsw, client_t *c,
     Pixmap *pmap, color_intensity_t *ci, color_intensity_t *text_ci, gboolean set_visible_name)
 {
@@ -873,9 +896,8 @@ static void _redraw_tbar_pixmap(gswm_t *gsw, client_t *c,
         /* Draw title */
         x += dx;
         cairo_set_source_rgb(cr, text_ci->r, text_ci->g, text_ci->b);
-        cairo_move_to(cr, x, 0.8*h);
         _truncate_title_string(gsw, cle->data, cr, set_visible_name, wtab_width_title, s);
-        cairo_show_text(cr, s->str);
+        render_text(cr, s->str, gsw, x, h);
       }
     }
     else {
@@ -883,9 +905,8 @@ static void _redraw_tbar_pixmap(gswm_t *gsw, client_t *c,
       if(0. > wtab_width_title)
         wtab_width_title = 0.;
       cairo_set_source_rgb(cr, text_ci->r, text_ci->g, text_ci->b);
-      cairo_move_to(cr, scr->fr_info.pm_width + dx, 0.8*h);
       _truncate_title_string(gsw, c, cr, set_visible_name, wtab_width, s);
-      cairo_show_text(cr, s->str);
+      render_text(cr, s->str, gsw, scr->fr_info.pm_width + dx, h);
     }
     cairo_destroy(cr);
   }

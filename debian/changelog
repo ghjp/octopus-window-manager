@@ -1,3 +1,9 @@
+octopus (1.0.2-1) unstable; urgency=medium
+
+  * Changed text rendering to pangocairo instead of cairo only
+
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Tue, 13 Jun 2017 21:12:08 +0200
+
 octopus (1.0.1-1) unstable; urgency=medium
 
   * Replaced transparent OSD command line by an opaque one.

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([octopus], [1.0.1], [pfefferl@gmx.net])
+AC_INIT([octopus], [1.0.2], [pfefferl@gmx.net])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([auxdir])
 
@@ -41,7 +41,7 @@ AC_DEFINE(FULL_DEBUG, 0, Turn on full debugging output)
 AM_PATH_GLIB_2_0([2.2.0],,,)
 PKG_CHECK_MODULES([X11], [x11])
 PKG_CHECK_MODULES([GDK_PIXBUF_XLIB], [gdk-pixbuf-xlib-2.0])
-PKG_CHECK_MODULES([CAIRO], [cairo >= 1.0.0])
+PKG_CHECK_MODULES([PANGOCAIRO], [pangocairo >= 1.0.0])
 AC_PATH_XTRA
 
 # Checks for header files.

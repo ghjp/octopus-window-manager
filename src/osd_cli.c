@@ -10,6 +10,7 @@
 
 #include <X11/extensions/shape.h>
 #include <cairo-xlib.h>
+#include <pango/pangocairo.h>
 
 osd_cli_t *osd_cli_create(gswm_t *gsw)
 {
@@ -89,46 +90,16 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
     gchar *mask_font = obj->gsw->ucfg.osd_font;
     cairo_surface_t *mask_surface = cairo_xlib_surface_create_for_bitmap(
         dpy, mask_bitmap, ScreenOfDisplay(dpy, scr), iw, ih);
+
+    tw = iw;
+    th = ih;
     cairo_t *cr_mask = cairo_create(mask_surface);
 
     cairo_surface_destroy(mask_surface);
     /* fill window bitmap with black */
-    cairo_save(cr_mask);
     cairo_set_source_rgb(cr_mask, 0, 0, 0);
     //cairo_set_operator(cr_mask, CAIRO_OPERATOR_CLEAR);
     cairo_paint(cr_mask);
-    cairo_restore(cr_mask);
-
-    cairo_select_font_face(cr_mask, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr_mask, ih);
-
-    tw = iw;
-    th = ih;
-    cairo_text_extents(cr_mask, text, &extents);
-    TRACE("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
-          extents.width + extents.x_bearing, extents.height,
-          extents.x_bearing, extents.y_bearing,
-          extents.x_advance, extents.y_advance);
-
-    tw = extents.x_advance;
-    th = extents.height;
-    tx = -extents.x_bearing;
-    ty = -extents.y_bearing;
-    TRACE("tw=%lf th=%lf", tw, th);
-    //XResizeWindow(dpy, obj->win, tw, th); iw = tw; ih = th;
-    /*
-       cairo_arc(cr_mask, iw / 2., ih / 2., iw * 0.25, 0, 2 * G_PI);
-       cairo_set_source_rgb(cr_mask, 1, 1, 1);
-       cairo_fill(cr_mask);
-       */
-    /* cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);*/
-    cairo_move_to(cr_mask, tx, ty);
-    /*
-       cairo_text_path(cr_mask, "Hallo Hans");
-       cairo_set_source_rgb(cr_mask, 1,0,0);
-       cairo_fill(cr_mask);
-       */
-    cairo_show_text(cr_mask, text);
     cairo_destroy(cr_mask);
 
 #if 0
@@ -154,8 +125,20 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
           DefaultVisual(dpy, scr), iw, ih);
       cairo_t *cr = cairo_create(cr_xlib_surf);
 
-      TRACE("Pixmap creation successful: pixmap = 0x%lx", pmap);
       cairo_surface_destroy(cr_xlib_surf); /* A reference is hold by cr */
+      cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+      cairo_set_font_size(cr, ih);
+      cairo_text_extents(cr, text, &extents);
+      TRACE("e_w=%lf e_h=%lf e_xb=%lf e_yb=%lf e_xa=%lf e_ya=%lf",
+            extents.width + extents.x_bearing, extents.height,
+            extents.x_bearing, extents.y_bearing,
+            extents.x_advance, extents.y_advance);
+
+      tw = extents.x_advance;
+      th = extents.height;
+      tx = -extents.x_bearing;
+      ty = -extents.y_bearing;
+      TRACE("Pixmap creation successful: pixmap = 0x%lx", pmap);
       /**
         cairo_save(cr);
         cairo_rectangle(cr, 0, 0, iw, ih);
@@ -198,25 +181,42 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
       cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_fgc.r, obj->gsw->ucfg.osd_fgc.g, obj->gsw->ucfg.osd_fgc.b);
       cairo_paint(cr);
       /* Try some text path tricks */
-      cairo_move_to(cr, tx, ty);
-      cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-      cairo_set_font_size(cr, ih);
-      cairo_text_path(cr, text);
-      /*
-         pat = cairo_pattern_create_linear(0, 0, tw, 0);
-         cairo_pattern_add_color_stop_rgb(pat, 0, .12, .39, 1.);
-         cairo_pattern_add_color_stop_rgb(pat, 1, .9, .9, .98);
-         cairo_set_source(cr, pat);
-         cairo_fill_preserve(cr);
-         */
-      /*
-         cairo_set_source_rgba(cr, .12, .39, 1., 1.);
-         cairo_fill_preserve(cr);
-         */
-      //cairo_set_source_rgb(cr, .9, .9, .98);
-      cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
-      cairo_set_line_width(cr, ih/16.);
-      cairo_stroke(cr);
+      if(1) {
+        PangoLayout *layout = pango_cairo_create_layout (cr);
+        PangoFontDescription *font_description = pango_font_description_new();
+        pango_font_description_set_family(font_description, mask_font);
+        pango_font_description_set_weight(font_description, PANGO_WEIGHT_BOLD);
+        pango_font_description_set_absolute_size(font_description, 8 * ih * PANGO_SCALE / 10);
+        pango_layout_set_font_description(layout, font_description);
+        pango_layout_set_text(layout, text, -1);
+        cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
+        cairo_move_to(cr, tx, 0);
+        pango_cairo_show_layout (cr, layout);
+        //pango_cairo_show_layout_line(cr, pango_layout_get_line (layout, 0));
+        g_object_unref(layout);
+        pango_font_description_free(font_description);
+      }
+      else {
+        cairo_move_to(cr, tx, ty);
+        cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, ih);
+        cairo_text_path(cr, text);
+        /*
+           pat = cairo_pattern_create_linear(0, 0, tw, 0);
+           cairo_pattern_add_color_stop_rgb(pat, 0, .12, .39, 1.);
+           cairo_pattern_add_color_stop_rgb(pat, 1, .9, .9, .98);
+           cairo_set_source(cr, pat);
+           cairo_fill_preserve(cr);
+           */
+        /*
+           cairo_set_source_rgba(cr, .12, .39, 1., 1.);
+           cairo_fill_preserve(cr);
+           */
+        //cairo_set_source_rgb(cr, .9, .9, .98);
+        cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
+        cairo_set_line_width(cr, ih/16.);
+        cairo_stroke(cr);
+      }
       cairo_destroy(cr);
 
       XShapeCombineMask(dpy, obj->win, ShapeBounding, 0, 0, mask_bitmap, ShapeSet);
