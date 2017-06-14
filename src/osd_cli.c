@@ -131,22 +131,6 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
     cairo_show_text(cr_mask, text);
     cairo_destroy(cr_mask);
 
-#if 0
-    if(FALSE){
-      GC mask_gc, mask_gc_back;
-      mask_gc = XCreateGC(dpy, mask_bitmap, 0, NULL);
-      XSetForeground(dpy, mask_gc, WhitePixel(dpy, scr));
-      XSetBackground(dpy, mask_gc, BlackPixel(dpy, scr));
-      mask_gc_back = XCreateGC(dpy, mask_bitmap, 0, NULL);
-      XSetForeground(dpy, mask_gc_back, BlackPixel(dpy, scr));
-      XSetBackground(dpy, mask_gc_back, WhitePixel(dpy, scr));
-      XFillRectangle(dpy, mask_bitmap, mask_gc, 0, 0, iw, ih);
-      /*XFillRectangle(dpy, mask_bitmap, mask_gc_back, 0*iw/4, 0*ih/4, iw*2/4, ih*2/4);*/
-      XFillArc(dpy, mask_bitmap, mask_gc_back, -iw/4, -iw/4, iw*2/4, iw*2/4, 0, -90*64);
-    }
-#endif
-
-
     /* Create background relief */
     if(G_LIKELY((pmap = XCreatePixmap(dpy, DefaultRootWindow(dpy), iw, ih, DefaultDepth(dpy, scr))))) {
       G_GNUC_UNUSED cairo_pattern_t *pat;
@@ -156,48 +140,11 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
 
       TRACE("Pixmap creation successful: pixmap = 0x%lx", pmap);
       cairo_surface_destroy(cr_xlib_surf); /* A reference is hold by cr */
-      /**
-        cairo_save(cr);
-        cairo_rectangle(cr, 0, 0, iw, ih);
-        cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-        cairo_fill(cr);
-        cairo_restore(cr);
-       **/
 
-#if 0
-      /* Draw image onto canvas */
-      cairo_rectangle(cr, 0, 0, iw/2., ih/3.);
-      pat = cairo_pattern_create_linear(0, 0, iw, ih);
-      cairo_pattern_add_color_stop_rgba(pat, 0, 0.0, 0.0, 1.0, 0.9);
-      cairo_pattern_add_color_stop_rgba(pat, 1, 0.0, 1.0, 0.0, 0.1);
-      cairo_set_source(cr, pat);
-      cairo_fill(cr);
-      cairo_set_source_rgba(cr, g_rand_double(rand), g_rand_double(rand), g_rand_double(rand), g_rand_double(rand));
-      cairo_rectangle(cr, iw/10., ih/4., iw/2., ih/2.);
-      cairo_fill(cr);
-      /* Show some text */
-      cairo_set_source_rgb(cr, g_rand_double(rand), g_rand_double(rand), g_rand_double(rand));
-      cairo_move_to(cr, 0.1*iw, 0.5*ih);
-      cairo_set_font_size(cr, 0.125*ih);
-      cairo_show_text(cr, "Cairo OSD Demo");
-      cairo_pattern_destroy(pat);
-
-      /* Try some text path tricks */
-      cairo_move_to(cr, 0.25*iw, ih);
-      cairo_select_font_face(cr_mask, "Mercedes", CAIRO_FONT_SLANT_ITALIC, CAIRO_FONT_WEIGHT_BOLD);
-      cairo_set_font_size(cr, 0.95*ih);
-      cairo_text_path(cr, "Dr. Johann Pfefferl");
-      cairo_set_source_rgb(cr, 0.5, 0.5, 1);
-      cairo_fill_preserve(cr);
-      cairo_set_source_rgb(cr, 0, 0, 0);
-      cairo_set_line_width(cr, 0.025*ih);
-      cairo_stroke(cr);
-#endif
       /* Background color */
       //cairo_set_source_rgb(cr, .12, .39, 1.);
       cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_fgc.r, obj->gsw->ucfg.osd_fgc.g, obj->gsw->ucfg.osd_fgc.b);
       cairo_paint(cr);
-      /* Try some text path tricks */
       cairo_move_to(cr, tx, ty);
       cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
       cairo_set_font_size(cr, ih);

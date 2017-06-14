@@ -817,24 +817,6 @@ static void _redraw_tbar_pixmap(gswm_t *gsw, client_t *c,
       cairo_set_source(cr, pat);
       cairo_fill(cr);
       cairo_pattern_destroy(pat);
-
-      /*
-         pat = cairo_pattern_create_linear(0., 0., 0., h/2.0);
-         cairo_pattern_add_color_stop_rgba(pat, 1, ci->r, ci->g, ci->b, alpha_east);
-         cairo_pattern_add_color_stop_rgba(pat, 0, ci->r, ci->g, ci->b, alpha_west);
-         cairo_rectangle(cr, 0,0,w,h/2.0);
-         cairo_set_source(cr, pat);
-         cairo_fill(cr);
-         cairo_pattern_destroy(pat);
-
-         pat = cairo_pattern_create_linear(0., h/2.0, 0., h);
-         cairo_pattern_add_color_stop_rgba(pat, 0, ci->r, ci->g, ci->b, alpha_east);
-         cairo_pattern_add_color_stop_rgba(pat, 1, ci->r, ci->g, ci->b, alpha_west);
-         cairo_rectangle(cr, 0,h/2.0,w,h/2.0);
-         cairo_set_source(cr, pat);
-         cairo_fill(cr);
-         cairo_pattern_destroy(pat);
-       */
     }
 
     /* Create tabbed window indicators and title strings */
