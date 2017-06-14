@@ -183,18 +183,17 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
       /* Try some text path tricks */
       if(1) {
         PangoLayout *layout = pango_cairo_create_layout (cr);
-        PangoFontDescription *font_description = pango_font_description_new();
-        pango_font_description_set_family(font_description, mask_font);
-        pango_font_description_set_weight(font_description, PANGO_WEIGHT_BOLD);
+        PangoFontDescription *font_description = pango_font_description_from_string(mask_font);
+        //pango_font_description_set_weight(font_description, PANGO_WEIGHT_BOLD);
         pango_font_description_set_absolute_size(font_description, 8 * ih * PANGO_SCALE / 10);
         pango_layout_set_font_description(layout, font_description);
+        pango_font_description_free(font_description);
         pango_layout_set_text(layout, text, -1);
         cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
         cairo_move_to(cr, tx, 0);
         pango_cairo_show_layout (cr, layout);
         //pango_cairo_show_layout_line(cr, pango_layout_get_line (layout, 0));
         g_object_unref(layout);
-        pango_font_description_free(font_description);
       }
       else {
         cairo_move_to(cr, tx, ty);

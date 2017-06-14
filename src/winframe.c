@@ -728,17 +728,16 @@ static void render_text(cairo_t *cr, gchar *text, gswm_t *gsw, gint x, gint h)
 {
   if(1) {
     PangoLayout *layout = pango_cairo_create_layout (cr);
-    PangoFontDescription *font_description = pango_font_description_new();
-    pango_font_description_set_family(font_description, gsw->ucfg.titlebar_font_family);
-    pango_font_description_set_weight(font_description, PANGO_WEIGHT_NORMAL);
+    PangoFontDescription *font_description = pango_font_description_from_string(gsw->ucfg.titlebar_font_family);
+    //pango_font_description_set_weight(font_description, PANGO_WEIGHT_NORMAL);
     pango_font_description_set_absolute_size(font_description, 8 * h * PANGO_SCALE / 10);
     pango_layout_set_font_description(layout, font_description);
+    pango_font_description_free(font_description);
     pango_layout_set_text(layout, text, -1);
     cairo_move_to(cr, x, 0.05*h);
     pango_cairo_show_layout (cr, layout);
     //pango_cairo_show_layout_line(cr, pango_layout_get_line (layout, 0));
     g_object_unref(layout);
-    pango_font_description_free(font_description);
   }
   else {
     cairo_move_to(cr, x, 0.8*h);
