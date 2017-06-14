@@ -201,22 +201,8 @@ void osd_cli_set_text(osd_cli_t *obj, gchar *text)
       cairo_move_to(cr, tx, ty);
       cairo_select_font_face(cr, mask_font, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
       cairo_set_font_size(cr, ih);
-      cairo_text_path(cr, text);
-      /*
-         pat = cairo_pattern_create_linear(0, 0, tw, 0);
-         cairo_pattern_add_color_stop_rgb(pat, 0, .12, .39, 1.);
-         cairo_pattern_add_color_stop_rgb(pat, 1, .9, .9, .98);
-         cairo_set_source(cr, pat);
-         cairo_fill_preserve(cr);
-         */
-      /*
-         cairo_set_source_rgba(cr, .12, .39, 1., 1.);
-         cairo_fill_preserve(cr);
-         */
-      //cairo_set_source_rgb(cr, .9, .9, .98);
       cairo_set_source_rgb(cr, obj->gsw->ucfg.osd_bgc.r, obj->gsw->ucfg.osd_bgc.g, obj->gsw->ucfg.osd_bgc.b);
-      cairo_set_line_width(cr, ih/16.);
-      cairo_stroke(cr);
+      cairo_show_text(cr, text);
       cairo_destroy(cr);
 
       XShapeCombineMask(dpy, obj->win, ShapeBounding, 0, 0, mask_bitmap, ShapeSet);
