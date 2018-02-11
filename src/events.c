@@ -703,6 +703,9 @@ static void _handle_client_message(gswm_t *gsw, XClientMessageEvent *e)
           break;
       }
     }
+    else if(e->message_type == gsw->xa.wm_net_request_frame_extents) {
+        set_ewmh_net_frame_extents(gsw, clnt);
+    }
     else {
       gchar *an = XGetAtomName(gsw->display, e->message_type);
       if(an) {
@@ -791,7 +794,7 @@ static void _handle_enter_event(gswm_t *gsw, XCrossingEvent *e)
   ev.xcrossing = *e;
   while(XCheckTypedEvent(gsw->display, EnterNotify, &ev))
     /* DO NOTHING */;
-  e = &ev;
+  e = (XCrossingEvent*)&ev;
   TRACE("%s window=%ld mode=%d detail=%d focus=%d",
         __func__, e->window, e->mode, e->detail, e->focus);
   /* Ignore internal application events */
