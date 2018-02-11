@@ -266,6 +266,8 @@ typedef struct {
   Atom    wm_utf8_string;
   Atom    wm_xrootpmap_id;
   Atom    wm_xsetroot_id;
+  /* Other properties */
+  Atom    wm_net_wm_full_placement;
 } xa_wm_t;
 
 typedef struct {

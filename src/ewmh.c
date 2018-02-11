@@ -148,6 +148,8 @@ void init_ewmh_support(gswm_t *gsw)
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_state_above,          "_NET_WM_STATE_ABOVE");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_state_below,          "_NET_WM_STATE_BELOW");
   ADD_NET_SUPPORT(gsw->xa.wm_net_wm_strut,                "_NET_WM_STRUT");
+  /* Other properties */
+  ADD_NET_SUPPORT(gsw->xa.wm_net_wm_full_placement,       "_NET_WM_FULL_PLACEMENT");
 
   TRACE("%s len=%d", __func__, net_supported_list->len);
 
