@@ -1,9 +1,9 @@
-octopus (1.0.2-2) UNRELEASED; urgency=medium
+octopus (1.0.2-2) unstable; urgency=medium
 
   * Added support for _NET_REQUEST_FRAME_EXTENTS root message
   * List hint _NET_WM_FULL_PLACEMENT in property _NET_SUPPORTED
 
- -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Sun, 11 Feb 2018 15:25:18 +0100
+ -- Dr. Johann Pfefferl <pfefferl@gmx.net>  Thu, 11 Jul 2019 15:31:43 +0200
 
 octopus (1.0.2-1) unstable; urgency=medium
 
