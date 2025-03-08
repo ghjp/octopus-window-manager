@@ -1,21 +1,21 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.57)
-AC_INIT([octopus], [1.0.2], [pfefferl@gmx.net])
+AC_PREREQ([2.71])
+AC_INIT([octopus],[1.0.2],[pfefferl@gmx.net])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_AUX_DIR([auxdir])
 
 AC_CONFIG_MACRO_DIR([m4])
-AM_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 AM_INIT_AUTOMAKE([-Wall -Werror gnu])
-AM_DISABLE_STATIC
+AC_DISABLE_STATIC([])
 
 # Allow application specific compile and library flags aka. "octopus_CFLAGS = ...."
 AM_PROG_CC_C_O
 # Checks for programs.
-AM_PROG_LIBTOOL
+LT_INIT
 AC_PROG_MAKE_SET
 
 if test "$CC" = gcc
@@ -25,7 +25,7 @@ fi
 
 AC_MSG_CHECKING(for full debugging)
 AC_ARG_ENABLE(full-debug,
-	      AC_HELP_STRING([--enable-full-debug],[Turn on full debugging output (default=no)]),
+	      AS_HELP_STRING([--enable-full-debug],[Turn on full debugging output (default=no)]),
 	      [
 	       case "${enableval}" in
 		       yes) full_debug=yes ;;
@@ -45,7 +45,11 @@ PKG_CHECK_MODULES([CAIRO], [cairo >= 1.0.0])
 AC_PATH_XTRA
 
 # Checks for header files.
-AC_HEADER_STDC
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([locale.h stdlib.h string.h unistd.h])
 
@@ -58,8 +62,7 @@ AC_CHECK_FUNCS([gethostname memset setlocale sigaction strtol])
 # Check for XShape extension
 AC_MSG_CHECKING([whether to build support for the XShape extension])
 AC_ARG_ENABLE(xshape,
-	      AC_HELP_STRING([--enable-xshape],
-			     [enable support for the XShape extension [default=yes]]), ,
+	      AS_HELP_STRING([--enable-xshape],[enable support for the XShape extension [default=yes]]), ,
 			     [enable_xshape=yes])
 if test "x$enable_xshape" = "xyes"; then
 	AC_MSG_RESULT([yes])
@@ -73,8 +76,7 @@ fi
 # Check for XFree86-VidModeExtension extension
 AC_MSG_CHECKING([whether to build support for the XFree86-VidModeExtension extension])
 AC_ARG_ENABLE(xf86vm,
-	      AC_HELP_STRING([--enable-xf86vm],
-			     [enable support for the XFree86-VidModeExtension [default=yes]]), ,
+	      AS_HELP_STRING([--enable-xf86vm],[enable support for the XFree86-VidModeExtension [default=yes]]), ,
 			     [enable_xf86vm=yes])
 if test "x$enable_xf86vm" = "xyes"; then
 	AC_MSG_RESULT([yes])
@@ -88,8 +90,7 @@ fi
 # Check for XRANDR support
 AC_MSG_CHECKING([wheter to build support for the XRANDR extension])
 AC_ARG_ENABLE(xrandr,
-	      AC_HELP_STRING([--enable-xrandr],
-			     [enable support for the XRANDR extension [default=yes]]), ,
+	      AS_HELP_STRING([--enable-xrandr],[enable support for the XRANDR extension [default=yes]]), ,
 			     [enable_xrandr=yes])
 if test "x$enable_xrandr" = "xyes"; then
 	AC_MSG_RESULT([yes])
@@ -103,8 +104,7 @@ if test "x$enable_xrandr" = "xyes"; then
 # Check for Xinerama extension
 AC_MSG_CHECKING([whether to build support for the Xinerama extension])
 AC_ARG_ENABLE(xinerama,
-	      AC_HELP_STRING([--enable-xinerama],
-			     [enable support for the Xinerama extension [default=yes]]), ,
+	      AS_HELP_STRING([--enable-xinerama],[enable support for the Xinerama extension [default=yes]]), ,
 			     [enable_xinerama=yes])
 if test "x$enable_xinerama" = "xyes"; then
 	AC_MSG_RESULT([yes])
