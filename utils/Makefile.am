@@ -1,9 +1,7 @@
-octopus_setbg_CFLAGS = @GDK_PIXBUF_XLIB_CFLAGS@ @X11_CFLAGS@
-octopus_setbg_LDFLAGS = @GDK_PIXBUF_XLIB_LIBS@ @X11_LIBS@
 octopus_xkeyd_CFLAGS = @GLIB_CFLAGS@ @X_CFLAGS@ @X11_CFLAGS@
 octopus_xkeyd_LDFLAGS = @GLIB_LIBS@ @X_LIBS@ @X11_LIBS@
 octopus_remote_CFLAGS = $(octopus_xkeyd_CFLAGS)
 octopus_remote_LDFLAGS = $(octopus_xkeyd_LDFLAGS)
 noinst_HEADERS = xkeyd_userconfig.h
 octopus_xkeyd_SOURCES = octopus_xkeyd.c xkeyd_userconfig.c
-bin_PROGRAMS = octopus_setbg octopus_xkeyd octopus_remote
+bin_PROGRAMS = octopus_xkeyd octopus_remote
